@@ -1,7 +1,7 @@
 export(enetLTS, cv.enetLTS, coef.enetLTS, fitted.enetLTS, print.enetLTS,
        predict.enetLTS, residuals.enetLTS, weights.enetLTS, plot.enetLTS,
        plotDiagnostic.enetLTS, plotCoef.enetLTS, plotResid.enetLTS,
-       nonzeroCoef.enetLTS, lambda00)
+       nonzeroCoef.enetLTS, lambda00, myfunction)
 
 import(ggplot2)
 import(grid)
