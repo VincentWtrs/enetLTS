@@ -1,1 +1,3 @@
-print("Hallokes, soep met bokes")
+myfunction <- function(){
+  print("Hallokes, soep met bokes")
+}
