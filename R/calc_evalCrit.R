@@ -1,6 +1,6 @@
 # CACL_EVALCRIT_UPDATE: Allowing nfold = 1 FOR INFORMATION CRITERION-BASED APPROACHES
-calc_evalCrit_UPDATE <- function(rowind, combis_ind, alphas, lambdas, 
-                                 index, xx, yy, nfold, repl, family, ic_type = NULL) {
+calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas, 
+                          index, xx, yy, nfold, repl, family, ic_type = NULL) {
   # family argument defined as well, because it was defined within cv.enetLTS and calc_evalCrit just used it there as well
   
   ## NEW: Handling information criterion case
