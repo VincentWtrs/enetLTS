@@ -2,7 +2,7 @@
 bba6d61a1cd737c86bba9c64cdc841e2 *NAMESPACE
 6dc8f082722eb354542447a4ad79d8a9 *R/beginningCstep.R
 b73eeacd42db0200f15fc75966325b50 *R/BYfunc.R
-420609b4d678fa8f5bbe4201593193c8 *R/calc_evalcrit.R
+93e40084a2bf1c62f8b56ec0369fbf1d *R/calc_evalCrit.R
 bee50f616b5687c0151f14c25e96fc78 *R/Csteps.R
 fcc1b6e35d72aa693ef113f6c30dbf90 *R/InitialSubsets.R
 e815d4ca4a3e2d69df8dd42b8158f806 *R/coef.enetLTS.R
