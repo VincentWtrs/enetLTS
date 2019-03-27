@@ -3,12 +3,12 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                           index, xx, yy, nfold, repl, family, ic_type = NULL) {
   # family argument defined as well, because it was defined within cv.enetLTS and calc_evalCrit just used it there as well
   
-  ## NEW: Handling information criterion case
-  if(!is.null(ic_type)){
+  ## NEW: Handling information criterion case ## NEW(2) moved the nfold and repl correcting part to top-layer enetLTS() function
+  #if(!is.null(ic_type)){
     ic <- TRUE
-    nfold <- 1 # Forcing nfold to 1 (> 1 makes no sense)
-    repl <- 1 # Forcing repl to 1  (> 1 makes no sense)
-    print("Information Criterion option selected (ic_type), nfold and repl forced to 1.")
+    #nfold <- 1 # Forcing nfold to 1 (> 1 makes no sense)
+    #repl <- 1 # Forcing repl to 1  (> 1 makes no sense)
+    #print("Information Criterion option selected (ic_type), nfold and repl forced to 1.")
   } else if(is.null(ic_type)){
     ic <- FALSE
   }
@@ -26,7 +26,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     y <- yy[index[, i, j]]
   }
   
-  
   evalCritl <- rep(NA, repl) # Initiating
   
   ## For each replication
@@ -34,7 +33,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     
     ## NEW: if(ic == FALSE): Keep old functionality
     if(ic == FALSE){
-      
       # Binomial Case
       if (family == "binomial") {
         folds0 <- cvTools:::cvFolds(length(y[y == 0]), K = nfold, R = 1, type = "random")
@@ -117,8 +115,8 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
       }
     } # END OF if(ic == FALSE)
     
-    ########## NEW: if(ic == TRUE) ########## 
-    if(ic == TRUE){
+    ########## NEW: if ic is TRUE ########## 
+    if(isTRUE(ic)){
       loss <- rep(NA, nrow(x)) # nrow(x) = h
       xtrain <- x # Note: there is only a training set here
       ytrain <- y # Note: there is only a training set here
