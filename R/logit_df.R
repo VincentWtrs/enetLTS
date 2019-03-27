@@ -10,8 +10,6 @@ logit_df <- function(model, X, alpha = NULL, intercept){
   ## OUTPUT
   # df: the effective degrees of freedom for the logit model
   
-  
-  
   ## NOTES
   # 1. lamba value can be extracted from glmnet model, alpha cannot in most circumstances
   # 2. The case for including an intercept is not so clean as it seems as it would require different
