@@ -66,7 +66,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   # Information criterion check
   if(!is.null(ic_type)){
-    print("When providing an information criterion, the cross-validation settings are ignored")
+    print("Information criterion supplied: the cross-validation input parameters (nfold, repl) are ignored")
     nfold <- 1
     repl <- 1
   }
