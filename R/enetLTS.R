@@ -71,6 +71,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     repl <- 1
   }
   
+  # Check if IC is used together with Gaussian family (not implemented yet)
+  if(!is.null(ic_type)){
+    if(family == "gaussian"){
+      stop("Information criterion approach not yet supported for Gaussian family") # Some error throwing
+    }
+  }
+  
   ## C-STEPS
   WarmCstepresults <- warmCsteps(x = x, 
                                  y = y, 
@@ -92,7 +99,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  seed = seed)
   indexall <- WarmCstepresults$indexall
   
-  if((length(alphas) == 1) & (length(lambdas) == 1)) {
+  # Check for a 1x1 hyperparameter grid
+  if((length(alphas) == 1) & (length(lambdas) == 1)){
     if(plot == TRUE) 
       warning("There is no meaning to see plot for a single combination of lambda and alpha")
     indexbest <- drop(indexall)
@@ -101,13 +109,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   } 
   
   ## CROSS VALIDATION
-  if((length(alphas) > 1) | (length(lambdas) > 1)) { # NEW: added more specific split here
-    # Because IC not implemented yet for gaussians: implement a stop here
-    if(!is.null(ic_type)){
-      if(family == "gaussian"){
-        stop("Information criterion approach not yet supported for Gaussian family") # Some error throwing
-      }
-    }
+  # Checking if grid is bigger than 1x1
+  if((length(alphas) > 1) | (length(lambdas) > 1)){
       # NEW: Changed from cv.enetLTS to cv.enetLTS_UPDATE ## NEW(2): got IC calculations out of cv.enetLTS_UPDATE
       CVresults <- cv.enetLTS(indexall, 
                               x, 
@@ -126,25 +129,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       alphabest <- CVresults$alphaopt
       lambdabest <- CVresults$lambdaopt
       evalCritCV <- CVresults$evalCrit
-    }
-    #if(!is.null(ic_type)){ # NEW: IC CALCULATION HAPPENS OUTSIDE OF cv.enetLTS_UPDATE # Will not pursue, should be part of big redesign
-    #  print("Information criterion method: nfold and repl ignored and set to 1")
-    #  ICresults <- ic.enetLTS(indexall,
-    #                          x,
-    #                          y,
-    #                          family,
-    #                          h,
-    #                          alphas,
-    #                          lambdas,
-    #                          plot,
-    #                          ic_type)
-    #  # Gathering results from IC
-    #  indexbest <- ICresults$indexbest
-    #  alphabest <- ICresults$alphaopt
-    #  lambdabest <- ICresults$lambda$opt
-    #  evalCritCV <- ICresults$evalCrit # We just keep the name for convenience (TO DO)
-    #  }
   }
+  
+  # If scaling is TRUE
   if (scal) {
     scl <- prepara(xx, yy, family, indexbest, robu = 0)
     xs <- scl$xnor
