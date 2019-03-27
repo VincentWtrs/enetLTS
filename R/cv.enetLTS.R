@@ -20,8 +20,8 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   ## REMOVED: DEFINITION OF calc_evalCrit(), THIS HAS BEEN SPLIT OFF TO SEPARATE FILE
   
   # Running for all combinations of alpha, lambda
-  ### NEW: UPDATED TO CALL calc_evalcrit_UPDATE instead of the original one ALSO: added argument family = family and ic_type to be passed on as well
-  temp_result <- mclapply(1:nrow(combis_ind), FUN = calc_evalCrit_UPDATE, 
+  ### NEW: added argument family = family and ic_type to be passed on as well
+  temp_result <- mclapply(1:nrow(combis_ind), FUN = calc_evalCrit, 
                           combis_ind = combis_ind, 
                           alphas = alphas, 
                           lambdas = lambdas, 
