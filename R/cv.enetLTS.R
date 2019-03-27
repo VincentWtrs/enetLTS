@@ -21,7 +21,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   
   # Running for all combinations of alpha, lambda
   ### NEW: UPDATED TO CALL calc_evalcrit_UPDATE instead of the original one ALSO: added argument family = family and ic_type to be passed on as well
-  temp_result <- parallel:::mclapply(1:nrow(combis_ind), FUN = calc_evalCrit_UPDATE, 
+  temp_result <- mclapply(1:nrow(combis_ind), FUN = calc_evalCrit_UPDATE, 
                           combis_ind = combis_ind, 
                           alphas = alphas, 
                           lambdas = lambdas, 
@@ -81,7 +81,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     ggmspe <- evalCrit
     rownames(ggmspe) <- lambdas
     colnames(ggmspe) <- alphas
-    ggmspe <- reshape:::melt(ggmspe) # NEW: Trying to force getting it from here
+    ggmspe <- melt(ggmspe) # NEW: Trying to force getting it from here
     if (is.null(index)) {
       if (family == "binomial") {
         names(ggmspe) <- c("lambda", "alpha", "TMNLL")
@@ -119,9 +119,9 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
       }
     }
     mspeplot <- mspeplot + xlab("lambda") + ylab("alpha")
-    grid:::grid.newpage() # NEW: added grid::: to force it getting the right package when changing the function in namespace
-    grid:::pushViewport(grid:::viewport(layout = grid:::grid.layout(1, 1)))
-    print(mspeplot, vp = grid:::viewport(layout.pos.row = 1, layout.pos.col = 1))
+    grid.newpage() # NEW: added grid::: to force it getting the right package when changing the function in namespace # NEW NEW: REMOVED THIS
+    pushViewport(viewport(layout = grid.layout(1, 1))) # From "grid" package
+    print(mspeplot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1)) # From "grid" package
   }
   return(list(evalCrit = evalCrit, minevalCrit = minevalCrit, 
               indexbest = indexbest, lambdaopt = lambda, alphaopt = alpha))
