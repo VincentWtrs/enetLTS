@@ -3,13 +3,17 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                           index, xx, yy, nfold, repl, family, ic_type = NULL) {
   # family argument defined as well, because it was defined within cv.enetLTS and calc_evalCrit just used it there as well
   
+  # Test printing statement
+  print("Using new version of calc_evalCrit()")
+  
+  
   ## NEW: Handling information criterion case ## NEW(2) moved the nfold and repl correcting part to top-layer enetLTS() function
   if(!is.null(ic_type)){
     ic <- TRUE
     #nfold <- 1 # Forcing nfold to 1 (> 1 makes no sense)
     #repl <- 1 # Forcing repl to 1  (> 1 makes no sense)
     #print("Information Criterion option selected (ic_type), nfold and repl forced to 1.")
-  } else if(is.null(ic_type)){
+  }else if(is.null(ic_type)){
     ic <- FALSE
   }
   
