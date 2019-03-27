@@ -1,6 +1,6 @@
 cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold, 
-                       repl, ncores, plot = TRUE, ic_type = NULL) 
-{
+                       repl, ncores, plot = TRUE, ic_type = NULL){
+  
   MNLL <- TMNLL <- RTMSPE <- RMSPE <- NULL
   n <- nrow(xx)
   p <- ncol(xx)
