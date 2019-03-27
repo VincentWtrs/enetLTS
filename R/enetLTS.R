@@ -64,6 +64,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   x <- sc$xnor
   y <- sc$ycen
   
+  # Information criterion check
+  if(!is.null(ic_type)){
+    print("When providing an information criterion, the cross-validation settings are ignored")
+    nfold <- 1
+    repl <- 1
+  }
+  
   ## C-STEPS
   WarmCstepresults <- warmCsteps(x = x, 
                                  y = y, 
