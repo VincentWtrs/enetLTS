@@ -1,46 +1,46 @@
-warmCsteps_UPDATE <- function (x, y, h, n, p, family, alphas, lambdas, hsize, nsamp, 
-                                s1, csteps, nfold, para, ncores, tol, scal, seed) 
-{
+warmCsteps <- function(x, y, h, n, p, family, alphas, lambdas, hsize, nsamp, 
+                       s1, csteps, nfold, para, ncores, tol, scal, seed){
+  
   alpha <- alphas[1]
   lambda <- lambdas[1]
   residall <- array(NA, dim = c(n, length(lambdas), length(alphas)))
   indexall <- array(NA, dim = c(h, length(lambdas), length(alphas)))
   if (length(alphas) == 1 & length(lambdas) == 1) {
-    beginning.Cstep.with500 <- beginningCstep(x, 
-                                              y, 
-                                              family, 
-                                              h, 
-                                              hsize, 
-                                              alpha, 
-                                              lambda, 
-                                              nsamp, 
-                                              s1, 
-                                              ncores, 
-                                              csteps, 
-                                              tol, 
-                                              scal, 
-                                              para,
-                                              seed)
+    beginning.Cstep.with500 <- beginningCstep(x = x, 
+                                              y = , 
+                                              family = family, 
+                                              h = h, 
+                                              hsize = hsize, 
+                                              alpha = alpha, 
+                                              lambda = lambda, 
+                                              nsamp = nsamp, 
+                                              s1 = s1, 
+                                              ncores = ncores, 
+                                              csteps = csteps, 
+                                              tol = tol, 
+                                              scal = scal, 
+                                              para = para,
+                                              seed = seed)
     residall[, 1, 1] <- beginning.Cstep.with500$resid
     indexall[, 1, 1] <- beginning.Cstep.with500$index
     return(list(residall = residall, indexall = indexall))
     
   } else {
-    beginning.Cstep.with500 <- beginningCstep(x, 
-                                              y, 
-                                              family, 
-                                              h, 
-                                              hsize, 
-                                              alpha, 
-                                              lambda, 
-                                              nsamp, 
-                                              s1, 
-                                              ncores, 
-                                              csteps, 
-                                              tol, 
-                                              scal, 
-                                              para, 
-                                              seed)
+    beginning.Cstep.with500 <- beginningCstep(x = x, 
+                                              y = y, 
+                                              family = family, 
+                                              h = h, 
+                                              hsize = hsize, 
+                                              alpha = alpha, 
+                                              lambda = lambda, 
+                                              nsamp = nsamp, 
+                                              s1 = s1, 
+                                              ncores = ncores, 
+                                              csteps = csteps, 
+                                              tol = tol, 
+                                              scal = scal, 
+                                              para = para, 
+                                              seed = seed)
     index1_al <- beginning.Cstep.with500$index
     index1_la <- beginning.Cstep.with500$index
     resid1_al <- beginning.Cstep.with500$resid
@@ -62,8 +62,7 @@ warmCsteps_UPDATE <- function (x, y, h, n, p, family, alphas, lambdas, hsize, ns
                            lambda/h, 
                            scal)
         countloop <- 0
-        while ((cstep.mod$object > objbest) & (countloop < 
-                                               csteps)) {
+        while ((cstep.mod$object > objbest) & (countloop < csteps)) {
           countloop <- countloop + 1
           objbest <- cstep.mod$object
           newindex_la <- cstep.mod$index
