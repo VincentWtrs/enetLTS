@@ -102,46 +102,48 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   ## CROSS VALIDATION
   if((length(alphas) > 1) | (length(lambdas) > 1)) { # NEW: added more specific split here
-    if(ic == FALSE){ # NEW: if no IC type is supplied than CV will be used
+    # Because IC not implemented yet for gaussians: implement a stop here
+    if(!is.null(ic_type)){
       if(family == "gaussian"){
         stop("Information criterion approach not yet supported for Gaussian family") # Some error throwing
       }
+    }
       # NEW: Changed from cv.enetLTS to cv.enetLTS_UPDATE ## NEW(2): got IC calculations out of cv.enetLTS_UPDATE
-      CVresults <- cv.enetLTS_UPDATE(indexall, 
-                                     x, 
-                                     y, 
-                                     family, 
-                                     h, 
-                                     alphas, 
-                                     lambdas, 
-                                     nfold, 
-                                     repl, 
-                                     ncores, 
-                                     plot, 
-                                     ic_type) # NEW: ic_type ## NEW(2): remove ic_type
+      CVresults <- cv.enetLTS(indexall, 
+                              x, 
+                              y, 
+                              family, 
+                              h, 
+                              alphas, 
+                              lambdas, 
+                              nfold, 
+                              repl, 
+                              ncores, 
+                              plot, 
+                              ic_type) # NEW: ic_type ## NEW(2): remove ic_type # NEW(3) Think we can remove this due to default NULL
       # Gathering results from CV
       indexbest <- CVresults$indexbest
       alphabest <- CVresults$alphaopt
       lambdabest <- CVresults$lambdaopt
       evalCritCV <- CVresults$evalCrit
     }
-    if(ic == TRUE){ # NEW: IC CALCULATION HAPPENS OUTSIDE OF cv.enetLTS_UPDATE
-      print("Information criterion method: nfold and repl ignored and set to 1")
-      ICresults <- ic.enetLTS(indexall,
-                              x,
-                              y,
-                              family,
-                              h,
-                              alphas,
-                              lambdas,
-                              plot,
-                              ic_type)
-      # Gathering results from IC
-      indexbest <- ICresults$indexbest
-      alphabest <- ICresults$alphaopt
-      lambdabest <- ICresults$lambda$opt
-      evalCritCV <- ICresults$evalCrit # We just keep the name for convenience (TO DO)
-      }
+    #if(!is.null(ic_type)){ # NEW: IC CALCULATION HAPPENS OUTSIDE OF cv.enetLTS_UPDATE # Will not pursue, should be part of big redesign
+    #  print("Information criterion method: nfold and repl ignored and set to 1")
+    #  ICresults <- ic.enetLTS(indexall,
+    #                          x,
+    #                          y,
+    #                          family,
+    #                          h,
+    #                          alphas,
+    #                          lambdas,
+    #                          plot,
+    #                          ic_type)
+    #  # Gathering results from IC
+    #  indexbest <- ICresults$indexbest
+    #  alphabest <- ICresults$alphaopt
+    #  lambdabest <- ICresults$lambda$opt
+    #  evalCritCV <- ICresults$evalCrit # We just keep the name for convenience (TO DO)
+    #  }
   }
   if (scal) {
     scl <- prepara(xx, yy, family, indexbest, robu = 0)
