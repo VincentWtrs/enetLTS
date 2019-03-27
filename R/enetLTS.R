@@ -8,7 +8,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   # NEW: ic_type test test
   # NEW: type_lambdaw: choosing lambda.min or lambda.1se for the reweighting step.
   
-  print("USING UPDATED VERSION OF enetLTS: enetLTS_UPDATE") # So I can see that the new function is effectively called
+  print("USING UPDATED VERSION OF enetLTS") # So I can see that the new function is effectively called
   ########################
   
   matchedCall <- match.call()
