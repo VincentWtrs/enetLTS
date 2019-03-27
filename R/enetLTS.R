@@ -15,7 +15,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   matchedCall[[1]] <- as.name("enetLTS")
   family <- match.arg(family)
   type <- match.arg(type)
-  xx <- enetLTS:::addColnames(as.matrix(xx))
+  xx <- addColnames(as.matrix(xx))
   nc = dim(yy)
   if (is.null(nc)) {
     yy <- as.matrix(yy)
@@ -57,32 +57,32 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     l0 <- robustHD::lambda0(xx, yy, normalize = scal, intercept = intercept)
     lambdas <- seq(l0, 0, by = -0.025 * l0)
   } else if (missing(lambdas) & family == "binomial") {
-    l00 <- enetLTS:::lambda00(xx, yy, normalize = scal, intercept = intercept)
+    l00 <- lambda00(xx, yy, normalize = scal, intercept = intercept)
     lambdas <- seq(l00, 0, by = -0.025 * l00)
   }
-  sc <- enetLTS:::prepara(xx, yy, family, robu = 1)
+  sc <- prepara(xx, yy, family, robu = 1)
   x <- sc$xnor
   y <- sc$ycen
   
   ## C-STEPS
-  WarmCstepresults <- enetLTS:::warmCsteps(x = x, 
-                                           y = y, 
-                                           h = h, 
-                                           n = n, 
-                                           p = p, 
-                                           family = family, 
-                                           alphas = alphas, 
-                                           lambdas = lambdas, 
-                                           hsize = hsize, 
-                                           nsamp = nsamp, 
-                                           s1 = s1, 
-                                           Csteps = ncsteps, # Note differing argument name here 
-                                           nfold = nfold, 
-                                           para = para, 
-                                           ncores = ncores, 
-                                           tol = tol, 
-                                           scal = scal, 
-                                           seed = seed)
+  WarmCstepresults <- warmCsteps(x = x, 
+                                 y = y, 
+                                 h = h, 
+                                 n = n, 
+                                 p = p, 
+                                 family = family, 
+                                 alphas = alphas, 
+                                 lambdas = lambdas, 
+                                 hsize = hsize, 
+                                 nsamp = nsamp, 
+                                 s1 = s1, 
+                                 Csteps = ncsteps, # Note differing argument name here 
+                                 nfold = nfold, 
+                                 para = para, 
+                                 ncores = ncores, 
+                                 tol = tol, 
+                                 scal = scal, 
+                                 seed = seed)
   indexall <- WarmCstepresults$indexall
   
   if((length(alphas) == 1) & (length(lambdas) == 1)) {
@@ -137,7 +137,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       }
   }
   if (scal) {
-    scl <- enetLTS:::prepara(xx, yy, family, indexbest, robu = 0)
+    scl <- prepara(xx, yy, family, indexbest, robu = 0)
     xs <- scl$xnor
     ys <- scl$ycen
     fit <- glmnet(xs[indexbest, ], 
@@ -154,9 +154,15 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       raw.coefficients <- drop(as.matrix(fit$beta)/scl$sigx)
       raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + 
         log(1 + exp(xs %*% as.matrix(fit$beta)))
-      raw.wt <- enetLTS:::weight.binomial(xx, yy, c(a00, raw.coefficients), 
-                                intercept = intercept, del)
-      sclw <- enetLTS:::prepara(xx, yy, family, which(raw.wt == 1), 
+      raw.wt <- weight.binomial(xx, 
+                                yy, 
+                                c(a00, raw.coefficients), 
+                                intercept = intercept, 
+                                del)
+      sclw <- prepara(xx, 
+                      yy, 
+                      family, 
+                      which(raw.wt == 1), 
                       robu = 0)
       xss <- sclw$xnor
       yss <- sclw$ycen
@@ -185,7 +191,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       else drop(fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% 
                   (sclw$mux/sclw$sigx))
       coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
-      wgt <- enetLTS:::weight.binomial(xx, yy, c(a0, coefficients), 
+      wgt <- weight.binomial(xx, yy, c(a0, coefficients), 
                              intercept, del)
       reweighted.residuals <- -(yy * cbind(1, xx) %*% c(a0, 
                                                         coefficients)) + log(1 + exp(cbind(1, xx) %*% 
@@ -199,7 +205,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       raw.coefficients <- drop(as.matrix(fit$beta)/scl$sigx)
       raw.residuals <- yy - cbind(1, xx) %*% c(a00, raw.coefficients)
       raw.rmse <- sqrt(mean(raw.residuals^2))
-      raw.wt <- enetLTS:::weight.gaussian(raw.residuals, indexbest, 
+      raw.wt <-weight.gaussian(raw.residuals, indexbest, 
                                 del)$we
       sclw <- prepara(xx, yy, family, which(raw.wt == 1), 
                       robu = 0)
@@ -231,7 +237,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       reweighted.residuals <- yy - cbind(1, xx) %*% c(a0, 
                                                       coefficients)
       reweighted.rmse <- sqrt(mean(reweighted.residuals^2))
-      wgt <- enetLTS:::weight.gaussian(reweighted.residuals, raw.wt == 
+      wgt <- weight.gaussian(reweighted.residuals, raw.wt == 
                                1, del)$we
     }
   }
@@ -247,7 +253,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       raw.coefficients <- drop(as.matrix(fit$beta)/sc$sigx)
       raw.residuals <- -(y * x %*% as.matrix(fit$beta)) + 
         log(1 + exp(x %*% as.matrix(fit$beta)))
-      raw.wt <- enetLTS:::weight.binomial(xx, yy, c(a00, raw.coefficients), 
+      raw.wt <- weight.binomial(xx, yy, c(a00, raw.coefficients), 
                                 intercept, del)
       if (missing(lambdaw)) {
         lambdaw <- cv.glmnet(x[which(raw.wt == 1), ], 
@@ -287,7 +293,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         0
       else drop(fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sc$mux/sc$sigx))
       coefficients <- drop(as.matrix(fitw$beta)/sc$sigx)
-      wgt <- enetLTS:::weight.binomial(xx, yy, c(a0, coefficients), 
+      wgt <- weight.binomial(xx, yy, c(a0, coefficients), 
                              intercept, del)
       reweighted.residuals <- -(yy * cbind(1, xx) %*% c(a0, coefficients)) + log(1 + exp(cbind(1, xx) %*% c(a0, coefficients)))
     }
@@ -299,8 +305,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       raw.coefficients <- drop(as.matrix(fit$beta)/sc$sigx)
       raw.residuals <- yy - cbind(1, xx) %*% c(a00, raw.coefficients)
       raw.rmse <- sqrt(mean(raw.residuals^2))
-      raw.wt <- enettLTS:::weight.gaussian(raw.residuals, indexbest, 
-                                del)$we
+      raw.wt <- weight.gaussian(raw.residuals, indexbest, del)$we
+      
       if (missing(lambdaw)) {
         lambdaw <- cv.glmnet(x[which(raw.wt == 1), ], 
                              y[which(raw.wt == 1)], family = family, nfolds = 5, 
@@ -326,14 +332,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       reweighted.residuals <- yy - cbind(1, xx) %*% c(a0, 
                                                       coefficients)
       reweighted.rmse <- sqrt(mean(reweighted.residuals^2))
-      wgt <- enetLTS:::weight.gaussian(reweighted.residuals, raw.wt == 
-                               1, del)$we
+      wgt <- weight.gaussian(reweighted.residuals, raw.wt == 1, del)$we
     }
   }
   num.nonzerocoef <- sum(coefficients != 0)
   intercept <- isTRUE(intercept)
   if (intercept) 
-    xx <- enetLTS:::addIntercept(xx)
+    xx <- addIntercept(xx)
   if (intercept) {
     coefficients <- c(a0, coefficients)
     raw.coefficients <- c(a00, raw.coefficients)
