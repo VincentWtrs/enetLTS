@@ -1,16 +1,15 @@
-enetLTS_UPDATE <- function (xx, yy, family = c("gaussian", "binomial"), alphas, 
-                            lambdas, lambdaw, hsize = 0.75, intercept = TRUE, nsamp = 500, 
-                            s1 = 10, nCsteps = 20, nfold = 5, seed = NULL, plot = TRUE, 
-                            repl = 5, para = TRUE, ncores = 1, del = 0.0125, tol = -1e+06, 
-                            scal = TRUE, type = c("response", "class"), ic_type = NULL, type_lambdaw) 
-  # NEW: ic_type test test
-  # NEW: type_lambdaw: choosing lambda.min or lambda.1se for the reweighting step.
-{
+enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas, 
+                   lambdas, lambdaw, hsize = 0.75, intercept = TRUE, nsamp = 500, 
+                   s1 = 10, nCsteps = 20, nfold = 5, seed = NULL, plot = TRUE, 
+                   repl = 5, para = TRUE, ncores = 1, del = 0.0125, tol = -1e+06, 
+                   scal = TRUE, type = c("response", "class"), ic_type = NULL, type_lambdaw){
   
   #### UPDATED VERSION ###
+  # NEW: ic_type test test
+  # NEW: type_lambdaw: choosing lambda.min or lambda.1se for the reweighting step.
+  
   print("USING UPDATED VERSION OF enetLTS: enetLTS_UPDATE") # So I can see that the new function is effectively called
   ########################
-  
   
   matchedCall <- match.call()
   matchedCall[[1]] <- as.name("enetLTS")
