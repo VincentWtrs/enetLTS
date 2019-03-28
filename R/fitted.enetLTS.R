@@ -1,8 +1,4 @@
-
-fitted.enetLTS <-
-   function(object,vers=c("reweighted","raw","both"),type=c("response","class"),...){
-
-
+fitted.enetLTS <- function(object, vers = c("reweighted","raw","both"), type = c("response","class"), ...){
       vers <- match.arg(vers)
       type <- match.arg(type)
 
