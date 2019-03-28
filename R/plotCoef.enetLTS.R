@@ -1,9 +1,7 @@
-
-plotCoef.enetLTS <- function(object,vers=c("reweighted","raw"),
-                                      colors=NULL,...){
+plotCoef.enetLTS <- function(object, vers = c("reweighted", "raw"),
+                                      colors = NULL, ...){
    
    nam <- NULL
-   
    if(is.null(colors)){
       colors <- list(bars="#0000AA",errorbars="red",
                      background="#BBBBEE",abline="#21A0D2",
