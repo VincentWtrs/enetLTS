@@ -32,8 +32,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   ncores <- rep(ncores, length.out = 1)
   if (is.na(ncores)) 
     ncores <- detectCores()
-  if (!is.numeric(ncores) || is.infinite(ncores) || ncores < 
-      1) {
+  if (!is.numeric(ncores) || is.infinite(ncores) || ncores < 1){
     ncores <- 1
     warning("invalid value of 'ncores'; using default value")
   }
@@ -107,9 +106,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   # Check for a 1x1 hyperparameter grid
   if((length(alphas) == 1) & (length(lambdas) == 1)){
-    if(plot == TRUE) 
+    if(isTRUE(plot)){
       warning("There is no meaning to see plot for a single combination of lambda and alpha")
-    indexbest <- drop(indexall)
+    }
+    
+    indexbest <- drop(indexall) # Dropping the matrix structure
     alphabest <- alphas
     lambdabest <- lambdas
   } 
@@ -153,8 +154,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                   lambda = lambdabest, 
                   standardize = FALSE, 
                   intercept = FALSE) # TO DO: I THINK THIS NEEDS TO BE SPLITTED FOR BINOMIAL AND GAUSSIAN
-    if (family == "binomial") {
-      a00 <- if (intercept == F) 
+    if (family == "binomial"){
+      a00 <- if(intercept == FALSE) 
         0
       else drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx))
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx)
@@ -205,7 +206,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      lambda = lambdaw, 
                      standardize = FALSE, 
                      intercept = FALSE)
-      a0 <- if(intercept == F) 
+      a0 <- if(intercept == FALSE) 
         0
       else drop(fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sclw$mux/sclw$sigx))
       coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
@@ -214,11 +215,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                              beta = c(a0, coefficients), 
                              intercept = intercept, 
                              del = del)
-      reweighted.residuals <- -(yy * cbind(1, xx) %*% c(a0, coefficients)) + log(1 + exp(cbind(1, xx) %*% 
-                                                                                       c(a0, coefficients)))
+      reweighted.residuals <- -(yy * cbind(1, xx) %*% c(a0, coefficients)) + log(1 + exp(cbind(1, xx) %*% c(a0, coefficients)))
     }
     else if (family == "gaussian") {
-      a00 <- if (intercept == F) 
+      a00 <- if (intercept == FALSE) 
         0
       else drop(scl$muy + fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux/scl$sigx))
       raw.coefficients <- drop(as.matrix(fit$beta)/scl$sigx)
@@ -335,7 +335,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      lambda = lambdaw, 
                      standardize = FALSE, 
                      intercept = FALSE)
-      a0 <- if(intercept == F) 
+      a0 <- if(intercept == FALSE) 
         0
       else drop(fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sc$mux/sc$sigx))
       coefficients <- drop(as.matrix(fitw$beta)/sc$sigx)
@@ -416,11 +416,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     raw.fitted.values <- if (type == "class") {
       ifelse(test = u <= 0.5, yes = 0, no = 1)
     }
-    else if (type == "response") {
+    else if (type == "response"){
       1/(1 + exp(-u))
     }
     uu <- xx %*% coefficients
-    fitted.values <- if (type == "class") {
+    fitted.values <- if (type == "class"){
       ifelse(test = uu <= 0.5, yes = 0, no = 1)
     }
     else if (type == "response"){
