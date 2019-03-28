@@ -57,10 +57,16 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     l0 <- robustHD::lambda0(xx, yy, normalize = scal, intercept = intercept)
     lambdas <- seq(l0, 0, by = -0.025 * l0)
   } else if (missing(lambdas) & family == "binomial") {
-    l00 <- lambda00(xx, yy, normalize = scal, intercept = intercept)
+    l00 <- lambda00(x = xx, 
+                    y = yy, 
+                    normalize = scal, 
+                    intercept = intercept)
     lambdas <- seq(l00, 0, by = -0.025 * l00)
   }
-  sc <- prepara(xx, yy, family, robu = 1)
+  sc <- prepara(x = xx, 
+                y = yy, 
+                family = family, 
+                robu = 1)
   x <- sc$xnor
   y <- sc$ycen
   
@@ -112,18 +118,18 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   # Checking if grid is bigger than 1x1
   if((length(alphas) > 1) | (length(lambdas) > 1)){
       # NEW: Changed from cv.enetLTS to cv.enetLTS_UPDATE ## NEW(2): got IC calculations out of cv.enetLTS_UPDATE
-      CVresults <- cv.enetLTS(indexall, 
-                              x, 
-                              y, 
-                              family, 
-                              h, 
-                              alphas, 
-                              lambdas, 
-                              nfold, 
-                              repl, 
-                              ncores, 
-                              plot, 
-                              ic_type) # NEW: ic_type ## NEW(2): remove ic_type # NEW(3) Think we can remove this due to default NULL
+      CVresults <- cv.enetLTS(index = indexall, 
+                              xx = x, 
+                              yy = y, 
+                              family = family, 
+                              h = h, 
+                              alphas = alphas, 
+                              lambdas = lambdas, 
+                              nfold = nfold, 
+                              repl = repl, 
+                              ncores = ncores, 
+                              plot = plot, 
+                              ic_type = ic_type) # NEW: ic_type ## NEW(2): remove ic_type # NEW(3) Think we can remove this due to default NULL
       # Gathering results from CV
       indexbest <- CVresults$indexbest
       alphabest <- CVresults$alphaopt
@@ -162,7 +168,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       sclw <- prepara(x = xx, 
                       y = yy, 
                       family = family, 
-                      family = which(raw.wt == 1), 
+                      index = which(raw.wt == 1), 
                       robu = 0)
       xss <- sclw$xnor
       yss <- sclw$ycen
