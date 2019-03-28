@@ -18,14 +18,16 @@ tune_plot <- function(alphas, lambdas, lambda, alpha, evalCrit, index, family){
     rownames(ggmspe) <- lambdas
     colnames(ggmspe) <- alphas
     ggmspe <- melt(ggmspe) # NEW: Trying to force getting it from here
-    if (is.null(index)) {
+    if (is.null(index)){
       if (family == "binomial") {
         names(ggmspe) <- c("lambda", "alpha", "TMNLL")
-        mspeplot <- ggplot(ggmspe, aes(x = as.factor(lambda), 
-                                       y = as.factor(alpha), fill = TMNLL)) + geom_tile() + 
-          scale_fill_gradientn(colours = mycol.b) + theme(axis.text.x = element_text(angle = -90))
-        mspeplot <- mspeplot + ggtitle(paste0("TMNLL (minimum at lambda = ", 
-                                              lambda, ",alpha = ", alpha, ",  ", family, ")"))
+        
+        mspeplot <- ggplot(ggmspe, aes(x = as.factor(lambda), y = as.factor(alpha), fill = TMNLL)) 
+        + geom_tile() 
+        + scale_fill_gradientn(colours = mycol.b) 
+        + theme(axis.text.x = element_text(angle = -90))
+        
+        mspeplot <- mspeplot + ggtitle(paste0("TMNLL (minimum at lambda = ", lambda, ",alpha = ", alpha, ",  ", family, ")"))
       }
       else if (family == "gaussian") {
         names(ggmspe) <- c("lambda", "alpha", "RTMSPE")
