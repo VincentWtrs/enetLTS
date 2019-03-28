@@ -1,9 +1,6 @@
-
-beginningCstep <- 
-function(x,y,family,h,hsize,alpha,lambda,nsamp,s1,ncores,csteps,tol,scal,para,seed)
-{
- ## internal function for Cstep and warmCsteps
+beginningCstep <- function(x, y, family, h, hsize, alpha, lambda, nsamp, s1, ncores, csteps, tol, scal, para, seed){
  
+ ## internal function for Cstep and warmCsteps
  #  source("objectiveFunc.R")
  #  source("InitialSubsets.R")
  #  source("Csteps.R")
