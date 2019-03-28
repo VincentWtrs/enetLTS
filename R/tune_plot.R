@@ -2,6 +2,7 @@ tune_plot <- function(alphas, lambdas, lambda, alpha, evalCrit, index, family){
     print(paste("optimal model: lambda =", lambda, "alpha =", 
                 alpha))
     lenCol <- length(alphas) * length(lambdas)
+    
     #mycol.b <- colorRampPalette(c("black", 
     #                              "blue2", 
     #                              "purple", 
@@ -18,7 +19,7 @@ tune_plot <- function(alphas, lambdas, lambda, alpha, evalCrit, index, family){
     rownames(ggmspe) <- lambdas
     colnames(ggmspe) <- alphas
     ggmspe <- melt(ggmspe) # NEW: Trying to force getting it from here
-    if (is.null(index)){
+    if(is.null(index)){
       if (family == "binomial") {
         names(ggmspe) <- c("lambda", "alpha", "TMNLL")
         
@@ -27,7 +28,7 @@ tune_plot <- function(alphas, lambdas, lambda, alpha, evalCrit, index, family){
         + scale_fill_gradientn(colours = mycol.b) 
         + theme(axis.text.x = element_text(angle = -90))
         
-        mspeplot <- mspeplot + ggtitle(paste0("TMNLL (minimum at lambda = ", lambda, ",alpha = ", alpha, ",  ", family, ")"))
+        mspeplot <- mspeplot + ggtitle(paste0("TMNLL (minimum at lambda = ", lambda, ", alpha = ", alpha, ",  ", family, ")"))
       }
       else if (family == "gaussian") {
         names(ggmspe) <- c("lambda", "alpha", "RTMSPE")
@@ -37,23 +38,25 @@ tune_plot <- function(alphas, lambdas, lambda, alpha, evalCrit, index, family){
         mspeplot <- mspeplot + ggtitle(paste0("RTMSPE (minimum at lambda = ", 
                                               lambda, ",alpha = ", alpha, ",  ", family, ")"))
       }
-    }
-    else{
+    } # end of if(is.null(index))
+    
+    # Thiis is where we will end up most likely
+    else{ 
       if (family == "binomial") {
         names(ggmspe) <- c("lambda", "alpha", "MNLL")
-        mspeplot <- ggplot(ggmspe, aes(x = as.factor(lambda), 
-                                       y = as.factor(alpha), fill = MNLL)) + geom_tile() + 
-          scale_fill_gradientn(colours = mycol.b) + theme(axis.text.x = element_text(angle = -90))
-        mspeplot <- mspeplot + ggtitle(paste0("MNLL (minimum at lambda = ", 
-                                              lambda, ",alpha=", alpha, ",  ", family, ")"))
+        mspeplot <- ggplot(ggmspe, aes(x = as.factor(lambda), y = as.factor(alpha), fill = MNLL)) 
+        + geom_tile() 
+        + scale_fill_gradientn(colours = mycol.b) 
+        + theme(axis.text.x = element_text(angle = -90))
+        mspeplot <- mspeplot + ggtitle(paste0("MNLL (minimum at lambda = ", lambda, ",alpha = ", alpha, ",  ", family, ")"))
       }
-      else if (family == "gaussian") {
+      else if (family == "gaussian"){
         names(ggmspe) <- c("lambda", "alpha", "RMSPE")
-        mspeplot <- ggplot(ggmspe, aes(x = as.factor(lambda), 
-                                       y = as.factor(alpha), fill = RMSPE)) + geom_tile() + 
-          scale_fill_gradientn(colours = mycol.b) + theme(axis.text.x = element_text(angle = -90))
-        mspeplot <- mspeplot + ggtitle(paste0("RMSPE (minimum at lambda=", 
-                                              lambda, ",alpha = ", alpha, ",  ", family, ")"))
+        mspeplot <- ggplot(ggmspe, aes(x = as.factor(lambda), y = as.factor(alpha), fill = RMSPE)) 
+        + geom_tile() 
+        + scale_fill_gradientn(colours = mycol.b) 
+        + theme(axis.text.x = element_text(angle = -90))
+        mspeplot <- mspeplot + ggtitle(paste0("RMSPE (minimum at lambda = ", lambda, ",alpha = ", alpha, ",  ", family, ")"))
       }
     }
     mspeplot <- mspeplot + xlab("lambda") + ylab("alpha")
