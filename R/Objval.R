@@ -1,5 +1,5 @@
 # Value of objective function:
-Objval <- function(x,y,family,coef,ind=NULL,alpha,lambda){
+Objval <- function(x, y, family, coef, ind = NULL, alpha, lambda){
    if (is.null(ind)){
       if (family=="binomial"){
          obj <- mean(phiBY3(x%*%coef,ifelse(y==0,1,0),c3=0.5))
