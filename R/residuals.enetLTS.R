@@ -1,9 +1,5 @@
-
-residuals.enetLTS <-
-   function(object,vers=c("reweighted","raw","both"),...){
-
-      vers <- match.arg(vers)
-
+residuals.enetLTS <- function(object, vers = c("reweighted", "raw", "both"), ...){
+   vers <- match.arg(vers)
       if (vers=="reweighted"){
          if (object$inputs$family=="binomial"){
             residuals <-  -(object$inputs$y * object$inputs$x %*% c(object$a0,object$coefficients)) +
