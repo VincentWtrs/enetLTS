@@ -1,7 +1,4 @@
-
-print.enetLTS <-
-   function(x,vers=c("reweighted","raw"),zeros=FALSE,...){
-
+print.enetLTS <- function(x, vers = c("reweighted","raw"), zeros = FALSE, ...){
       # require(enetLTS)
       # require(predict.enetLTS)
       # require(coef.enetLTS)
