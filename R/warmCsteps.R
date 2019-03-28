@@ -7,7 +7,7 @@ warmCsteps <- function(x, y, h, n, p, family, alphas, lambdas, hsize, nsamp,
   indexall <- array(NA, dim = c(h, length(lambdas), length(alphas)))
   if (length(alphas) == 1 & length(lambdas) == 1) {
     beginning.Cstep.with500 <- beginningCstep(x = x, 
-                                              y = , 
+                                              y = y, 
                                               family = family, 
                                               h = h, 
                                               hsize = hsize, 
