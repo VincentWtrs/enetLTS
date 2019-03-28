@@ -172,7 +172,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                       robu = 0)
       xss <- sclw$xnor
       yss <- sclw$ycen
-      if (missing(lambdaw)) {
+      if (missing(lambdaw)){
         lambdaw <- cv.glmnet(x = xss[which(raw.wt == 1), ], 
                              y = yss[which(raw.wt == 1)], 
                              family = family, 
