@@ -351,7 +351,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 ind = indexbest, 
                                 del = del)$we
       
-      if (missing(lambdaw)) {
+      if(missing(lambdaw)){
         lambdaw <- cv.glmnet(x = x[which(raw.wt == 1), ], 
                              y = y[which(raw.wt == 1)], 
                              family = family, 
@@ -361,10 +361,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                              intercept = FALSE, 
                              type.measure = "mse")$lambda.min
       }
-      else if (!missing(lambdaw) & length(lambdaw) == 1) {
+      else if (!missing(lambdaw) & length(lambdaw) == 1){
         lambdaw <- lambdaw
       }
-      else if (!missing(lambdaw) & length(lambdaw) > 1) {
+      else if (!missing(lambdaw) & length(lambdaw) > 1){
         lambdaw <- cv.glmnet(x = x[which(raw.wt == 1), ], 
                              y = y[which(raw.wt == 1)], 
                              family = family, 
@@ -382,7 +382,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      lambda = lambdaw, 
                      standardize = FALSE, 
                      intercept = FALSE)
-      a0 <- if (intercept == FALSE) 
+      a0 <- if(intercept == FALSE) 
         0
       else drop(sc$muy + fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sc$mux/sc$sigx))
       coefficients <- drop(as.matrix(fitw$beta)/sc$sigx)
@@ -405,7 +405,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     coefficients <- coefficients
     raw.coefficients <- raw.coefficients
   }
-  if (family == "binomial") {
+  if (family == "binomial"){
     u <- xx %*% raw.coefficients
     raw.fitted.values <- if (type == "class") {
       ifelse(test = u <= 0.5, yes = 0, no = 1)
@@ -417,25 +417,25 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     fitted.values <- if (type == "class") {
       ifelse(test = uu <= 0.5, yes = 0, no = 1)
     }
-    else if (type == "response") {
+    else if (type == "response"){
       1/(1 + exp(-uu))
     }
   }
-  else if (family == "gaussian") {
+  else if (family == "gaussian"){
     raw.fitted.values <- xx %*% raw.coefficients
     fitted.values <- xx %*% coefficients
   }
-  if (family == "binomial") {
+  if (family == "binomial"){
     objective <- h * (mean((-yy[indexbest] * (xx[indexbest, ] %*% coefficients)) + log(1 + exp(xx[indexbest, ] %*% coefficients))) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
   }
-  else if (family == "gaussian") {
+  else if (family == "gaussian"){
     objective <- h * ((1/2) * mean((yy[indexbest] - xx[indexbest, ] %*% coefficients)^2) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
   }
-  if(intercept) {
+  if(intercept){
     coefficients <- coefficients[-1]
     raw.coefficients <- raw.coefficients[-1]
   }
-  else {
+  else{
     coefficients <- coefficients
     raw.coefficients <- raw.coefficients
   }
@@ -457,6 +457,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                  ncores = ncores, 
                  del = del, 
                  scal = scal)
+  
   if(family == "binomial"){
     output <- list(objective = objective, 
                    best = sort(indexbest), 
@@ -481,7 +482,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    indexall = indexall, 
                    call = sys.call())
   }
-  else if (family == "gaussian") {
+  else if (family == "gaussian"){
     output <- list(objective = objective, 
                    best = sort(indexbest), 
                    raw.wt = raw.wt, 
