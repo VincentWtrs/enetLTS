@@ -1,9 +1,5 @@
-
-
-predict.enetLTS <-
-   function(object,newX,vers=c("reweighted","raw","both"),
-            type=c("response","coefficients","nonzero","class"),...)
-   {
+predict.enetLTS <- function(object, newX, vers = c("reweighted", "raw", "both"),
+                            type = c("response", "coefficients", "nonzero", "class"), ...){
 
       type <- match.arg(type)
       vers <- match.arg(vers)
