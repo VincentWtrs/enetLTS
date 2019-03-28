@@ -1,6 +1,4 @@
-
-nonzeroCoef.enetLTS  <- function (beta)
-{
+nonzeroCoef.enetLTS  <- function(beta){
   beta <- as.matrix(beta)
   beta <- abs(beta)>0      # this is sparse
   beta <- which(beta)
