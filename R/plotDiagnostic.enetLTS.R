@@ -1,5 +1,4 @@
-
-plotDiagnostic.enetLTS <- function(object,vers=c("reweighted","raw"),...){
+plotDiagnostic.enetLTS <- function(object, vers = c("reweighted", "raw"), ...){
    
    vers <- match.arg(vers)
    family <- object$inputs$family
