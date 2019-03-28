@@ -2,7 +2,7 @@
 
 lambda00 <- function(x, y, normalize = TRUE, intercept = TRUE, const = 2,
                      prob = 0.95, tol = .Machine$double.eps^0.5,
-                     eps = .Machine$double.eps, ...) {
+                     eps = .Machine$double.eps, ...){
    # initializations
    n <- length(y)
    x <- as.matrix(x)
