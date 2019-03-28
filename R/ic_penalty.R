@@ -81,7 +81,7 @@ ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
   # HBIC: High-dimensional BIC
   if(type == "HBIC"){
     sigma <- 1.5 # Empirically well-performing ]1, 2]
-    if(sigma > 1){
+    if(sigma < 1){
       stop("Sigma is required to be > 1 following Wang & Zhu (2011)")
     }
     penalty <- (2 * sigma * df * log(p))/nobs
