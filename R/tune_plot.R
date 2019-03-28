@@ -1,4 +1,4 @@
-tune_plot <- function(alphas, lambdas, evalCrit, index, family){
+tune_plot <- function(alphas, lambdas, lambda, alpha, evalCrit, index, family){
     print(paste("optimal model: lambda =", lambda, "alpha =", 
                 alpha))
     lenCol <- length(alphas) * length(lambdas)

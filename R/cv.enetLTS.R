@@ -127,7 +127,9 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   # NEW: separate function
   if(isTRUE(plot)){
     tune_plot(alphas = alphas,
+              alpha = alpha,
               lambdas = lambdas,
+              lambda = lambda,
               evalCrit = evalCrit,
               index = index,
               family = family)
