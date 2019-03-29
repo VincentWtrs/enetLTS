@@ -146,8 +146,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  n = n, 
                                  p = p, 
                                  family = family, 
-                                 alphas = alphas, 
-                                 lambdas = lambdas, 
+                                 alphas = alphas, # Calling with whole alphas sequence!
+                                 lambdas = lambdas, # Calling with whole lambdas sequence!
                                  hsize = hsize, 
                                  nsamp = nsamp, 
                                  s1 = s1, 
@@ -158,23 +158,28 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  tol = tol, 
                                  scal = scal, 
                                  seed = seed)
-  indexall <- WarmCstepresults$indexall
+  indexall <- WarmCstepresults$indexall # Extracting indices of observations for all alpha-lambda combinations
+  # NOTE: indexall is a 3-dim ARRAY (h x #lambdas x #alphas) (e.g. 75 x 41 x 20)
+  # ... calling indexall[1, , ] will give the indices of the first observations for
+  # ... all alpha-lambda values. Calling indexall[1, , 1] will give a vector of all
+  # ... indices of the FIRST observations for all (e.g.) 41 lambda values (empty index)
+  # ... for the first alpha value (third index in the indexall[] call)
   
-  # Check for a 1x1 hyperparameter grid
+  
+  ## FINDING BEST ALPHA-LAMBDA VALUES
+  # Case: 1x1 tuning grid (trivial)
   if((length(alphas) == 1) & (length(lambdas) == 1)){
     if(isTRUE(plot)){
       warning("There is no meaning to see plot for a single combination of lambda and alpha")
     }
-    
     indexbest <- drop(indexall) # Dropping the matrix structure
-    alphabest <- alphas
-    lambdabest <- lambdas
+    alphabest <- alphas # Obviously the only one is the best
+    lambdabest <- lambdas # Obviously the only one is the best
   } 
   
-  ## CROSS VALIDATION
-  # Checking if grid is bigger than 1x1
-  if((length(alphas) > 1) | (length(lambdas) > 1)){
-    # NEW: Changed from cv.enetLTS to cv.enetLTS_UPDATE ## NEW(2): got IC calculations out of cv.enetLTS_UPDATE
+  # Case: bigger tuning grid
+  if ((length(alphas) > 1) | (length(lambdas) > 1)) {
+    # NOTE: the results are called CV results can be from a IC search
     CVresults <- cv.enetLTS(index = indexall, 
                             xx = x, 
                             yy = y, 
@@ -187,35 +192,40 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                             ncores = ncores, 
                             plot = plot, 
                             ic_type = ic_type) # NEW: ic_type ## NEW(2): remove ic_type # NEW(3) Think we can remove this due to default NULL
-    # Gathering results from CV
+    # Gathering results from search
     indexbest <- CVresults$indexbest
     alphabest <- CVresults$alphaopt
     lambdabest <- CVresults$lambdaopt
     evalCritCV <- CVresults$evalCrit
   }
   
-  # If scaling is TRUE
-  if(isTRUE(scal)){
+  # If scaling is TRUE (default)
+  if (isTRUE(scal)) {
     scl <- prepara(x = xx, 
                    y = yy, 
                    family = family, 
                    index = indexbest, 
-                   robu = 0)
-    xs <- scl$xnor
-    ys <- scl$ycen
-    if(family == "gaussian"){ # New addition
-      fit <- glmnet(x = xs[indexbest, ], 
-                    y = ys[indexbest, ], 
-                    family = family, 
-                    alpha = alphabest, 
-                    lambda = lambdabest, 
-                    standardize = FALSE, 
-                    intercept = FALSE) # TO DO: I THINK THIS NEEDS TO BE SPLITTED FOR BINOMIAL AND GAUSSIAN
+                   robu = 0) # Nonrobust
+    xs <- scl$xnor # Normalized X
+    ys <- scl$ycen # Centered y (not for binomial, confusing)
+    
+    ## NEW
+    #if(family == "gaussian"){ 
+    #  fit <- glmnet(x = xs[indexbest, ], 
+    #                y = ys[indexbest, ], 
+    #                family = family, 
+    #                alpha = alphabest, 
+    #                lambda = lambdabest, 
+    #                standardize = FALSE, 
+    #                intercept = FALSE) # TO DO: I THINK THIS NEEDS TO BE SPLITTED FOR BINOMIAL AND GAUSSIAN
     }
-    if(family == "binomial"){
-      a00 <- if(intercept == FALSE) 
-        0
-      else drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx))
+    
+    if (family == "binomial") {
+      if (isFALSE(intercept)) {
+         a00 <- 0 # NEW: changed this from weird a00 <- if (intercept == FALSE) {0} style of notation
+        } else {
+          a00 <- drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx)) # NEW: same
+        }
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx)
       raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta)))
       raw.wt <- weight.binomial(x = xx, 
