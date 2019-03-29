@@ -4,16 +4,21 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   MNLL <- TMNLL <- RTMSPE <- RMSPE <- NULL
   n <- nrow(xx)
   p <- ncol(xx)
-  wh <- (alphas < 0 | alphas > 1)
+  
+  ## Input parameter checks
+  # alphas sequence
+  wh <- (alphas < 0 | alphas > 1) # This is already done on the higher level function...
   if (sum(wh) > 0) 
     stop("alphas can take the values only between 0 and 1")
   if (missing(alphas)) 
     stop("provide an alphas sequence")
+  
+  # lambdas sequence
   if (missing(lambdas)) 
     stop("provide an lambdas sequence")
+  
   evalCrit <- matrix(NA, nrow = length(lambdas), ncol = length(alphas))
-  dimnames(evalCrit) <- list(paste("lambdas", lambdas), paste("alpha", 
-                                                              alphas))
+  dimnames(evalCrit) <- list(paste("lambdas", lambdas), paste("alpha", alphas))
   combis_ind <- expand.grid(1:length(lambdas), 1:length(alphas))
   indcombi <- 1:nrow(combis_ind)
   
@@ -71,6 +76,11 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
               index = index,
               family = family)
   }
-  return(list(evalCrit = evalCrit, minevalCrit = minevalCrit, 
-              indexbest = indexbest, lambdaopt = lambda, alphaopt = alpha))
+  
+  # OUTPUT
+  return(list(evalCrit = evalCrit, 
+              minevalCrit = minevalCrit, 
+              indexbest = indexbest, 
+              lambdaopt = lambda, 
+              alphaopt = alpha))
 }
