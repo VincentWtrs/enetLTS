@@ -13,7 +13,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     #nfold <- 1 # Forcing nfold to 1 (> 1 makes no sense)
     #repl <- 1 # Forcing repl to 1  (> 1 makes no sense)
     #print("Information Criterion option selected (ic_type), nfold and repl forced to 1.")
-  }else if(is.null(ic_type)){
+  } else if (is.null(ic_type)) {
     ic <- FALSE
   }
   
@@ -21,7 +21,15 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
   j <- combis_ind[rowind, 2]
   lambda <- lambdas[i]
   alpha <- alphas[j]
-  print(paste("cross-validating for WEJOOOOWABUDABI alpha: ", alpha, " and lambda :", lambda), sep = "")
+  
+  # Printing which alpha-lambda combination is currently used
+  #print(paste("cross-validating for WEJOOOOWABUDABI alpha: ", alpha, " and lambda :", lambda), sep = "")
+  if(isFALSE(ic)){
+    print(paste("Tuning with cross-validation approach, currently fitting for: ", alpha, " and lambda :", lambda), sep = "")
+  } else if(isTRUE(ic)){
+    print(paste("Tuning with information criterion approach, currently fitting for: ", alpha, " and lambda :", lambda), sep = "")
+  }
+  
   if (is.null(index)) {
     x <- xx
     y <- yy
