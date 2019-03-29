@@ -199,14 +199,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     evalCritCV <- CVresults$evalCrit
   }
   
-  # Fitting glmnet on best subset
-  fit <- glmnet(x = xs[indexbest, ], 
-                y = ys[indexbest, ], 
-                family = family, 
-                alpha = alphabest, 
-                lambda = lambdabest, 
-                standardize = FALSE, # Because already done
-                intercept = FALSE) # TO DO: CHECK WHAT HAS TO BE DONE HERE WITH INTERCEPT...
   
   ### RESCALING STEP (Theoretically we should be in an outlier-free world now!)
   # Scaling again (based on outlier-free set) (???? TO DO)
@@ -218,6 +210,15 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    robu = 0) # Nonrobust
     xs <- scl$xnor # Normalized X
     ys <- scl$ycen # Centered y (not for binomial, confusing)
+    
+    # Fitting glmnet on best subset
+    fit <- glmnet(x = xs[indexbest, ], 
+                  y = ys[indexbest, ], 
+                  family = family, 
+                  alpha = alphabest, 
+                  lambda = lambdabest, 
+                  standardize = FALSE, # Because already done
+                  intercept = FALSE) # TO DO: CHECK WHAT HAS TO BE DONE HERE WITH INTERCEPT...
     
     ## Case: Binomial
     # Intercept handling
