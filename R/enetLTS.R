@@ -199,33 +199,27 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     evalCritCV <- CVresults$evalCrit
   }
   
-  # If scaling is TRUE (default)
-  if (isTRUE(scal)) {
+  ### RESCALING STEP (Theoretically we should be in an outlier-free world now!)
+  # Scaling again (based on outlier-free set) (???? TO DO)
+  if (isTRUE(scal)) { # TO DO: WHY IS THIS DONE?
     scl <- prepara(x = xx, 
                    y = yy, 
                    family = family, 
-                   index = indexbest, 
+                   index = indexbest, # Indexes provided s.t. the normalization should happen on the outlier-free set
                    robu = 0) # Nonrobust
     xs <- scl$xnor # Normalized X
     ys <- scl$ycen # Centered y (not for binomial, confusing)
     
-    ## NEW
-    #if(family == "gaussian"){ 
-    #  fit <- glmnet(x = xs[indexbest, ], 
-    #                y = ys[indexbest, ], 
-    #                family = family, 
-    #                alpha = alphabest, 
-    #                lambda = lambdabest, 
-    #                standardize = FALSE, 
-    #                intercept = FALSE) # TO DO: I THINK THIS NEEDS TO BE SPLITTED FOR BINOMIAL AND GAUSSIAN
-    }
-    
+    ## Case: Binomial
+    # Intercept handling
     if (family == "binomial") {
       if (isFALSE(intercept)) {
          a00 <- 0 # NEW: changed this from weird a00 <- if (intercept == FALSE) {0} style of notation
         } else {
           a00 <- drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx)) # NEW: same
         }
+      
+      # Extracting raw results
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx)
       raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta)))
       raw.wt <- weight.binomial(x = xx, 
@@ -234,39 +228,53 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 intercept = intercept, 
                                 del = del)
       
+      # Normalizing using outlier-free data (raw.wt == 1)
       sclw <- prepara(x = xx, 
                       y = yy, 
                       family = family, 
-                      index = which(raw.wt == 1), 
+                      index = which(raw.wt == 1), # Only for those which are outlier-free
                       robu = 0)
-      xss <- sclw$xnor
+      xss <- sclw$xnor 
       yss <- sclw$ycen
-      if (missing(lambdaw)){
-        lambdaw <- cv.glmnet(x = xss[which(raw.wt == 1), ], 
-                             y = yss[which(raw.wt == 1)], 
-                             family = family, 
-                             nfolds = 5, 
-                             alpha = alphabest, 
-                             standardize = FALSE, 
-                             intercept = FALSE, 
-                             type.measure = "deviance")$lambda.1se # NEW: changed from $lambda.min to $lambda.1se AND type.measure = "mse" to "deviance"
+      
+      # Tuning lambdaw (reweighted lambda)
+      if (missing(lambdaw)) { # Case: no lambdaw given (DEFAULT)
+        lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit
+                                 y = yss[which(raw.wt == 1)], 
+                                 family = family, 
+                                 nfolds = 5, 
+                                 alpha = alphabest, 
+                                 standardize = FALSE, 
+                                 intercept = FALSE, 
+                                 type.measure = "deviance")
+      # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
+      
+      # Case: lambdaw given by user (unlikely)
+      } else if (!missing(lambdaw) & length(lambdaw) == 1) { # Only single lambdaw given
+        lambdaw <- lambdaw 
+      } else if (!missing(lambdaw) & length(lambdaw) > 1) { # Multiple lambdaw given
+        lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit 
+                                y = yss[which(raw.wt == 1)], 
+                                family = family, 
+                                lambda = lambdaw, 
+                                nfolds = 5, 
+                                alpha = alphabest, 
+                                standardize = FALSE, 
+                                intercept = FALSE, 
+                                type.measure = "deviance") # NEW: changed from "MSE" to "deviance" for the Gaussian case it is the same anyways
       }
-      else if (!missing(lambdaw) & length(lambdaw) == 1) {
-        lambdaw <- lambdaw
-      }
-      else if (!missing(lambdaw) & length(lambdaw) > 1) {
-        lambdaw <- cv.glmnet(x = xss[which(raw.wt == 1), ], 
-                             y = yss[which(raw.wt == 1)], 
-                             family = family, 
-                             lambda = lambdaw, 
-                             nfolds = 5, 
-                             alpha = alphabest, 
-                             standardize = FALSE, 
-                             intercept = FALSE, 
-                             type.measure = "deviance")$lambda.1se  # NEW: changed from $lambda.min to $lambda.1se AND type.measure = "mse" to "deviance"
-        
-      }
+  
+    # Choosing lambda based on user-input (min vs. 1SE) # NEW
+    if (type_lambdaw == "min") {
+      lambdaw <- lambdaw_fit$lambda.min
+    }
+    
+    if (type_lambdaw == "1se") {
+      lambdaw <- lambdaw_fit$lambda.1se
+    }
+    
+      # Fitting using optimal labmda 
       fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
                      y = yss[which(raw.wt == 1)], 
                      family = family, 
@@ -342,9 +350,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       wgt <- weight.gaussian(resi = reweighted.residuals, 
                              ind = raw.wt == 1, 
                              del = del)$we
-    }
-  }
-  else {
+    } 
+  } else {
     fit <- glmnet(x = x[indexbest, ], 
                   y = y[indexbest, ], 
                   family = family, 
