@@ -292,7 +292,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      intercept = FALSE)
       
       # Intercept handling
-      if (isFalse(intercept)) {
+      if (isFALSE(intercept)) {
         a0 <- 0 # NEW
       } else {
         a0 <- drop(fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sclw$mux/sclw$sigx))
