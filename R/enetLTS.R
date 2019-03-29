@@ -199,6 +199,15 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     evalCritCV <- CVresults$evalCrit
   }
   
+  # Fitting glmnet on best subset
+  fit <- glmnet(x = xs[indexbest, ], 
+                y = ys[indexbest, ], 
+                family = family, 
+                alpha = alphabest, 
+                lambda = lambdabest, 
+                standardize = FALSE, # Because already done
+                intercept = FALSE) # TO DO: CHECK WHAT HAS TO BE DONE HERE WITH INTERCEPT...
+  
   ### RESCALING STEP (Theoretically we should be in an outlier-free world now!)
   # Scaling again (based on outlier-free set) (???? TO DO)
   if (isTRUE(scal)) { # TO DO: WHY IS THIS DONE?
