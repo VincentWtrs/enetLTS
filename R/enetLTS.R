@@ -161,7 +161,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   ## FINDING BEST ALPHA-LAMBDA VALUES
   # Case: 1x1 tuning grid (trivial)
-  if((length(alphas) == 1) & (length(lambdas) == 1)){
+  if ((length(alphas) == 1) & (length(lambdas) == 1)) {
     if(isTRUE(plot)){
       warning("There is no meaning to see plot for a single combination of lambda and alpha")
     }
@@ -194,24 +194,35 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   
   ### RESCALING STEP (Theoretically we should be in an outlier-free world now!)
-  # Scaling again (based on outlier-free set) (???? TO DO)
+  # Nonrobust scaling based on the outlier-free set
   if (isTRUE(scal)) { # TO DO: WHY IS THIS DONE?
     scl <- prepara(x = xx, 
                    y = yy, 
                    family = family, 
                    index = indexbest, # Indexes provided s.t. the normalization should happen on the outlier-free set
-                   robu = 0) # Nonrobust
+                   robu = 0) # Nonrobust because now in outlier-free world... (given by the indexbest index)
     xs <- scl$xnor # Normalized X
     ys <- scl$ycen # Centered y (not for binomial, confusing)
     
     # Fitting glmnet on best subset
+    ## NEW: branch based on binomial
+    if (family == "binomial") {
+      fit <- glmnet(x = xs[indexbest, ],
+                    y = ys[indexbest, ],
+                    family = family,
+                    alpha = alphabest,
+                    lambda = lambdabest,
+                    standardize = FALSE, # Because already done
+                    intercept = TRUE) # Because in logit standardize and intercept don't interact in the same way 
+    } else if (family == "gaussian") {
     fit <- glmnet(x = xs[indexbest, ], 
                   y = ys[indexbest, ], 
                   family = family, 
                   alpha = alphabest, 
                   lambda = lambdabest, 
                   standardize = FALSE, # Because already done
-                  intercept = FALSE) # TO DO: CHECK WHAT HAS TO BE DONE HERE WITH INTERCEPT...
+                  intercept = FALSE) 
+  }
     
     ## Case: Binomial
     # Intercept handling
@@ -219,11 +230,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       if (isFALSE(intercept)) {
         a00 <- 0 # NEW: changed this from weird a00 <- if (intercept == FALSE) {0} style of notation
       } else {
-        a00 <- drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx)) # NEW: same
+        #a00 <- drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx)) # NEW: same
+        a00 <- fit$a0 # NEW: I think this is the way
       }
       
       # Extracting raw results
-      raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx)
+      raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # TO DO Does this actually hold for logit??
       raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta)))
       raw.wt <- weight.binomial(x = xx, 
                                 y = yy, 
@@ -231,7 +243,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 intercept = intercept, 
                                 del = del)
       
-      # Normalizing using outlier-free data (raw.wt == 1)
+      # Normalizing using outlier-free data (raw.wt == 1) # TO DO: is raw.wt different from best index?
       sclw <- prepara(x = xx, 
                       y = yy, 
                       family = family, 
@@ -248,7 +260,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  nfolds = 5, 
                                  alpha = alphabest, 
                                  standardize = FALSE, 
-                                 intercept = FALSE, 
+                                 intercept = TRUE, # NEW: changed this to true
                                  type.measure = "deviance")
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
@@ -264,7 +276,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  nfolds = 5, 
                                  alpha = alphabest, 
                                  standardize = FALSE, 
-                                 intercept = FALSE, 
+                                 intercept = TRUE, # NEW: changed to this to true 
                                  type.measure = "deviance") # NEW: changed from "MSE" to "deviance" for the Gaussian case it is the same anyways
       }
       
@@ -282,13 +294,14 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      alpha = alphabest, 
                      lambda = lambdaw, 
                      standardize = FALSE, 
-                     intercept = FALSE)
+                     intercept = TRUE) # NEW/ changed this to true!
       
       # Intercept handling
       if (isFALSE(intercept)) {
         a0 <- 0 # NEW
       } else {
-        a0 <- drop(fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sclw$mux/sclw$sigx))
+        #a0 <- drop(fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sclw$mux/sclw$sigx)) # NEW: REPLACED
+        a0 <- fitw$a0
       }
       coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
       wgt <- weight.binomial(x = xx, 
@@ -328,7 +341,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     raw.coefficients <- raw.coefficients
   }
   if (family == "binomial") {
-    u <- xx %*% raw.coefficients
+    u <- xx %*% raw.coefficients # XBeta?
     raw.fitted.values <- if (type == "class") {
       ifelse(test = u <= 0.5, yes = 0, no = 1)
     } else if (type == "response"){
@@ -342,6 +355,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     }
   }
   
+  # TO DO: CHECK THIS
   if (family == "binomial"){
     objective <- h * (mean((-yy[indexbest] * (xx[indexbest, ] %*% coefficients)) + log(1 + exp(xx[indexbest, ] %*% coefficients))) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
   } else if (family == "gaussian"){
