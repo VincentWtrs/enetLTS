@@ -40,7 +40,9 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       beta_with_int <- matrix(coef(fit)) # NEW: to include b0
       beta <- matrix(fit$beta) # Getting beta ($beta gets coefs WITHOUT INTERCEPT!) # We can still use it for the test later
       #resid <- -(ys * xs %*% beta_with_int) + log(1 + exp(xs %*% beta_with_int) # OLD
-      resid <- -(ys * xs %*% beta_with_int) + log(1 + exp(xs %*% beta_with_int)) # NEW
+      resid <- -(ys * cbind(1, xs) %*% beta_with_int) + log(1 + exp(cbind(1, xs) %*% beta_with_int)) # NEW: used beta_with_int and cbind(1, Xs) to accomodate
+      
+      
       
       # Fallback if all beta == 0 # Stop early (?)
       if (all(beta == 0)){
@@ -79,7 +81,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
     
   # Case: No scaling (Unlikely)
   } else if (isFALSE(scal)) {
-    if (family == "binomial") { # TO DO: Correct this!
+    if (family == "binomial") { # TO DO: Correct this later
       fit <- glmnet(x = x[indx, ],
                     y = y[indx],
                     family = family,
