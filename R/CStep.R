@@ -1,4 +1,4 @@
-CStep <- function(x,y,family,indx,h,hsize,alpha,lambda,scal){
+CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
   ## internal function
   
   # require(glmnet)
@@ -20,15 +20,27 @@ CStep <- function(x,y,family,indx,h,hsize,alpha,lambda,scal){
     # Case: Scaling & Binomial
     if (family == "binomial") {
       # Fitting Elastic Net with given settings
-      fit <- glmnet(x = xs[indx,],
+      #fit <- glmnet(x = xs[indx,],
+      #              y = ys[indx],
+      #              family = family,
+      #              alpha = alpha, # Single alpha
+      #              lambda = lambda, # Single lambda
+      #              standardize = FALSE,
+      #              intercept = FALSE) # DUBIOUS! If changing this also change beta and resid! BUT KEEP TRACK WITH THE if(all(beta==0))
+      
+      # NEW: with intercept = TRUE
+      fit <- glmnet(x = xs[indx, ]
                     y = ys[indx],
                     family = family,
-                    alpha = alpha, # Single alpha
-                    lambda = lambda, # Single lambda
+                    alpha = alpha,
+                    lambda = lambda,
                     standardize = FALSE,
-                    intercept = FALSE) # DUBIOUS! If changing this also change beta and resid! BUT KEEP TRACK WITH THE if(all(beta==0))
-      beta <- matrix(fit$beta) # Getting beta ($beta gets coefs WITHOUT INTERCEPT!)
-      resid <- -(ys * xs %*% beta) + log(1 + exp(xs %*% beta))
+                    intercept = TRUE) # NEW set to TRUE
+      
+      beta_with_int <- matrix(coef(fit)) # NEW: to include b0
+      beta <- matrix(fit$beta) # Getting beta ($beta gets coefs WITHOUT INTERCEPT!) # We can still use it for the test later
+      #resid <- -(ys * xs %*% beta_with_int) + log(1 + exp(xs %*% beta_with_int) # OLD
+      resid <- -(ys * xs %*% beta_with_int) + log(1 + exp(xs %*% beta_with_int)) # NEW
       
       # Fallback if all beta == 0 # Stop early (?)
       if (all(beta == 0)){
@@ -67,7 +79,7 @@ CStep <- function(x,y,family,indx,h,hsize,alpha,lambda,scal){
     
   # Case: No scaling (Unlikely)
   } else if (isFALSE(scal)) {
-    if (family == "binomial") {
+    if (family == "binomial") { # TO DO: Correct this!
       fit <- glmnet(x = x[indx, ],
                     y = y[indx],
                     family = family,
