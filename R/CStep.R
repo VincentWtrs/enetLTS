@@ -17,6 +17,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
                    index = indx, # TO DO: Can the data be scaled nonrobustly because it is already outlier-free?
                    robu = 0)
     xs <- scl$xnor
+    xs_myvar <- xs
     ys <- scl$ycen
     
     # Case: Scaling & Binomial
@@ -42,7 +43,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       beta_with_int <- matrix(coef(fit)) # NEW: to include b0
       beta <- matrix(fit$beta) # Getting beta ($beta gets coefs WITHOUT INTERCEPT!) # We can still use it for the test later
       #resid <- -(ys * xs %*% beta_with_int) + log(1 + exp(xs %*% beta_with_int) # OLD
-      resid <- -(ys * cbind(1, xs) %*% beta_with_int) + log(1 + exp(cbind(1, xs) %*% beta_with_int)) # NEW: used beta_with_int and cbind(1, Xs) to accomodate
+      resid <- -(ys * cbind(1, xs_myvar) %*% beta_with_int) + log(1 + exp(cbind(1, xs_myvar) %*% beta_with_int)) # NEW: used beta_with_int and cbind(1, Xs) to accomodate
       
       
       
