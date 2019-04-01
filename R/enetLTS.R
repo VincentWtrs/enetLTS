@@ -234,11 +234,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       } else {
         #a00 <- drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx)) # NEW: same
         a00 <- fit$a0 # NEW: I think this is the way
+        print(a00) # TO DO: remove after debug
+        print(as.matrix(fit$beta)) # TO DO: remove after debug
       }
       
       # Extracting raw results
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # TO DO Does this actually hold for logit??
-      beta_with_int <- cbind(a00, as.matrix(fit$beta)) # NEW
+      beta_with_int <- cbind(a00, as.matrix(fit$beta)) # NEW # SOMETHING IS WRONG HERE! ########################################
       # TO DO: remove
       print(paste("The dimensionality of beta_with_int is", length(beta_with_int))) # TO REMOVE # DEBUGGING # TO DO
       print(paste("The dimensionality of cbind(1, xs) is:", dim(cbind(1, xs)))) # TO REMOVE # DEBUGGING # TO DO
