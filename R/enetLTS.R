@@ -31,7 +31,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   # tol: Tolerance for stopping while loops in the C-step procedures, default: -1e+06
   # type: type of predictions required, default: c("response", "class")
   
-  print("USING UPDATED VERSION OF enetLTS") # So I can see that the new function is effectively called
+  print("USING UPDATED VERSION OF enetLTS: WITH THE INTERCEPT FIX") # So I can see that the new function is effectively called
   ########################
   
   matchedCall <- match.call() # Use match.call() if there are a lot of optional arguments
