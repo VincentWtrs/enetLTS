@@ -39,7 +39,15 @@ beginningCstep <- function(x, y, family, h, hsize, alpha, lambda, nsamp, s1, nco
     lastbestindex <- mclapply(1:s1, function(zz, x, y, family, h, hsize, alpha, lambda, H2) { ## DEFINNG FUNCTION TO BE RAN WITHIN MCLAPPLY
       indexsubbest <- H2$idxbest[[zz]]
       objbest <- tol
-      cstep.mod <- CStep(x, y, family, indexsubbest, h, hsize, alpha, lambda/h, scal) # Running a C-step
+      cstep.mod <- CStep(x = x, 
+                         y = y, 
+                         family = family, 
+                         indx = indexsubbest, 
+                         h = h, 
+                         hsize = hsize, 
+                         alpha = alpha, 
+                         lambda = lambda/h, 
+                         scal = scal) # Running a C-step
       countloop <- 0 # Initiating countloop at 0
       
       # while loop to run a set amount of csteps or stop early when tolerance level is reached
@@ -123,5 +131,7 @@ beginningCstep <- function(x, y, family, h, hsize, alpha, lambda, nsamp, s1, nco
   # Getting indices and residuals
   index <- lastbestindex[[whichbestindex]]$lastindex # Gives h indices of a clean dataset to be used
   resid <- lastbestindex[[whichbestindex]]$residu # Gives the n (!!!!!!) residuals (technically in a matrix, will make it to vector)
-  return(list(index = index, resid = drop(resid))) # drop(): drops the dimensionalities if possible, hence makes the matrix a vector
+  
+  return(list(index = index, 
+              resid = drop(resid))) # drop(): drops the dimensionalities if possible, hence makes the matrix a vector
 }
