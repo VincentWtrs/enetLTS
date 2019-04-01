@@ -29,7 +29,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       #              intercept = FALSE) # DUBIOUS! If changing this also change beta and resid! BUT KEEP TRACK WITH THE if(all(beta==0))
       
       # NEW: with intercept = TRUE
-      fit <- glmnet(x = xs[indx, ]
+      fit <- glmnet(x = xs[indx, ],
                     y = ys[indx],
                     family = family,
                     alpha = alpha,
@@ -99,7 +99,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       indxnew <- c(index0,index1)
       
     } else if (family == "gaussian") {
-      fit <- glmnet(x = x[indx,],
+      fit <- glmnet(x = x[indx, ],
                     y = y[indx],
                     family = family,
                     alpha = alpha,
