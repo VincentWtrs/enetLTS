@@ -234,24 +234,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       } else {
         #a00 <- drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx)) # NEW: same
         a00 <- fit$a0 # NEW: I think this is the way
-        print(a00) # TO DO: remove after debug
-        print(as.matrix(fit$beta)) # TO DO: remove after debug
       }
       
       # Extracting raw results
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # TO DO Does this actually hold for logit??
-      beta_with_int <- cbind(a00, as.matrix(fit$beta)) # NEW # SOMETHING IS WRONG HERE! ########################################
-      # TO DO: remove
-      print(paste("The dimensionality of beta_with_int is", length(beta_with_int))) # TO REMOVE # DEBUGGING # TO DO
-      print(paste("The dimensionality of cbind(1, xs) is:", dim(cbind(1, xs)))) # TO REMOVE # DEBUGGING # TO DO
-      
-      xs_myvarmain <- xs
-      
+      beta_with_int <- coef(fit) # NEW # SOMETHING IS WRONG HERE! ########################################
       #raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta))) # OLD
-      
-      
-      
-      raw.residuals <- -(ys * cbind(1, xs_myvarmain) %*% beta_with_int) + log(1 + exp(cbind(1, xs_myvarmain) %*% beta_with_int)) # NEW: cbind(1, xs) and beta_with_int
+      raw.residuals <- -(ys * cbind(1, xs) %*% beta_with_int) + log(1 + exp(cbind(1, xs) %*% beta_with_int)) # NEW: cbind(1, xs) and beta_with_int
       raw.wt <- weight.binomial(x = xx, 
                                 y = yy, 
                                 beta = c(a00, raw.coefficients), 
