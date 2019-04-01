@@ -5,6 +5,8 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
   # source("utilities.R")
   # source("objectiveFunc.R")
   
+  # Note: the lambda given will be lambda/h hence will be correctly sized!
+  
   n <- nrow(x)
   
   # Case: Scaling data (nonrobustly) (DEFAULT)
