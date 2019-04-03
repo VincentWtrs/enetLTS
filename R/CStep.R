@@ -52,7 +52,8 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal, new = TRUE)
         # TO DO: QUITE SURE THEY GET THE RESIDUALS ON N SAMPLES NOT ON xs[indx, ] SAMPLES HERE! (FIND OUT IF MAKES SENSE) (NEED TO LOOK UP C-STEPS)
         
         # Fallback if all beta == 0 # Stop early (?)
-        if (all(beta == 0)){
+        print(beta)
+        if (all(beta == 0)) {
           return(list(object = -Inf,index = indx, residu = resid, beta = beta))
         }
       }
@@ -75,7 +76,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal, new = TRUE)
       }
       
       # Fallback if all beta == 0 # Stop early (?)
-      if (all(beta == 0)){
+      if (all(beta == 0)) {
         return(list(object = -Inf,index = indx, residu = resid, beta = beta))
       }
       
