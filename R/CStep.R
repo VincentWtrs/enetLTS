@@ -62,8 +62,8 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal, new = TRUE)
         # Extracting data a priori
         x_indexed <- x[indx, ] # Not xs because we will use glmnet standardization
         y_indexed <- y[indx] # same for ys
-        fit <- glmnet(x = xs_indexed,
-                      y = ys_indexed,
+        fit <- glmnet(x = x_indexed,
+                      y = y_indexed,
                       family = family,
                       alpha = alpha,
                       lambda = lambda,
