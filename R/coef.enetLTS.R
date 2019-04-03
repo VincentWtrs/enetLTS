@@ -12,7 +12,7 @@ coef.enetLTS <- function(object, vers=c("reweighted","raw"), zeros = TRUE, ...){
       namesbeta <- which(nbeta != 0)
       nbeta <- nbeta[nbeta != 0]
       #names(nbeta) <- namesbeta # Check if replacing this helps
-      names(nbeta) <- 0:length(nbeta)
+      names(nbeta) <- 0:length(nbeta-1) # -1 to get length right...
    }
    return(nbeta)
 }
