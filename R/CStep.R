@@ -54,9 +54,9 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal, new = TRUE)
         # Fallback if all beta == 0 # Stop early (?)
         print("I am checking this now")
         print(beta)
-        if (all(beta == 0)) {
-          return(list(object = -Inf,index = indx, residu = resid, beta = beta))
-        }
+        #if (all(beta == 0)) {
+        #  return(list(object = -Inf,index = indx, residu = resid, beta = beta))
+        #}
       }
       
       # NEW
@@ -77,9 +77,9 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal, new = TRUE)
       }
       
       # Fallback if all beta == 0 # Stop early (?)
-      if (all(beta == 0)) {
-        return(list(object = -Inf,index = indx, residu = resid, beta = beta))
-      }
+      #if (all(beta == 0)) {
+      #  return(list(object = -Inf,index = indx, residu = resid, beta = beta))
+      #}
       
       # If not all equal to 0: 
       # Sorting n residuals and getting the h smallest
@@ -124,8 +124,8 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal, new = TRUE)
                     intercept = FALSE)
       beta <- matrix(fit$beta)
       resid <- -(y * x %*% beta) + log(1+exp(x %*% beta))
-      if (all(beta == 0)) {
-        return(list(object = -Inf,index = indx,residu =resid,beta=beta))}
+      #if (all(beta == 0)) {
+      #  return(list(object = -Inf,index = indx,residu =resid,beta=beta))}
       resid.sort <- sort(resid, decreasing = FALSE, index.return = TRUE) 
       h0 <- floor((length(y[y == 0]) + 1) * hsize)
       h1 <- h - h0
