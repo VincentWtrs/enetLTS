@@ -35,7 +35,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal, new = TRUE)
       #              intercept = FALSE) # DUBIOUS! If changing this also change beta and resid! BUT KEEP TRACK WITH THE if(all(beta==0))
       
       # NEW: with intercept = TRUE
-      if(isFALSE(new)){ # NEW this if clause
+      #if(isFALSE(new)){ # NEW this if clause
         fit <- glmnet(x = xs[indx, ],
                       y = ys[indx],
                       family = family,
