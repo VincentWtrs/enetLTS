@@ -1,18 +1,17 @@
-coef.enetLTS <- function(object, vers=c("reweighted","raw"), zeros = TRUE, ...){
+coef.enetLTS <- function(object, vers=c("reweighted","raw"), zeros = TRUE, ...) {
    vers <- match.arg(vers)
    nbeta <- predict.enetLTS(object, 
                             newX = object$inputs$xx, 
                             vers = vers, 
                             type = "coefficients", ...)
    nbeta <- as.numeric(unlist(nbeta))
-   if (isTRUE(zeros)) { # TO DO ?
+   if (isTRUE(zeros)) {
       nbeta <- nbeta
-      names(nbeta) <- 0:length(nbeta) # Changing to start from X0
-   } else if (!isTRUE(zeros)) { # TO DO: check
+      names(nbeta) <- 1:length(nbeta)
+   } else if (!isTRUE(zeros)) {
       namesbeta <- which(nbeta != 0)
       nbeta <- nbeta[nbeta != 0]
-      #names(nbeta) <- namesbeta # Check if replacing this helps
-      names(nbeta) <- 0:length(nbeta-1) # -1 to get length right...
+      names(nbeta) <- namesbeta
    }
    return(nbeta)
 }
