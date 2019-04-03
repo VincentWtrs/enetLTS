@@ -11,7 +11,7 @@ print.enetLTS <- function(x, vers = c("reweighted", "raw"), zeros = FALSE, ...){
       coefficients <- coef.enetLTS(x, 
                                    vers = vers,
                                    zeros = zeros)
-      cat("\nCoefficients blablabla:\n")
+      cat("\nCoefficients:\n")
       print(coefficients,...)
 
       nCoefficients <- sum(coefficients != 0)
