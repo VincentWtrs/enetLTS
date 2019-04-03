@@ -1,9 +1,12 @@
-CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
+CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal, new = TRUE){
   ## internal function
   
   # require(glmnet)
   # source("utilities.R")
   # source("objectiveFunc.R")
+  
+  ## INPUT
+  # new: Do we use my new proposed method or not?
   
   # Note: the lambda given will be lambda/h hence will be correctly sized!
   
@@ -22,7 +25,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
     
     # Case: Scaling & Binomial
     if (family == "binomial") {
-      # Fitting Elastic Net with given settings
+      # Fitting Elastic Net with given settings # OLD
       #fit <- glmnet(x = xs[indx,],
       #              y = ys[indx],
       #              family = family,
@@ -32,20 +35,44 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       #              intercept = FALSE) # DUBIOUS! If changing this also change beta and resid! BUT KEEP TRACK WITH THE if(all(beta==0))
       
       # NEW: with intercept = TRUE
-      fit <- glmnet(x = xs[indx, ],
-                    y = ys[indx],
-                    family = family,
-                    alpha = alpha,
-                    lambda = lambda,
-                    standardize = FALSE,
-                    intercept = TRUE) # NEW set to TRUE
+      if(isFALSE(new)){ # NEW this if clause
+        fit <- glmnet(x = xs[indx, ],
+                      y = ys[indx],
+                      family = family,
+                      alpha = alpha,
+                      lambda = lambda,
+                      standardize = FALSE, 
+                      intercept = TRUE) # NEW set to TRUE
+        
+        beta_with_int <- matrix(coef(fit)) # NEW: to include b0
+        beta <- matrix(fit$beta) # Getting beta ($beta gets coefs WITHOUT INTERCEPT!) # We can still use it for the test later
+        #resid <- -(ys * xs %*% beta_with_int) + log(1 + exp(xs %*% beta_with_int) # OLD
+        resid <- -(ys * cbind(1, xs_myvar) %*% beta_with_int) + log(1 + exp(cbind(1, xs_myvar) %*% beta_with_int)) # NEW: used beta_with_int and cbind(1, Xs) to accomodate
+        
+        # TO DO: QUITE SURE THEY GET THE RESIDUALS ON N SAMPLES NOT ON xs[indx, ] SAMPLES HERE! (FIND OUT IF MAKES SENSE) (NEED TO LOOK UP C-STEPS)
+        
+        # Fallback if all beta == 0 # Stop early (?)
+        if (all(beta == 0)){
+          return(list(object = -Inf,index = indx, residu = resid, beta = beta))
+        }
+      }
       
-      beta_with_int <- matrix(coef(fit)) # NEW: to include b0
-      beta <- matrix(fit$beta) # Getting beta ($beta gets coefs WITHOUT INTERCEPT!) # We can still use it for the test later
-      #resid <- -(ys * xs %*% beta_with_int) + log(1 + exp(xs %*% beta_with_int) # OLD
-      resid <- -(ys * cbind(1, xs_myvar) %*% beta_with_int) + log(1 + exp(cbind(1, xs_myvar) %*% beta_with_int)) # NEW: used beta_with_int and cbind(1, Xs) to accomodate
-      
-      
+      # NEW
+      if(isTRUE(new)){ # NEW: maybe better way to deal with standardization
+        # Extracting data a priori
+        x_indexed <- x[indx, ] # Not xs because we will use glmnet standardization
+        y_indexed <- y[indx] # same for ys
+        fit <- glmnet(x = xs_indexed,
+                      y = ys_indexed,
+                      family = family,
+                      alpha = alpha,
+                      lambda = lambda,
+                      standardize = TRUE, # NEW!
+                      intercept = TRUE)
+        
+        beta_with_int <- as.matrix(coef(fit))
+        resid <- -(y * cbind(1, x) %*% beta_with_int) + log(1 + exp(cbind(1, x) %*% beta_with_int)) # TO DO: CONTINUE
+      }
       
       # Fallback if all beta == 0 # Stop early (?)
       if (all(beta == 0)){
@@ -53,11 +80,12 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       }
       
       # If not all equal to 0: 
+      # Sorting n residuals and getting the h smallest
       resid.sort <- sort(resid, decreasing = FALSE, index.return = TRUE) 
       h0 <- floor((length(y[y == 0]) + 1) * hsize)
       h1 <- h - h0
-      index0 <- resid.sort$ix[y[resid.sort$ix] == 0][1:h0]
-      index1 <- resid.sort$ix[y[resid.sort$ix] == 1][1:h1]
+      index0 <- resid.sort$ix[y[resid.sort$ix] == 0][1:h0] # For y == 0
+      index1 <- resid.sort$ix[y[resid.sort$ix] == 1][1:h1] # For y == 1
       indxnew <- c(index0, index1)
     } else if (family == "gaussian") {
       fit <- glmnet(x = xs[indx,],
@@ -82,7 +110,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
                   alpha = alpha,
                   lambda = lambda)
     
-  # Case: No scaling (Unlikely)
+    # Case: No scaling (Unlikely)
   } else if (isFALSE(scal)) {
     if (family == "binomial") { # TO DO: Correct this later
       fit <- glmnet(x = x[indx, ],
