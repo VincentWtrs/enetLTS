@@ -2,7 +2,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                     lambdas, lambdaw, hsize = 0.75, intercept = TRUE, nsamp = 500, 
                     s1 = 10, nCsteps = 20, nfold = 5, seed = NULL, plot = TRUE, 
                     repl = 5, para = TRUE, ncores = 1, del = 0.0125, tol = -1e+06, 
-                    scal = TRUE, type = c("response", "class"), ic_type = NULL, type_lambdaw = "min"){
+                    scal = TRUE, type = c("response", "class"), ic_type = NULL, type_lambdaw = "min", ic_type_reweighted = NULL){
   
   #### UPDATED VERSION ###
   # NEW: ic_type test test
@@ -268,6 +268,18 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  type.measure = "deviance")
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
+      # NEW: ADDING IC-BASED REWEIGHTED TUNING # TO DO: fix this, we need to do the IC tuning at the end, get proper loss, etc (which is the loss now to take into account...)
+      #if (!is.null(ic_type_reweighted)) {
+      #  for(1:length(lambdas)){
+      #    lambda
+      #  }
+      #  lambdaw_fit <- glmnet(x = xss[which(raw.wt == 1), ],
+      #                        y = yss[which(raw.wt == 1)],
+      #                        family = family,
+      #                        alpha = alphabest,
+      #                        )
+      #}
+        
         
         # Case: lambdaw given by user (unlikely)
       } else if (!missing(lambdaw) & length(lambdaw) == 1) { # Only single lambdaw given
@@ -317,7 +329,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     }
     
     ############################
-    # Case: Gaussian: REmOVED #
+    # Case: Gaussian: REMOVED #
     ############################
     
     
