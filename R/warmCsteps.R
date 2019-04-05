@@ -24,7 +24,8 @@ warmCsteps <- function(x, y, h, n, p, family, alphas, lambdas, hsize, nsamp,
     residall[, 1, 1] <- beginning.Cstep.with500$resid
     indexall[, 1, 1] <- beginning.Cstep.with500$index
     return(list(residall = residall, indexall = indexall))
-    
+  
+  # Case: multiple lambda/alpha combinations  
   } else {
     beginning.Cstep.with500 <- beginningCstep(x = x, 
                                               y = y, 
@@ -49,51 +50,72 @@ warmCsteps <- function(x, y, h, n, p, family, alphas, lambdas, hsize, nsamp,
       alpha <- alphas[al]
       index1_la <- index1_al
       resid1_la <- resid1_al
+      
+      # Case: single lambda
       if (length(lambdas) == 1) {
         newindex_la <- index1_la
         objbest <- tol
-        cstep.mod <- CStep(x, 
-                           y, 
-                           family, 
-                           newindex_la, 
-                           h, 
-                           hsize, 
-                           alpha, 
-                           lambda/h, 
-                           scal)
+        cstep.mod <- CStep(x = x, 
+                           y = y, 
+                           family = family, 
+                           indx = newindex_la, 
+                           h = h, 
+                           hsize = hsize, 
+                           alpha = alpha, 
+                           lambda = lambda/h, 
+                           scal = scal)
         countloop <- 0
         while ((cstep.mod$object > objbest) & (countloop < csteps)) {
           countloop <- countloop + 1
           objbest <- cstep.mod$object
           newindex_la <- cstep.mod$index
           newresid_la <- cstep.mod$residu
-          cstep.mod <- CStep(x, y, family, newindex_la, 
-                             h, hsize, alpha, lambda/h, scal)
+          cstep.mod <- CStep(x = x, 
+                             y = y, 
+                             family = family, 
+                             indx = newindex_la, 
+                             h = h, 
+                             hsize = hsize, 
+                             alpha = alpha, 
+                             lambda = lambda/h, 
+                             scal = scal)
           index1_la <- newindex_la
         }
         indexall[, , al] <- newindex_la
         residall[, , al] <- newresid_la
-      }
-      else {
-        IndexMatrix <- matrix(NA, nrow = h, ncol = (length(lambdas) - 
-                                                      1))
-        ResidMatrix <- matrix(NA, nrow = n, ncol = (length(lambdas) - 
-                                                      1))
+      
+      # Case: Multiple lambdas (DEFAULT)
+      } else {
+        IndexMatrix <- matrix(NA, nrow = h, ncol = (length(lambdas) - 1))
+        ResidMatrix <- matrix(NA, nrow = n, ncol = (length(lambdas) - 1))
         for (la in 1:(length(lambdas) - 1)) {
           lambda <- lambdas[la + 1]
           newindex_la <- index1_la
           objbest <- tol
-          cstep.mod <- CStep(x, y, family, newindex_la, 
-                             h, hsize, alpha, lambda/h, scal)
+          cstep.mod <- CStep(x = x, 
+                             y = y, 
+                             family = family, 
+                             indx = newindex_la, 
+                             h = h, 
+                             hsize = hsize, 
+                             alpha = alpha, 
+                             lambda = lambda/h, 
+                             scal = scal)
           countloop <- 0
-          while ((cstep.mod$object > objbest) & (countloop < 
-                                                 csteps)) {
+          while ((cstep.mod$object > objbest) & (countloop < csteps)) {
             countloop <- countloop + 1
             objbest <- cstep.mod$object
             newindex_la <- cstep.mod$index
             newresid_la <- cstep.mod$residu
-            cstep.mod <- CStep(x, y, family, newindex_la, 
-                               h, hsize, alpha, lambda/h, scal)
+            cstep.mod <- CStep(x = x, 
+                               y = y, 
+                               family = family, 
+                               indx = newindex_la, 
+                               h = h, 
+                               hsize = hsize, 
+                               alpha = alpha, 
+                               lambda = lambda/h, 
+                               scal = scal)
             index1_la <- newindex_la
           }
           IndexMatrix[, la] <- newindex_la
@@ -102,11 +124,17 @@ warmCsteps <- function(x, y, h, n, p, family, alphas, lambdas, hsize, nsamp,
         lambda <- lambdas[1]
         newindex_al <- index1_al
         objbest <- tol
-        cstep.mod <- CStep(x, y, family, newindex_al, 
-                           h, hsize, alpha, lambda/h, scal)
+        cstep.mod <- CStep(x = x, 
+                           y = y, 
+                           family = family, 
+                           indx = newindex_al, 
+                           h = h, 
+                           hsize = hsize, 
+                           alpha = alpha, 
+                           lambda = lambda/h, 
+                           scal = scal)
         countloop <- 0
-        while ((cstep.mod$object > objbest) & (countloop < 
-                                               csteps)) {
+        while ((cstep.mod$object > objbest) & (countloop < csteps)) {
           countloop <- countloop + 1
           objbest <- cstep.mod$object
           newindex_al <- cstep.mod$index
