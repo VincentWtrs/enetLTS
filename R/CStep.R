@@ -97,7 +97,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
     fit <- glmnet(x = x[indx, ],
                   y = y[indx],
                   family = family,
-                  alpha=  alpha,
+                  alpha = alpha,
                   lambda = lambda,
                   standardize = FALSE,
                   intercept = FALSE)
