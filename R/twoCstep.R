@@ -10,7 +10,7 @@ twoCstep <- function(c, x, y, family, h, hsize, alpha, lambda) {
                     h = h,
                     hsize = hsize,
                     alpha = alpha,
-                    lambda = lambda/4,
+                    lambda = lambda/4, # 4 (2 + 2) observations Binomial case
                     scal = FALSE)
     
   # Case: Gaussian
@@ -22,7 +22,7 @@ twoCstep <- function(c, x, y, family, h, hsize, alpha, lambda) {
                     h = h,
                     hsize = hsize,
                     alpha = alpha,
-                    lambda = lambda/3,
+                    lambda = lambda/3, # 3 observations enough in Gaussian case
                     scal = FALSE)
   }
   
