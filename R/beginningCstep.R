@@ -77,46 +77,10 @@ beginningCstep <- function(x, y, family, h, hsize, alpha, lambda, nsamp, s1, nco
   # Non-parallel case
   } else {
     # Looping over all of the s1 (10) best subsets
-    lastbestindex <- lapply(1:s1, function(zz, x, y, family, 
-                                           h, hsize, alpha, lambda, H2) { # Beginning function definition
-      indexsubbest <- H2$idxbest[[zz]] # zz is the number of the 10 subsets (1, ..., 10)
-      objbest <- tol
-      cstep.mod <- CStep(x = x, 
-                         y = y, 
-                         family = family, 
-                         indx = indexsubbest, 
-                         h = h, 
-                         hsize = hsize, 
-                         alpha = alpha, 
-                         lambda = lambda/h, 
-                         scal = scal)
-      countloop <- 0
-      # while-loop keep running as long as objective function is bigger than tolerance unless max amount of csteps is reached
-      while ((cstep.mod$object > objbest) & (countloop < csteps)) {
-        countloop <- countloop + 1 # Need to keep track of runs to stop on time
-        objbest <- cstep.mod$object # cstep.mod will be overwritten each time but no worries, the C-steps are decreasing the objective each time anyway!
-        newindex <- cstep.mod$index # Keeping the indices of course
-        beta <- cstep.mod$beta # And the fitted betas
-        cstep.mod <- CStep(x = x, 
-                           y = y, 
-                           family = family, 
-                           indx = newindex, 
-                           h = h, 
-                           hsize = hsize, 
-                           alpha = alpha, 
-                           lambda = lambda/h, # Correct scaling of lambda as usual
-                           scal = scal)
-        # Remember that a C-step also entails fitting the model!
-      }
-      return(list(lastindex = newindex, 
-                  objbest = objbest, 
-                  countloop = countloop, 
-                  residu = cstep.mod$residu, 
-                  beta = beta))
-    # Ending function definition
-    } , x, y, family, h, hsize, alpha, lambda, H2) # Passing params
+    lastbestindex <- lapply(X = 1:s1, 
+                            FUN = lastbestindex_function, # NEW: Defined the function in a separate .R file!
+                            x, y, family, h, hsize, alpha, lambda, H2) # Passing params
   } # END else
-  
   
   ### Getting the results
   # Getting objective functions for each of 10 subsets after all the many Csteps
