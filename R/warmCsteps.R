@@ -44,7 +44,7 @@ warmCsteps <- function(x, y, h, n, p, family, alphas, lambdas, hsize, nsamp,
                                               seed = seed)
     index1_al <- beginning.Cstep.with500$index
     index1_la <- beginning.Cstep.with500$index
-    print(paste("The beginning C-step index:", print(index1_al)) # TO DO: remove this print
+    #print(paste("The beginning C-step index:", print(index1_al)) # TO DO: remove this print
     resid1_al <- beginning.Cstep.with500$resid
     resid1_la <- beginning.Cstep.with500$resid
     for (al in 1:length(alphas)) {
