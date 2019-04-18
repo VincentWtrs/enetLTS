@@ -109,12 +109,14 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   }
   
   ## lambdas sequence
-  #################################
-  # Missing and Gaussian: REMOVED #
-  #################################
-  
-  
-  if (missing(lambdas) & family == "binomial") { # Binomial case
+  # Case: No user given lambdas and gaussian
+  if (missing(lambdas) & family == "gaussian") {
+    # Bivariate winsorization method
+    l0 <- robustHD::lambda0(xx, yy, normalize = scal, intercept = intercept)
+    lambdas <- seq(l0, 0, by = -0.025 * l0) # DECREASING SEQUENCE (HIGHEST REGULARIZATION FIRST) # TO DO: CHECK PROBABLY MORE LOGIC TO DO OTHER WAY AROUND TO GET OUTLIERS SINCE OTHERWISE THEY WILL BE HIDDEN IN THE SPAGHETTI (WARM START SEQUENCE) WHERE THE DIMENSIONALITY COLLAPSES AND THE OUTLIERS WILL NOT BE FOUND ANWAY...
+    
+    # Case: No user given lambdas and binomial
+  } else if (missing(lambdas) & family == "binomial") { # Binomial case
     # Point-biserial method
     l00 <- lambda00(x = xx, 
                     y = yy, 
@@ -217,14 +219,14 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                     standardize = FALSE, # Because already done
                     intercept = TRUE) # Because in logit standardize and intercept don't interact in the same way 
     } else if (family == "gaussian") {
-    fit <- glmnet(x = xs[indexbest, ], 
-                  y = ys[indexbest, ], 
-                  family = family, 
-                  alpha = alphabest, 
-                  lambda = lambdabest, 
-                  standardize = FALSE, # Because already done
-                  intercept = FALSE) 
-  }
+      fit <- glmnet(x = xs[indexbest, ], 
+                    y = ys[indexbest, ], 
+                    family = family, 
+                    alpha = alphabest, 
+                    lambda = lambdabest, 
+                    standardize = FALSE, # Because already done
+                    intercept = FALSE) 
+    }
     
     ## Case: Binomial
     # Intercept handling
@@ -268,17 +270,17 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  type.measure = "deviance")
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
-      # NEW: ADDING IC-BASED REWEIGHTED TUNING # TO DO: fix this, we need to do the IC tuning at the end, get proper loss, etc (which is the loss now to take into account...)
-      #if (!is.null(ic_type_reweighted)) {
-      #  for(1:length(lambdas)){
-      #    lambda
-      #  }
-      #  lambdaw_fit <- glmnet(x = xss[which(raw.wt == 1), ],
-      #                        y = yss[which(raw.wt == 1)],
-      #                        family = family,
-      #                        alpha = alphabest,
-      #                        )
-      #}
+        # NEW: ADDING IC-BASED REWEIGHTED TUNING # TO DO: fix this, we need to do the IC tuning at the end, get proper loss, etc (which is the loss now to take into account...)
+        #if (!is.null(ic_type_reweighted)) {
+        #  for(1:length(lambdas)){
+        #    lambda
+        #  }
+        #  lambdaw_fit <- glmnet(x = xss[which(raw.wt == 1), ],
+        #                        y = yss[which(raw.wt == 1)],
+        #                        family = family,
+        #                        alpha = alphabest,
+        #                        )
+        #}
         
         
         # Case: lambdaw given by user (unlikely)
@@ -326,18 +328,210 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                              intercept = intercept, 
                              del = del)
       reweighted.residuals <- -(yy * cbind(1, xx) %*% c(a0, coefficients)) + log(1 + exp(cbind(1, xx) %*% c(a0, coefficients)))
+      
+      # Case: Gaussian
+    } else if (family == "gaussian") {
+      a00 <- if (intercept == FALSE) 
+        0
+      else drop(scl$muy + fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux/scl$sigx))
+      raw.coefficients <- drop(as.matrix(fit$beta)/scl$sigx)
+      raw.residuals <- yy - cbind(1, xx) %*% c(a00, raw.coefficients)
+      raw.rmse <- sqrt(mean(raw.residuals^2))
+      raw.wt <- weight.gaussian(resi = raw.residuals, 
+                                ind = indexbest, 
+                                del = del)$we
+      sclw <- prepara(x = xx, 
+                      y = yy, 
+                      family = family, 
+                      index = which(raw.wt == 1), 
+                      robu = 0)
+      xss <- sclw$xnor
+      yss <- sclw$ycen
+      if ((missing(lambdaw))) {
+        lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ],
+                                 y = yss[which(raw.wt == 1)], 
+                                 family = family, 
+                                 nfolds = 5, 
+                                 alpha = alphabest, 
+                                 standardize = FALSE, 
+                                 intercept = FALSE, 
+                                 type.measure = "mse")$lambda.min
+      }
+      else if (!missing(lambdaw) & length(lambdaw) == 1) {
+        lambdaw <- lambdaw
+      }
+      else if (!missing(lambdaw) & length(lambdaw) > 1) {
+        lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ],
+                                 y = yss[which(raw.wt == 1)], 
+                                 family = family, 
+                                 lambda = lambdaw, 
+                                 nfolds = 5, 
+                                 alpha = alphabest, 
+                                 standardize = FALSE, 
+                                 intercept = FALSE, 
+                                 type.measure = "mse")
+      }
+      
+      # NEW: Choosing lambda
+      if (type_lambdaw == "min") {
+        lambdaw <- lambdaw_fit$lambda.min 
+      } else if (type_lambdaw == "1se") {
+        lambdaw <- lambdaw_fit$lambda.1se
+      }
+      
+      # Fitting using optimal lambdaw
+      fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
+                     y = yss[which(raw.wt == 1)], 
+                     family = family, 
+                     alpha = alphabest, 
+                     lambda = lambdaw, 
+                     standardize = FALSE, 
+                     intercept = FALSE)
+      a0 <- if (intercept == FALSE) 
+        0
+      else drop(sclw$muy + fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sclw$mux/sclw$sigx))
+      coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
+      reweighted.residuals <- yy - cbind(1, xx) %*% c(a0, coefficients)
+      reweighted.rmse <- sqrt(mean(reweighted.residuals^2))
+      wgt <- weight.gaussian(resi = reweighted.residuals, 
+                             ind = raw.wt == 1, 
+                             del = del)$we
+    } # End of Case: Gaussian
+    # End of isTRUE(scal)
+  } else { # Think (!) this amounts to having isFALSE(scal):
+    # Case: No scaling (unlikely)
+    fit <- glmnet(x = x[indexbest, ], 
+                  y = y[indexbest, ], 
+                  family = family, 
+                  alpha = alphabest, 
+                  lambda = lambdabest, 
+                  standardize = FALSE, 
+                  intercept = FALSE)
+    if (family == "binomial") {
+      a00 <- if (intercept == FALSE) 
+        0
+      else drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (sc$mux/sc$sigx))
+      raw.coefficients <- drop(as.matrix(fit$beta)/sc$sigx)
+      raw.residuals <- -(y * x %*% as.matrix(fit$beta)) + log(1 + exp(x %*% as.matrix(fit$beta)))
+      raw.wt <- weight.binomial(x = xx, 
+                                y = yy, 
+                                beta = c(a00, raw.coefficients), 
+                                intercept = intercept, 
+                                del = del)
+      if(missing(lambdaw)){
+        lambdaw <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+                             y = y[which(raw.wt == 1)], 
+                             family = family, 
+                             nfolds = 5, 
+                             alpha = alphabest, 
+                             standardize = FALSE, 
+                             intercept = FALSE, 
+                             type.measure = "mse")$lambda.min
+      }
+      else if (!missing(lambdaw) & length(lambdaw) == 1) {
+        lambdaw <- lambdaw
+      }
+      else if (!missing(lambdaw) & length(lambdaw) > 1) {
+        # NEW: saved model first, then extract the lambda we want
+        lambdaw_fit <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+                                 y = y[which(raw.wt == 1)], 
+                                 family = family,
+                                 lambda = lambdaw, 
+                                 nfolds = 5, 
+                                 alpha = alphabest, 
+                                 standardize = FALSE, 
+                                 intercept = FALSE, 
+                                 type.measure = "deviance") # NEW: changed type.measure = "mse" to type.meaure = "deviance" 
+        
+        # NEW: removed cv.glmnet(...)$lambda.min and given choice!
+        if(type_lambdaw == "min"){
+          lambdaw <- lambdaw_fit$lambda.min
+        } else if(type_lambdaw == "1se"){
+          lambdaw <- lambdaw_fit$lambda.1se
+        }
+      }
+      
+      # Fitting using optimal lambdaw
+      fitw <- glmnet(x = x[which(raw.wt == 1), ], 
+                     y = y[which(raw.wt == 1)], 
+                     family = family, 
+                     alpha = alphabest, 
+                     lambda = lambdaw, 
+                     standardize = FALSE, 
+                     intercept = FALSE)
+      a0 <- if(intercept == FALSE) 
+        0
+      else drop(fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sc$mux/sc$sigx))
+      coefficients <- drop(as.matrix(fitw$beta)/sc$sigx)
+      wgt <- weight.binomial(x = xx, 
+                             y = yy, 
+                             beta = c(a0, coefficients), 
+                             intercept = intercept, 
+                             del = del)
+      reweighted.residuals <- -(yy * cbind(1, xx) %*% c(a0, coefficients)) + log(1 + exp(cbind(1, xx) %*% c(a0, coefficients)))
+    } else if (family == "gaussian") { # Case: Gaussian (and no scaling)
+      a00 <- if (intercept == FALSE) 
+        0
+      else drop(sc$muy + fit$a0 - as.vector(as.matrix(fit$beta)) %*% (sc$mux/sc$sigx))
+      raw.coefficients <- drop(as.matrix(fit$beta)/sc$sigx)
+      raw.residuals <- yy - cbind(1, xx) %*% c(a00, raw.coefficients)
+      raw.rmse <- sqrt(mean(raw.residuals^2))
+      raw.wt <- weight.gaussian(resi = raw.residuals, 
+                                ind = indexbest, 
+                                del = del)$we
+      
+      if(missing(lambdaw)){
+        lambdaw <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+                             y = y[which(raw.wt == 1)], 
+                             family = family, 
+                             nfolds = 5, 
+                             alpha = alphabest, 
+                             standardize = FALSE, 
+                             intercept = FALSE, 
+                             type.measure = "mse")$lambda.min
+      }
+      else if (!missing(lambdaw) & length(lambdaw) == 1){
+        lambdaw <- lambdaw
+      }
+      else if (!missing(lambdaw) & length(lambdaw) > 1){
+        lambdaw_fit <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+                                 y = y[which(raw.wt == 1)], 
+                                 family = family, 
+                                 lambda = lambdaw, 
+                                 nfolds = 5, 
+                                 alpha = alphabest, 
+                                 standardize = FALSE, 
+                                 intercept = FALSE, 
+                                 type.measure = "mse")
+      }
+      
+      # NEW: lambda choosing part
+      if (type_lambdaw == "min") {
+        lambdaw <- lambdaw_fit$lambda.min
+      } else if (type_lambdaw == "1se") {
+        lambdaw <- lambdaw_fit$lambda.1se
+      }
+      
+      # Fitting using optimal lambda
+      fitw <- glmnet(x = x[which(raw.wt == 1), ], 
+                     y = y[which(raw.wt == 1)], 
+                     family = family, 
+                     alpha = alphabest, 
+                     lambda = lambdaw, 
+                     standardize = FALSE, 
+                     intercept = FALSE)
+      a0 <- if(intercept == FALSE) 
+        0
+      else drop(sc$muy + fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sc$mux/sc$sigx))
+      coefficients <- drop(as.matrix(fitw$beta)/sc$sigx)
+      reweighted.residuals <- yy - cbind(1, xx) %*% c(a0, coefficients)
+      reweighted.rmse <- sqrt(mean(reweighted.residuals^2))
+      wgt <- weight.gaussian(resi = reweighted.residuals, 
+                             ind = raw.wt == 1, 
+                             del = del)$we
     }
-    
-    ############################
-    # Case: Gaussian: REMOVED #
-    ############################
-    
-    
-  } 
+  } # End scal == FALSE
   
-  ################################
-  # Case: Scal == FALSE: REMOVED #
-  ################################
   
   
   ## PREPARING OUTPUT
@@ -428,10 +622,30 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    inputs = inputs, 
                    indexall = indexall, 
                    call = sys.call())
-    ############################  
-    # Case: gaussian: REMOVED #
-    ###########################
     
+  } else if (family == "gaussian"){
+    output <- list(objective = objective, 
+                   best = sort(indexbest), 
+                   raw.wt = raw.wt, 
+                   wt = wgt, 
+                   a00 = a00, 
+                   raw.coefficients = raw.coefficients, 
+                   a0 = a0, 
+                   coefficients = coefficients, 
+                   alpha = alphabest, 
+                   lambda = lambdabest, 
+                   lambdaw = lambdaw, 
+                   num.nonzerocoef = num.nonzerocoef, 
+                   h = h, 
+                   raw.residuals = drop(raw.residuals), 
+                   residuals = drop(reweighted.residuals), 
+                   fitted.values = drop(fitted.values), 
+                   raw.fitted.values = drop(raw.fitted.values), 
+                   raw.rmse = raw.rmse, 
+                   rmse = reweighted.rmse, 
+                   inputs = inputs, 
+                   indexall = indexall, 
+                   call = sys.call())
   }
   class(output) <- "enetLTS"
   output$call <- matchedCall
