@@ -31,6 +31,7 @@ InitialSubset <- function(x, y, family, h, hsize, alpha, lambda, nsamp, scal, pa
                           alpha = alpha, # This will be the first alpha / lambda
                           lambda = lambda,
                           mc.cores = ncores,
+                          scal = scal, # NEW: Added this because since separation in file the function does not know what scal is
                           index.subsets = index.subsets) # NEW: Added this because since we separated the function it now requires this as an input!
    # Case: Non-parallel
    } else {
@@ -43,6 +44,7 @@ InitialSubset <- function(x, y, family, h, hsize, alpha, lambda, nsamp, scal, pa
                         hsize = hsize,
                         alpha = alpha,
                         lambda = lambda,
+                        scal = scal, # NEW: Added this because since separation in file the function does not know what scal is
                         index.subsets = index.subsets) # NEW: Added this because since we separated the function it now requires this as an input!
    }
    
