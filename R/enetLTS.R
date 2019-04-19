@@ -575,18 +575,22 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     } else if (type == "response"){
       1/(1 + exp(-u))
     }
+     
     uu <- xx %*% coefficients
     fitted.values <- if (type == "class") {
       ifelse(test = uu <= 0.5, yes = 0, no = 1)
     } else if (type == "response") {
       1/(1 + exp(-uu))
     }
+  } else if (family == "gausian") {
+    raw.fitted.values <- xx %*% raw.coefficients
+    fitted.values <- xx %*% coefficients
   }
   
   # TO DO: CHECK THIS
   if (family == "binomial") {
     objective <- h * (mean((-yy[indexbest] * (xx[indexbest, ] %*% coefficients)) + log(1 + exp(xx[indexbest, ] %*% coefficients))) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
-  } else if (family == "gaussian"){
+  } else if (family == "gaussian") {
     objective <- h * ((1/2) * mean((yy[indexbest] - xx[indexbest, ] %*% coefficients)^2) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
   }
   if (intercept) {
