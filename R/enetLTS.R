@@ -268,9 +268,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  intercept = TRUE, # NEW: changed this to true
                                  type.measure = "deviance")
         
-        # NEW: plot
-        plot(lambdaw_fit) # cv plot
-        
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
         # Maybe extract the used lambdaw also
@@ -302,8 +299,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  intercept = TRUE, # NEW: changed to this to true 
                                  type.measure = "deviance") # NEW: changed from "MSE" to "deviance" for the Gaussian case it is the same anyways
         
-        # NEW: CV Plot
-        plot(lambdaw_fit) # TO DO: Make more efficient
       }
       
       # Choosing lambda based on user-input (min vs. 1SE) # NEW
@@ -505,9 +500,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  intercept = FALSE, 
                                  type.measure = "mse") # $lambda.min # NEW REMOVED
         
-        # NEW: Plotting cv plot
-        plot(lambdaw_fit)
-        
       }
       else if (!missing(lambdaw) & length(lambdaw) == 1) {
         lambdaw <- lambdaw
@@ -551,9 +543,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     }
   } # End scal == FALSE
   
-  # Plotting CV Plot (could put it in there multiple times but this seems to be cleaner) # TO DO: remove old parts
+  # Plotting CV Plot 
   plot(lambdaw_fit)
-  
+  print(paste0("The optimal reweighted lambda is: ", lambdaw)) # Printing chosen lambdaw
+  print(paste0("The optimal alpha used in the reweighting step is: ", alphabest)) # Printing chosen alpha
+  # Note: I put this here at the end because otherwise I would need to repeat the statement multiple times
   
   ## PREPARING OUTPUT
   # Counting number of nonzero coefficients
