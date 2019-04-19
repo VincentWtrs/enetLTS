@@ -340,10 +340,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     } else if (family == "gaussian") {
       a00 <- if (intercept == FALSE) 
         0
+      else drop(scl$muy + fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux/scl$sigx))
+      
       print("I'm getting into this part at least: intercept shit part1") # TO DO: remove this (debug) 
       
-      
-      else drop(scl$muy + fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux/scl$sigx))
       raw.coefficients <- drop(as.matrix(fit$beta)/scl$sigx)
       raw.residuals <- yy - cbind(1, xx) %*% c(a00, raw.coefficients)
       raw.rmse <- sqrt(mean(raw.residuals^2))
