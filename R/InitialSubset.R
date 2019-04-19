@@ -52,4 +52,3 @@ InitialSubset <- function(x, y, family, h, hsize, alpha, lambda, nsamp, scal, pa
    return(list(subsets = subsets,
                index.subsets = index.subsets))
 }
-
