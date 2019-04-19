@@ -1,5 +1,6 @@
-twoCstep <- function(c, x, y, family, h, hsize, alpha, lambda) {
-
+twoCstep <- function(c, x, y, family, h, hsize, alpha, lambda, index.subsets) {
+  # NEW: needed to add the index.subsets as an input because since separation the function could otherwise not see this input
+  
   ## C-step 1
   # Case: Binomial
   if (family=="binomial") {
