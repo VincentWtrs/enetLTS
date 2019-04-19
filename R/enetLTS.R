@@ -575,14 +575,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     } else if (type == "response"){
       1/(1 + exp(-u))
     }
-     
     uu <- xx %*% coefficients
     fitted.values <- if (type == "class") {
       ifelse(test = uu <= 0.5, yes = 0, no = 1)
     } else if (type == "response") {
       1/(1 + exp(-uu))
     }
-  } else if (family == "gausian") {
+  } else if (family == "gaussian") {
     raw.fitted.values <- xx %*% raw.coefficients
     fitted.values <- xx %*% coefficients
   }
