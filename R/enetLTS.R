@@ -196,6 +196,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     evalCritCV <- CVresults$evalCrit
   }
   
+  print("I'm getting beyond cv.enetLTS() yay") # TO DO: remove this (debug)
+  
   
   ### RESCALING STEP (Theoretically we should be in an outlier-free world now!)
   # Nonrobust scaling based on the outlier-free set
