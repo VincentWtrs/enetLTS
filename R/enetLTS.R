@@ -357,6 +357,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                       robu = 0)
       xss <- sclw$xnor
       yss <- sclw$ycen
+      print("I'm getting into this part at least: intercept shit part2") # TO DO: remove this (debug) 
+      
       if ((missing(lambdaw))) {
         lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ],
                                  y = yss[which(raw.wt == 1)], 
@@ -402,7 +404,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       a0 <- if (intercept == FALSE) 
         0
       else drop(sclw$muy + fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sclw$mux/sclw$sigx))
-      print("I'm getting into this part at least: intercept shit part3") # TO DO: remove this (debug) 
+      print("I'm getting into this part at least: intercept shit part4") # TO DO: remove this (debug) 
       
       coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
       reweighted.residuals <- yy - cbind(1, xx) %*% c(a0, coefficients)
