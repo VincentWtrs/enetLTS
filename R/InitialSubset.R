@@ -30,7 +30,8 @@ InitialSubset <- function(x, y, family, h, hsize, alpha, lambda, nsamp, scal, pa
                           hsize = hsize,
                           alpha = alpha, # This will be the first alpha / lambda
                           lambda = lambda,
-                          mc.cores = ncores)
+                          mc.cores = ncores,
+                          index.subsets = index.subsets) # NEW: Added this because since we separated the function it now requires this as an input!
    # Case: Non-parallel
    } else {
       subsets <- lapply(1:nsamp, # Looping for nsamp times (Default: 500)
@@ -41,7 +42,8 @@ InitialSubset <- function(x, y, family, h, hsize, alpha, lambda, nsamp, scal, pa
                         h = h,
                         hsize = hsize,
                         alpha = alpha,
-                        lambda = lambda)
+                        lambda = lambda,
+                        index.subsets = index.subsets) # NEW: Added this because since we separated the function it now requires this as an input!
    }
    
    # OUTPUT
