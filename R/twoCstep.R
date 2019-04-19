@@ -1,4 +1,4 @@
-twoCstep <- function(c, x, y, family, h, hsize, alpha, lambda, index.subsets) {
+twoCstep <- function(c, x, y, family, h, hsize, alpha, lambda, index.subsets, scal) {
   # NEW: needed to add the index.subsets as an input because since separation the function could otherwise not see this input
   
   ## C-step 1
