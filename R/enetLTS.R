@@ -196,9 +196,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     evalCritCV <- CVresults$evalCrit
   }
   
-  print("I'm getting beyond cv.enetLTS() yay") # TO DO: remove this (debug) # YES GETTING BEYOND
-  
-  
   ### RESCALING STEP (Theoretically we should be in an outlier-free world now!)
   # Nonrobust scaling based on the outlier-free set
   if (isTRUE(scal)) { # TO DO: WHY IS THIS DONE?
@@ -318,9 +315,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      standardize = FALSE, 
                      intercept = TRUE) # NEW/ changed this to true!
       
-      print("Everything still OK here after refitting using optimal lambda!") # TO DO: REMOVE THIS (DEBUG) # CHECKED: FAILS BEFORE
-      
-      
       # Intercept handling
       if (isFALSE(intercept)) {
         a0 <- 0 # NEW
@@ -342,8 +336,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         0
       else drop(scl$muy + fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux/scl$sigx))
       
-      print("I'm getting into this part at least: intercept shit part1") # TO DO: remove this (debug) 
-      
       raw.coefficients <- drop(as.matrix(fit$beta)/scl$sigx)
       raw.residuals <- yy - cbind(1, xx) %*% c(a00, raw.coefficients)
       raw.rmse <- sqrt(mean(raw.residuals^2))
@@ -357,8 +349,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                       robu = 0)
       xss <- sclw$xnor
       yss <- sclw$ycen
-      print("I'm getting into this part at least: intercept shit part2") # TO DO: remove this (debug) 
-      
+
       if ((missing(lambdaw))) {
         lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ],
                                  y = yss[which(raw.wt == 1)], 
@@ -390,8 +381,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       } else if (type_lambdaw == "1se") {
         lambdaw <- lambdaw_fit$lambda.1se
       }
-      print("I'm getting into this part at least: intercept shit part3") # TO DO: remove this (debug) 
-      
       
       # Fitting using optimal lambdaw
       fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
@@ -547,10 +536,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                              del = del)$we
     }
   } # End scal == FALSE
-  
-  print("Everything still OK here!") # TO DO: REMOVE THIS (DEBUG) # CHECKED: FAILS BEFORE
-  
-  
   
   ## PREPARING OUTPUT
   # Counting number of nonzero coefficients
