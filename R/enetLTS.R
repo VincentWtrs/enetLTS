@@ -532,6 +532,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     }
   } # End scal == FALSE
   
+  print("Everything still OK here!") # TO DO: REMOVE THIS (DEBUG)
+  
   
   
   ## PREPARING OUTPUT
