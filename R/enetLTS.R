@@ -239,7 +239,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       # Extracting raw results
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # TO DO Does this actually hold for logit??
-      beta_with_int <- coef(fit) # NEW # SOMETHING IS WRONG HERE! ########################################
+      beta_with_int <- coef(fit) # NEW # SOMETHING IS WRONG HERE! ######################################## # TO DO: still wrong? Don't think so
       #raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta))) # OLD
       raw.residuals <- -(ys * cbind(1, xs) %*% beta_with_int) + log(1 + exp(cbind(1, xs) %*% beta_with_int)) # NEW: cbind(1, xs) and beta_with_int
       raw.wt <- weight.binomial(x = xx, 
@@ -267,7 +267,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  standardize = FALSE, 
                                  intercept = TRUE, # NEW: changed this to true
                                  type.measure = "deviance")
+        
+        # NEW: plot
+        plot(lambdaw_fit) # cv plot
+        
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
+        
+        # Maybe extract the used lambdaw also
         
         # NEW: ADDING IC-BASED REWEIGHTED TUNING # TO DO: fix this, we need to do the IC tuning at the end, get proper loss, etc (which is the loss now to take into account...)
         #if (!is.null(ic_type_reweighted)) {
@@ -295,6 +301,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  standardize = FALSE, 
                                  intercept = TRUE, # NEW: changed to this to true 
                                  type.measure = "deviance") # NEW: changed from "MSE" to "deviance" for the Gaussian case it is the same anyways
+        
+        # NEW: CV Plot
+        plot(lambdaw_fit) # TO DO: Make more efficient
       }
       
       # Choosing lambda based on user-input (min vs. 1SE) # NEW
@@ -311,7 +320,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      alpha = alphabest, 
                      lambda = lambdaw, 
                      standardize = FALSE, 
-                     intercept = TRUE) # NEW/ changed this to true!
+                     intercept = TRUE) # NEW: changed this to true!
       
       # Intercept handling
       if (isFALSE(intercept)) {
@@ -347,7 +356,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                       robu = 0)
       xss <- sclw$xnor
       yss <- sclw$ycen
-
+      
       if ((missing(lambdaw))) {
         lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ],
                                  y = yss[which(raw.wt == 1)], 
@@ -391,7 +400,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       a0 <- if (intercept == FALSE) 
         0
       else drop(sclw$muy + fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sclw$mux/sclw$sigx))
-
+      
       coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
       reweighted.residuals <- yy - cbind(1, xx) %*% c(a0, coefficients)
       reweighted.rmse <- sqrt(mean(reweighted.residuals^2))
@@ -420,15 +429,16 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 beta = c(a00, raw.coefficients), 
                                 intercept = intercept, 
                                 del = del)
-      if(missing(lambdaw)){
-        lambdaw <- cv.glmnet(x = x[which(raw.wt == 1), ], 
-                             y = y[which(raw.wt == 1)], 
-                             family = family, 
-                             nfolds = 5, 
-                             alpha = alphabest, 
-                             standardize = FALSE, 
-                             intercept = FALSE, 
-                             type.measure = "mse") #$lambda.min # removed check check NEW
+      if (missing(lambdaw)) {
+        lambdaw_fit <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+                                 y = y[which(raw.wt == 1)], 
+                                 family = family, 
+                                 nfolds = 5, 
+                                 alpha = alphabest, 
+                                 standardize = FALSE, 
+                                 intercept = FALSE, 
+                                 type.measure = "mse") #$lambda.min # removed check check NEW
+        
       }
       else if (!missing(lambdaw) & length(lambdaw) == 1) {
         lambdaw <- lambdaw
@@ -445,10 +455,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  intercept = FALSE, 
                                  type.measure = "deviance") # NEW: changed type.measure = "mse" to type.meaure = "deviance" 
         
+        # NEW: Plotting the cross-validation curves
+        
+        
         # NEW: removed cv.glmnet(...)$lambda.min and given choice!
-        if(type_lambdaw == "min"){
+        if(type_lambdaw == "min") {
           lambdaw <- lambdaw_fit$lambda.min
-        } else if(type_lambdaw == "1se"){
+        } else if(type_lambdaw == "1se") {
           lambdaw <- lambdaw_fit$lambda.1se
         }
       }
@@ -482,20 +495,24 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 ind = indexbest, 
                                 del = del)$we
       
-      if(missing(lambdaw)){
-        lambdaw <- cv.glmnet(x = x[which(raw.wt == 1), ], 
-                             y = y[which(raw.wt == 1)], 
-                             family = family, 
-                             nfolds = 5, 
-                             alpha = alphabest, 
-                             standardize = FALSE, 
-                             intercept = FALSE, 
-                             type.measure = "mse") # $lambda.min # NEW REMOVED
+      if (missing(lambdaw)) {
+        lambdaw_fit <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+                                 y = y[which(raw.wt == 1)], 
+                                 family = family, 
+                                 nfolds = 5, 
+                                 alpha = alphabest, 
+                                 standardize = FALSE, 
+                                 intercept = FALSE, 
+                                 type.measure = "mse") # $lambda.min # NEW REMOVED
+        
+        # NEW: Plotting cv plot
+        plot(lambdaw_fit)
+        
       }
-      else if (!missing(lambdaw) & length(lambdaw) == 1){
+      else if (!missing(lambdaw) & length(lambdaw) == 1) {
         lambdaw <- lambdaw
       }
-      else if (!missing(lambdaw) & length(lambdaw) > 1){
+      else if (!missing(lambdaw) & length(lambdaw) > 1) {
         lambdaw_fit <- cv.glmnet(x = x[which(raw.wt == 1), ], 
                                  y = y[which(raw.wt == 1)], 
                                  family = family, 
@@ -533,6 +550,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                              del = del)$we
     }
   } # End scal == FALSE
+  
+  # Plotting CV Plot (could put it in there multiple times but this seems to be cleaner) # TO DO: remove old parts
+  plot(lambdaw_fit)
+  
   
   ## PREPARING OUTPUT
   # Counting number of nonzero coefficients
