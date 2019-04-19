@@ -367,7 +367,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  alpha = alphabest, 
                                  standardize = FALSE, 
                                  intercept = FALSE, 
-                                 type.measure = "mse")$lambda.min
+                                 type.measure = "mse") # NEW: REMOVED $lambda.min here because we extract it later anyways
       }
       else if (!missing(lambdaw) & length(lambdaw) == 1) {
         lambdaw <- lambdaw
@@ -442,7 +442,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                              alpha = alphabest, 
                              standardize = FALSE, 
                              intercept = FALSE, 
-                             type.measure = "mse")$lambda.min
+                             type.measure = "mse") #$lambda.min # removed check check NEW
       }
       else if (!missing(lambdaw) & length(lambdaw) == 1) {
         lambdaw <- lambdaw
@@ -504,7 +504,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                              alpha = alphabest, 
                              standardize = FALSE, 
                              intercept = FALSE, 
-                             type.measure = "mse")$lambda.min
+                             type.measure = "mse") # $lambda.min # NEW REMOVED
       }
       else if (!missing(lambdaw) & length(lambdaw) == 1){
         lambdaw <- lambdaw
