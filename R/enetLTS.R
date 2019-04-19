@@ -196,7 +196,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     evalCritCV <- CVresults$evalCrit
   }
   
-  print("I'm getting beyond cv.enetLTS() yay") # TO DO: remove this (debug)
+  print("I'm getting beyond cv.enetLTS() yay") # TO DO: remove this (debug) # YES GETTING BEYOND
   
   
   ### RESCALING STEP (Theoretically we should be in an outlier-free world now!)
@@ -209,6 +209,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    robu = 0) # Nonrobust because now in outlier-free world... (given by the indexbest index)
     xs <- scl$xnor # Normalized X
     ys <- scl$ycen # Centered y (not for binomial, confusing)
+    
+    print("I'm getting beyond prepara for scaling is TRUE yay") # TO DO: remove this (debug) 
     
     # Fitting glmnet on best subset
     ## NEW: branch based on binomial
