@@ -314,6 +314,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      standardize = FALSE, 
                      intercept = TRUE) # NEW/ changed this to true!
       
+      print("Everything still OK here after refitting using optimal lambda!") # TO DO: REMOVE THIS (DEBUG) # CHECKED: FAILS BEFORE
+      
+      
       # Intercept handling
       if (isFALSE(intercept)) {
         a0 <- 0 # NEW
@@ -532,7 +535,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     }
   } # End scal == FALSE
   
-  print("Everything still OK here!") # TO DO: REMOVE THIS (DEBUG)
+  print("Everything still OK here!") # TO DO: REMOVE THIS (DEBUG) # CHECKED: FAILS BEFORE
   
   
   
