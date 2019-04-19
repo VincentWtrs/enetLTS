@@ -388,6 +388,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       } else if (type_lambdaw == "1se") {
         lambdaw <- lambdaw_fit$lambda.1se
       }
+      print("I'm getting into this part at least: intercept shit part3") # TO DO: remove this (debug) 
+      
       
       # Fitting using optimal lambdaw
       fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
@@ -400,7 +402,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       a0 <- if (intercept == FALSE) 
         0
       else drop(sclw$muy + fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sclw$mux/sclw$sigx))
-      print("I'm getting into this part at least: intercept shit part2") # TO DO: remove this (debug) 
+      print("I'm getting into this part at least: intercept shit part3") # TO DO: remove this (debug) 
       
       coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
       reweighted.residuals <- yy - cbind(1, xx) %*% c(a0, coefficients)
