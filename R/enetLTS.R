@@ -207,8 +207,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     xs <- scl$xnor # Normalized X
     ys <- scl$ycen # Centered y (not for binomial, confusing)
     
-    print("I'm getting beyond prepara for scaling is TRUE yay") # TO DO: remove this (debug) 
-    
     # Fitting glmnet on best subset
     ## NEW: branch based on binomial
     if (family == "binomial") {
