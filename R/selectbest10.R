@@ -30,5 +30,8 @@ selectbest10 <- function(x, y, family, h, hsize, alpha, lambda, nsamp, s1, para,
       indx <- subsets[[idx[c]]]$indx
     },idx,subsets)
   }
-  return(list(idxbest=bestindex,s1_new=s1_new,subsets=subsets,index.subsets=index.subsets))
+  return(list(idxbest = bestindex, 
+              s1_new = s1_new,
+              subsets = subsets,
+              index.subsets = index.subsets))
 }
