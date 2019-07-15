@@ -100,7 +100,7 @@ ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
     penalty <- (df * log(nobs) + 2 * df * sigma * log(p))/nobs
   }
   
-  # EBIC2: Alternative EBIC - Chen & Chen (2008)
+  # EBIC2: EBIC with tau(s_j) notation (proportionality to size of amount of models for a certain size)
   if(type == "EBIC2"){
     sigma <- EBIC_sigma # 0.25 good default
     penalty <- (df * log(nobs) + 2 * sigma * log(choose(p, nonzeros)))/nobs
@@ -119,5 +119,6 @@ ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
     # Alternatively: penalty <-  (2 * nu * df * log(nobs/lambda))/nobs
   }
   
+  # OUTPUT: Penalty
   return(penalty)
 }
