@@ -17,6 +17,10 @@ ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
   #  stop("The input for ic_penalty() should be a glmnet model")
   #}
   
+  # TODO (TEMP - REMOVE ME - DEBUG PURPOSES)
+  print("Hallowkes, soep met bokes")
+  
+  
   # Checking if type is supported
   if(type != "AIC"  &
      type != "AIC_C" &
