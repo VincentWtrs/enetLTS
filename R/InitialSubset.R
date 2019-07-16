@@ -1,5 +1,7 @@
 InitialSubset <- function(x, y, family, h, hsize, alpha, lambda, nsamp, scal, para, ncores, seed){
    
+   
+   ## CALLED BY: 
    # Gives initial 500 subsamples after Two C Steps
    
    # Seed
