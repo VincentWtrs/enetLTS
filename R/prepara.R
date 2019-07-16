@@ -1,5 +1,8 @@
+
 prepara <- function(x, y, family, index = NULL, robu = NULL){
-  # default clasical scale, robust scale for robu=1
+  ## GOAL
+  # Handles centering and scaling of the input data using classic or robust estimators of location and scale.
+  # Default: Classic scaling. If robu = 1: robust scaling
 
   if (is.null(robu)) robu <- 0
   if (is.null(index)) {
