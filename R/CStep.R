@@ -35,7 +35,12 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       #              intercept = FALSE) # DUBIOUS! If changing this also change beta and resid! BUT KEEP TRACK WITH THE if(all(beta==0))
       xs_indx <- x[indx, ] # Selecting data but not doing it inside the function (cleaner)
       ys_indx <- y[indx] # Selecting data but not doing it inside the function (cleaner)
+      
+      # TO DO REMOVE:
+      print("The following ") #TO DO REMOVE
       print(table(ys_indx)) # TO DO REMOVE: printing a contingency table
+      print(indx) # TODO REMOVE
+      
       fit <- glmnet(x = xs_indx,
                     y = ys_indx,
                     family = family,
