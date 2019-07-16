@@ -37,11 +37,11 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       ys_indx <- y[indx] # Selecting data but not doing it inside the function (cleaner)
       
       # TO DO REMOVE:
-      print("The following distribution of y:") #TO DO REMOVE
-      print(table(y)) # TODO REMOVE
-      print(table(ys_indx)) # TO DO REMOVE: printing a contingency table
-      print('ordered indices:')
-      print(sort(indx)) # TODO REMOVE     
+      #print("The following distribution of y:") #TO DO REMOVE
+      #print(table(y)) # TODO REMOVE
+      #print(table(ys_indx)) # TO DO REMOVE: printing a contingency table
+      #print('ordered indices:')
+      #print(sort(indx)) # TODO REMOVE     
 
       fit <- glmnet(x = xs_indx,
                     y = ys_indx,
