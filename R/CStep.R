@@ -33,8 +33,8 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       #              lambda = lambda, # Single lambda
       #              standardize = FALSE,
       #              intercept = FALSE) # DUBIOUS! If changing this also change beta and resid! BUT KEEP TRACK WITH THE if(all(beta==0))
-      xs_indx <- x[indx, ] # Making own thing  
-      ys_indx <- y[indx] # Making own thing
+      xs_indx <- x[indx, ] # Selecting data but not doing it inside the function (cleaner)
+      ys_indx <- y[indx] # Selecting data but not doing it inside the function (cleaner)
       print(table(ys_indx)) # TO DO REMOVE: printing a contingency table
       fit <- glmnet(x = xs_indx,
                     y = ys_indx,
@@ -77,7 +77,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
                   standardize = FALSE,
                   intercept = FALSE)
     beta <- matrix(fit$beta)
-    resid <- ys - predict(fit,xs,exact=TRUE)
+    resid <- ys - predict(fit, xs, exact=TRUE)
     resid.sort <- sort(abs(resid),index.return=TRUE)
     indxnew <- resid.sort$ix[1:h]
   }
