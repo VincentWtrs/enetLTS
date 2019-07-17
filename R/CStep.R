@@ -42,14 +42,14 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       #print(table(ys_indx)) # TO DO REMOVE: printing a contingency table
       #print('ordered indices:')
       #print(sort(indx)) # TODO REMOVE     
-
+      
       fit <- glmnet(x = xs_indx,
                     y = ys_indx,
                     family = family,
                     alpha = alpha,
                     lambda = lambda,
                     standardize = TRUE, 
-                    intercept = TRUE) # NEW set to TRUE
+                    intercept = TRUE) # NEW (VW) set to TRUE
       
       beta_with_int <- matrix(coef(fit)) # NEW: to include b0
       beta <- matrix(fit$beta) # Getting beta ($beta gets coefs WITHOUT INTERCEPT!) # We can still use it for the test later
@@ -74,74 +74,74 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
       index0 <- resid.sort$ix[y[resid.sort$ix] == 0][1:h0] # For y == 0
       index1 <- resid.sort$ix[y[resid.sort$ix] == 1][1:h1] # For y == 1
       indxnew <- c(index0, index1)
-
-  } else if (family == "gaussian") {
-    fit <- glmnet(x = xs[indx,],
-                  y = ys[indx],
-                  family = family,
-                  alpha = alpha,
-                  lambda = lambda,
-                  standardize = FALSE,
-                  intercept = FALSE)
-    beta <- matrix(fit$beta)
-    resid <- ys - predict(fit, xs, exact=TRUE)
-    resid.sort <- sort(abs(resid),index.return=TRUE)
-    indxnew <- resid.sort$ix[1:h]
-  }
-  
-  # Calculating objective function
-  obj <- Objval(x = xs,
-                y = ys,
-                family = family,
-                coef = beta,
-                ind = indxnew, # Note: it gets the index supplied!
-                alpha = alpha,
-                lambda = lambda)
-  
-  # Case: No scaling (Unlikely)
-} else if (isFALSE(scal)) {
-  if (family == "binomial") { # TO DO: Correct this later
-    fit <- glmnet(x = x[indx, ],
-                  y = y[indx],
-                  family = family,
-                  alpha = alpha,
-                  lambda = lambda,
-                  standardize = FALSE,
-                  intercept = FALSE)
-    beta <- matrix(fit$beta)
-    resid <- -(y * x %*% beta) + log(1+exp(x %*% beta))
-    #if (all(beta == 0)) {
-    #  return(list(object = -Inf,index = indx,residu =resid,beta=beta))}
-    resid.sort <- sort(resid, decreasing = FALSE, index.return = TRUE) 
-    h0 <- floor((length(y[y == 0]) + 1) * hsize)
-    h1 <- h - h0
-    index0 <- resid.sort$ix[y[resid.sort$ix] == 0][1:h0]
-    index1 <- resid.sort$ix[y[resid.sort$ix] == 1][1:h1]
-    indxnew <- c(index0,index1)
+      
+    } else if (family == "gaussian") {
+      fit <- glmnet(x = xs[indx,],
+                    y = ys[indx],
+                    family = family,
+                    alpha = alpha,
+                    lambda = lambda,
+                    standardize = FALSE,
+                    intercept = FALSE)
+      beta <- matrix(fit$beta)
+      resid <- ys - predict(fit, xs, exact=TRUE)
+      resid.sort <- sort(abs(resid),index.return=TRUE)
+      indxnew <- resid.sort$ix[1:h]
+    }
     
-  } else if (family == "gaussian") {
-    fit <- glmnet(x = x[indx, ],
-                  y = y[indx],
+    # Calculating objective function
+    obj <- Objval(x = xs,
+                  y = ys,
                   family = family,
+                  coef = beta,
+                  ind = indxnew, # Note: it gets the index supplied!
                   alpha = alpha,
-                  lambda = lambda,
-                  standardize = FALSE,
-                  intercept = FALSE)
-    beta <- matrix(fit$beta)
-    resid <- y - predict(fit,x, exact = TRUE)
-    resid.sort <- sort(abs(resid), index.return = TRUE)
-    indxnew <- resid.sort$ix[1:h]
+                  lambda = lambda)
+    
+    # Case: No scaling (Unlikely)
+  } else if (isFALSE(scal)) {
+    if (family == "binomial") { # TO DO: Correct this later
+      fit <- glmnet(x = x[indx, ],
+                    y = y[indx],
+                    family = family,
+                    alpha = alpha,
+                    lambda = lambda,
+                    standardize = FALSE,
+                    intercept = FALSE)
+      beta <- matrix(fit$beta)
+      resid <- -(y * x %*% beta) + log(1+exp(x %*% beta))
+      #if (all(beta == 0)) {
+      #  return(list(object = -Inf,index = indx,residu =resid,beta=beta))}
+      resid.sort <- sort(resid, decreasing = FALSE, index.return = TRUE) 
+      h0 <- floor((length(y[y == 0]) + 1) * hsize)
+      h1 <- h - h0
+      index0 <- resid.sort$ix[y[resid.sort$ix] == 0][1:h0]
+      index1 <- resid.sort$ix[y[resid.sort$ix] == 1][1:h1]
+      indxnew <- c(index0,index1)
+      
+    } else if (family == "gaussian") {
+      fit <- glmnet(x = x[indx, ],
+                    y = y[indx],
+                    family = family,
+                    alpha = alpha,
+                    lambda = lambda,
+                    standardize = FALSE,
+                    intercept = FALSE)
+      beta <- matrix(fit$beta)
+      resid <- y - predict(fit,x, exact = TRUE)
+      resid.sort <- sort(abs(resid), index.return = TRUE)
+      indxnew <- resid.sort$ix[1:h]
+    }
+    
+    obj <- Objval(x = x,
+                  y = y,
+                  family = family,
+                  coef = beta,
+                  ind = indxnew,
+                  alpha = alpha,
+                  lambda = lambda)
   }
   
-  obj <- Objval(x = x,
-                y = y,
-                family = family,
-                coef = beta,
-                ind = indxnew,
-                alpha = alpha,
-                lambda = lambda)
-}
-
-# OUTPUT
-return(list(object=obj,index=indxnew,residu=resid,beta=beta))
+  # OUTPUT
+  return(list(object=obj,index=indxnew,residu=resid,beta=beta))
 }
