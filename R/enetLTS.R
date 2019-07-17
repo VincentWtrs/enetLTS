@@ -545,7 +545,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   } # End scal == FALSE
   
   # Plotting CV Plot 
-  plot(lambdaw_fit)
+  plot(reweighted_cv)
   print(paste0("The optimal reweighted lambda is: ", lambdaw)) # Printing chosen lambdaw
   print(paste0("The optimal alpha used in the reweighting step is: ", alphabest)) # Printing chosen alpha
   # Note: I put this here at the end because otherwise I would need to repeat the statement multiple times
