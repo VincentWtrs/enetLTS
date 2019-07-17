@@ -425,43 +425,44 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 intercept = intercept, 
                                 del = del)
       if (missing(lambdaw)) {
-        lambdaw_fit <- cv.glmnet(x = x[which(raw.wt == 1), ], 
-                                 y = y[which(raw.wt == 1)], 
-                                 family = family, 
-                                 nfolds = 5, 
-                                 alpha = alphabest, 
-                                 standardize = FALSE, 
-                                 intercept = FALSE, 
-                                 type.measure = "mse") #$lambda.min # removed check check NEW
+        reweighted_cv <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+                                  y = y[which(raw.wt == 1)], 
+                                  family = family, 
+                                  nfolds = 10, 
+                                  alpha = alphabest, 
+                                  standardize = FALSE, 
+                                  intercept = FALSE, 
+                                  type.measure = "deviance") #$lambda.min # removed check check NEW
         
       }
       else if (!missing(lambdaw) & length(lambdaw) == 1) {
         lambdaw <- lambdaw
       }
+      # In case of multiple user supplied lambdaws
       else if (!missing(lambdaw) & length(lambdaw) > 1) {
         # NEW: saved model first, then extract the lambda we want
-        lambdaw_fit <- cv.glmnet(x = x[which(raw.wt == 1), ], 
-                                 y = y[which(raw.wt == 1)], 
-                                 family = family,
-                                 lambda = lambdaw, 
-                                 nfolds = 5, 
-                                 alpha = alphabest, 
-                                 standardize = FALSE, 
-                                 intercept = FALSE, 
-                                 type.measure = "deviance") # NEW: changed type.measure = "mse" to type.meaure = "deviance" 
-        
+        reweighted_cv <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+                                   y = y[which(raw.wt == 1)], 
+                                   family = family,
+                                   lambda = lambdaw, 
+                                   nfolds = 10, 
+                                   alpha = alphabest, 
+                                   standardize = FALSE, 
+                                   intercept = FALSE, 
+                                   type.measure = "deviance") # NEW: changed type.measure = "mse" to type.meaure = "deviance" 
         # NEW: Plotting the cross-validation curves
         
         
         # NEW: removed cv.glmnet(...)$lambda.min and given choice!
         if(type_lambdaw == "min") {
-          lambdaw <- lambdaw_fit$lambda.min
+          lambdaw <- reweighted_fit$lambda.min
         } else if(type_lambdaw == "1se") {
-          lambdaw <- lambdaw_fit$lambda.1se
+          lambdaw <- reweighted_fit$lambda.1se
         }
       }
       
       # Fitting using optimal lambdaw
+      
       fitw <- glmnet(x = x[which(raw.wt == 1), ], 
                      y = y[which(raw.wt == 1)], 
                      family = family, 
@@ -491,7 +492,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 del = del)$we
       
       if (missing(lambdaw)) {
-        lambdaw_fit <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+        reweighted_cv <- cv.glmnet(x = x[which(raw.wt == 1), ], 
                                  y = y[which(raw.wt == 1)], 
                                  family = family, 
                                  nfolds = 5, 
@@ -505,7 +506,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         lambdaw <- lambdaw
       }
       else if (!missing(lambdaw) & length(lambdaw) > 1) {
-        lambdaw_fit <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+        reweighted_cv <- cv.glmnet(x = x[which(raw.wt == 1), ], 
                                  y = y[which(raw.wt == 1)], 
                                  family = family, 
                                  lambda = lambdaw, 
@@ -518,9 +519,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       # NEW: lambda choosing part
       if (type_lambdaw == "min") {
-        lambdaw <- lambdaw_fit$lambda.min
+        lambdaw <- reweighted_cv$lambda.min
       } else if (type_lambdaw == "1se") {
-        lambdaw <- lambdaw_fit$lambda.1se
+        lambdaw <- reweighted_cv$lambda.1se
       }
       
       # Fitting using optimal lambda
