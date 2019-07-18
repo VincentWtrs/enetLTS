@@ -448,10 +448,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                     y = y[which(raw.wt == 1)], 
                                     family = family, 
                                     nfolds = 10, 
-                                    alpha = alphabest, 
+                                    #alpha = alphabest, 
                                     standardize = FALSE, 
                                     intercept = FALSE)
-        alphaw <- reweighted_cv$alpha[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]
+        alphaw <- reweighted_cv$alpha[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]
         print(paste0("The reweighted alpha is: ", alphaw))
         
         
