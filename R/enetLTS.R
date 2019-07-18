@@ -313,10 +313,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       # Choosing lambda based on user-input (min vs. 1SE) # NEW
       if (type_lambdaw == "min") {
-        lambdaw <- lambdaw_fit$lambda.min
-        lambdaw <- 
+        #lambdaw <- lambdaw_fit$lambda.min
+        lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works 
       } else if (type_lambdaw == "1se") {
         lambdaw <- lambdaw_fit$lambda.1se
+        lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works
       }
       
       # Fitting using optimal lambdaw (reweighted!)
