@@ -259,14 +259,20 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       # Tuning lambdaw (reweighted lambda)
       if (missing(lambdaw)) { # Case: no lambdaw given (DEFAULT)
-        lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit
-                                 y = yss[which(raw.wt == 1)], 
-                                 family = family, 
-                                 nfolds = 5, 
-                                 alpha = alphabest, 
-                                 standardize = FALSE, 
-                                 intercept = TRUE, # NEW: changed this to true
-                                 type.measure = "deviance")
+         #reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit
+        #                         y = yss[which(raw.wt == 1)], 
+        #                         family = family, 
+        #                         nfolds = 5, 
+        #                         alpha = alphabest, 
+        #                         standardize = FALSE, 
+        #                         intercept = TRUE, # NEW: changed this to true
+        #                         type.measure = "deviance")
+        reweighted_cv <- cva.glmnet(x = xss[which[raw.wt == 1], ],
+                                    y = yss[which(raw.wt == 1)],
+                                    family = family,
+                                    nfolds = 5,
+                                    standardize = FALSE,
+                                    intercept = TRUE)
         
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
@@ -353,7 +359,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       yss <- sclw$ycen
       
       if ((missing(lambdaw))) {
-        lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ],
+        reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ],
                                  y = yss[which(raw.wt == 1)], 
                                  family = family, 
                                  nfolds = 5, 
@@ -366,15 +372,15 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         lambdaw <- lambdaw
       }
       else if (!missing(lambdaw) & length(lambdaw) > 1) {
-        lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ],
-                                 y = yss[which(raw.wt == 1)], 
-                                 family = family, 
-                                 lambda = lambdaw, 
-                                 nfolds = 5, 
-                                 alpha = alphabest, 
-                                 standardize = FALSE, 
-                                 intercept = FALSE, 
-                                 type.measure = "mse")
+        reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ],
+                                   y = yss[which(raw.wt == 1)], 
+                                   family = family, 
+                                   lambda = lambdaw, 
+                                   nfolds = 5, 
+                                   alpha = alphabest, 
+                                   standardize = FALSE, 
+                                   intercept = FALSE, 
+                                   type.measure = "mse")
       }
       
       # NEW: Choosing lambda
