@@ -291,9 +291,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         #}
         
         
-        # Case: lambdaw given by user (unlikely)
+        # Case: SINGLE lambdaw given by user (unlikely)
       } else if (!missing(lambdaw) & length(lambdaw) == 1) { # Only single lambdaw given
         lambdaw <- lambdaw
+        
+        # Case: Multiple lambdaws given by user (less unlikely)
       } else if (!missing(lambdaw) & length(lambdaw) > 1) { # Multiple lambdaw given
         reweighted_cv <- cva.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit 
                                  y = yss[which(raw.wt == 1)], 
@@ -310,10 +312,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       # Choosing lambda based on user-input (min vs. 1SE) # NEW
       if (type_lambdaw == "min") {
         #lambdaw <- lambdaw_fit$lambda.min
-        lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works 
+        lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works 
       } else if (type_lambdaw == "1se") {
         #lambdaw <- lambdaw_fit$lambda.1se
-        lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works
+        lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works
       }
       
       # Fitting using optimal lambdaw (reweighted!)
@@ -395,7 +397,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       # Fitting using optimal lambdaw
       fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
                      y = yss[which(raw.wt == 1)], 
-                     family = family, 
+                     family = "gaussian", 
                      alpha = alphabest, 
                      lambda = lambdaw, 
                      standardize = FALSE, 
