@@ -293,8 +293,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         
         # Case: lambdaw given by user (unlikely)
       } else if (!missing(lambdaw) & length(lambdaw) == 1) { # Only single lambdaw given
-        lambdaw <- lambdaw 
+        #lambdaw <- lambdaw
+        lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))] # TODO (CHECK)
+        
       } else if (!missing(lambdaw) & length(lambdaw) > 1) { # Multiple lambdaw given
+        lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))] # TODO (Check)
+        
         lambdaw_fit <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit 
                                  y = yss[which(raw.wt == 1)], 
                                  family = family, 
@@ -310,6 +314,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       # Choosing lambda based on user-input (min vs. 1SE) # NEW
       if (type_lambdaw == "min") {
         lambdaw <- lambdaw_fit$lambda.min
+        lambdaw <- 
       } else if (type_lambdaw == "1se") {
         lambdaw <- lambdaw_fit$lambda.1se
       }
