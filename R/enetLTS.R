@@ -295,7 +295,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       } else if (!missing(lambdaw) & length(lambdaw) == 1) { # Only single lambdaw given
         lambdaw <- lambdaw
       } else if (!missing(lambdaw) & length(lambdaw) > 1) { # Multiple lambdaw given
-        reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit 
+        reweighted_cv <- cva.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit 
                                  y = yss[which(raw.wt == 1)], 
                                  family = family, 
                                  lambda = lambdaw, 
@@ -312,7 +312,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         #lambdaw <- lambdaw_fit$lambda.min
         lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works 
       } else if (type_lambdaw == "1se") {
-        lambdaw <- lambdaw_fit$lambda.1se
+        #lambdaw <- lambdaw_fit$lambda.1se
         lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works
       }
       
