@@ -424,15 +424,28 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 beta = c(a00, raw.coefficients), 
                                 intercept = intercept, 
                                 del = del)
+      # This is probably the default:
       if (missing(lambdaw)) {
-        reweighted_cv <- cv.glmnet(x = x[which(raw.wt == 1), ], 
-                                  y = y[which(raw.wt == 1)], 
-                                  family = family, 
-                                  nfolds = 10, 
-                                  alpha = alphabest, 
-                                  standardize = FALSE, 
-                                  intercept = FALSE, 
-                                  type.measure = "deviance") #$lambda.min # removed check check NEW
+        #reweighted_cv <- cv.glmnet(x = x[which(raw.wt == 1), ], 
+        #                          y = y[which(raw.wt == 1)], 
+        #                          family = family, 
+        #                          nfolds = 10, 
+        #                          alpha = alphabest, 
+        #                          standardize = FALSE, 
+        #                          intercept = FALSE, 
+        #                          type.measure = "deviance") #$lambda.min # removed check check NEW
+        reweighted_cv <- cva.glmnet(x = x[which(raw.wt == 1), ], 
+                                    y = y[which(raw.wt == 1)], 
+                                    family = family, 
+                                    nfolds = 10, 
+                                    alpha = alphabest, 
+                                    standardize = FALSE, 
+                                    intercept = FALSE)
+        alphaw <- reweighted_cv$alpha[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]
+        print(paste0("The reweighted alpha is: ", alphaw))
+        
+        
+        
         
       }
       else if (!missing(lambdaw) & length(lambdaw) == 1) {
@@ -558,8 +571,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   intercept <- isTRUE(intercept)
   if (intercept) { 
     xx <- addIntercept(x = xx)
-  }
-  if (intercept) {
     coefficients <- c(a0, coefficients)
     raw.coefficients <- c(a00, raw.coefficients)
   } else {
