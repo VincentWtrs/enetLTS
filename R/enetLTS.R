@@ -543,12 +543,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       # NEW: lambda choosing part
       if (type_lambdaw == "min") {
         #lambdaw <- reweighted_cv$lambda.min
-        lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works
+        lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works
         
 
       } else if (type_lambdaw == "1se") {
         #lambdaw <- reweighted_cv$lambda.1se
-        lambdaw <- reweighted_cv$lambda[which.min(sapply(my_cva_glmnet$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) correct this, this is to see if it works
+        lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) correct this, this is to see if it works
         
       }
       
