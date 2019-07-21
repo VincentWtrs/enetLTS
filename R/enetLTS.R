@@ -37,6 +37,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   matchedCall <- match.call() # Use match.call() if there are a lot of optional arguments
   matchedCall[[1]] <- as.name("enetLTS")
   
+  # Loading libraries
+  library(glmnetUtils) # For cva.glmnet(): Tuning of alpha and lambda
+  
   family <- match.arg(family)
   type <- match.arg(type)
   xx <- addColnames(as.matrix(xx)) # Adds column names
@@ -270,7 +273,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         #                         standardize = FALSE, 
         #                         intercept = TRUE, # NEW: changed this to true
         #                         type.measure = "deviance")
-        reweighted_cv <- cva.glmnet(x = xss[which[raw.wt == 1], ],
+        reweighted_cv <- cva.glmnet(x = xss[which(raw.wt == 1), ],
                                     y = yss[which(raw.wt == 1)],
                                     family = family,
                                     nfolds = 5,
