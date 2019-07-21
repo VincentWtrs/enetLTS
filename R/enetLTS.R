@@ -260,9 +260,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       ### REWEIGHTING STEP
       ## Tuning lambdaw
       # Case: no given lambdaw (Default)
-      print("I am trying to print lambdaw")
-      print(lambdaw)
-      
       if (missing(lambdaw)) {
         print("We are here, where I will do the cva.glmnet")
          #reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit
