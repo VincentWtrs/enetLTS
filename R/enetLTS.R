@@ -257,8 +257,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       xss <- sclw$xnor 
       yss <- sclw$ycen
       
-      # Tuning lambdaw (reweighted lambda)
-      if (missing(lambdaw)) { # Case: no lambdaw given (DEFAULT)
+      ### REWEIGHTING STEP
+      ## Tuning lambdaw
+      # Case: no given lambdaw (Default)
+      if (missing(lambdaw)) {
          #reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit
         #                         y = yss[which(raw.wt == 1)], 
         #                         family = family, 
@@ -273,6 +275,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                     nfolds = 5,
                                     standardize = FALSE,
                                     intercept = TRUE)
+        
+        # TEMP: DEBUGGING PURPOSES
+        coef(reweighted_cv)
         
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
@@ -617,8 +622,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     objective <- h * ((1/2) * mean((yy[indexbest] - xx[indexbest, ] %*% coefficients)^2) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
   }
   if (intercept) {
-    coefficients <- coefficients[-1]
-    raw.coefficients <- raw.coefficients[-1]
+    coefficients <- coefficients[-1] # Removing first element
+    raw.coefficients <- raw.coefficients[-1]  # Removing first element
   } else {
     coefficients <- coefficients
     raw.coefficients <- raw.coefficients
