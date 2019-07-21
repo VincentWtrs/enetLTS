@@ -228,7 +228,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     }
     
     ## Case: Binomial
-    # Intercept handling
+    # Binomial: Intercept handling
     if (family == "binomial") {
       if (isFALSE(intercept)) {
         a00 <- 0 # NEW: changed this from weird a00 <- if (intercept == FALSE) {0} style of notation
@@ -237,7 +237,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         a00 <- fit$a0 # NEW: I think this is the way
       }
       
-      # Extracting raw results
+      # Binomial: Extracting raw results
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # TO DO Does this actually hold for logit??
       beta_with_int <- coef(fit) # NEW # SOMETHING IS WRONG HERE! ######################################## # TO DO: still wrong? Don't think so
       #raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta))) # OLD
@@ -248,7 +248,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 intercept = intercept, 
                                 del = del)
       
-      # Normalizing using outlier-free data (raw.wt == 1) # TO DO: is raw.wt different from best index?
+      # Again: Normalizing using outlier-free data (raw.wt == 1) # TODO: is raw.wt different from best index?
       sclw <- prepara(x = xx, 
                       y = yy, 
                       family = family, 
@@ -261,6 +261,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       ## Tuning lambdaw
       # Case: no given lambdaw (Default)
       if (missing(lambdaw)) {
+        print("We are here, where I will do the cva.glmnet")
          #reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit
         #                         y = yss[which(raw.wt == 1)], 
         #                         family = family, 
@@ -277,7 +278,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                     intercept = TRUE)
         
         # TEMP: DEBUGGING PURPOSES
-        coef(reweighted_cv)
+        print(coef(reweighted_cv))
         
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
