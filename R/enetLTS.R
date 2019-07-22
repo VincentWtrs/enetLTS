@@ -213,15 +213,15 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     xs <- scl$xnor # Normalized X
     ys <- scl$ycen # Centered y (not for binomial, confusing)
     
-    # Fitting Case: Binomial (and scaling TRUE) 
+    # Fitting: Case: Binomial (and scaling TRUE) 
     if (family == "binomial") {
       fit <- glmnet(x = xs[indexbest, ],
                     y = ys[indexbest, ],
                     family = "binomial",
-                    alpha = alphabest,
-                    lambda = lambdabest,
-                    standardize = FALSE, # Because already done
-                    intercept = TRUE) # Because in logit standardize and intercept don't interact in the same way 
+                    alpha = alphabest,  # With the tuned alpha
+                    lambda = lambdabest,  # ... and the tuned lambda
+                    standardize = FALSE, # Because already done in the prepara case (we are providing y standardized and x standardized)
+                    intercept = TRUE) # Because only for linear models the standardization makes the regression line go through the origin, not true for GLMs in general
     
     # Case: Gaussian (and scaling TRUE)
     } else if (family == "gaussian") {
@@ -243,16 +243,26 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       } else {
         #a00 <- drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx)) # NEW: same # THIS WOULD MAKE SENSE IN LINEAR CASES
         a00 <- fit$a0 # NEW: I think this is the way (a0 is the way a glmnet object can have its intercept accessed)
+        # NOTE: This only works if the model is fitted with a single lambda otherwise $a0 will give a vector of intercepts
       }
       
-      # Extracting coefficients
+      # Extracting coefficients from final fit (non-reweighted)
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # This holds for all GLMs, invariance principle
-      beta_with_int <- coef(fit) # TODO (Check)
+      beta_with_int <- coef(fit, s = lambdabest) # Adding s = lambdabest as redundancy, if no lambdabest would be supplied to glmnet, it would be able to display it for all lambdas
       #raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta))) # OLD
+      
+      # TODO REMOVE DEBUG
+      print("I am printing here the intercept to check if they are the same, USING coef()[0]")
+      print(coef(fit, s = lambdabest)[0])
+      
+      print("I am printing here the intercept to check if they are the same, USING object$a0 (printing a00)")
+      print(a00)
+      
       raw.residuals <- -(ys * cbind(1, xs) %*% beta_with_int) + log(1 + exp(cbind(1, xs) %*% beta_with_int)) # NEW: cbind(1, xs) and beta_with_int
+      # NOTE: This shoulb be the formula of the residuals
       raw.wt <- weight.binomial(x = xx, 
                                 y = yy, 
-                                beta = c(a00, raw.coefficients), 
+                                beta = c(a00, raw.coefficients),  # Or beta_with_int
                                 intercept = intercept, 
                                 del = del)
       
