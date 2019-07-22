@@ -248,7 +248,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       # Extracting coefficients from final fit (non-reweighted)
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # This holds for all GLMs, invariance principle
-      beta_with_int <- ás.vector(coef(fit, s = lambdabest)) # Adding s = lambdabest as redundancy, if no lambdabest would be supplied to glmnet, it would be able to display it for all lambdas
+      beta_with_int <- as.vector(coef(fit, s = lambdabest)) # Adding s = lambdabest as redundancy, if no lambdabest would be supplied to glmnet, it would be able to display it for all lambdas
       #raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta))) # OLD
       
       # TODO REMOVE DEBUG
