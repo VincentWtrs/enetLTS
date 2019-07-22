@@ -199,9 +199,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     evalCritCV <- CVresults$evalCrit
   }
   
-  ### RESCALING STEP (Theoretically we should be in an outlier-free world now!)
-  # Nonrobust scaling based on the outlier-free set
-  if (isTRUE(scal)) { # TO DO: WHY IS THIS DONE?
+  #### FINAL FITTING OF THE MODEL USING THE OPTIMAL PARAMETERS (NON-REWEIGHTED FIT)
+  ### Nonrobust scaling based on the outlier-free set
+  ## Case: Scaling TRUE
+  if (isTRUE(scal)) {
+    
+    # Scaling using the best index 'indexbest'
     scl <- prepara(x = xx, 
                    y = yy, 
                    family = family, 
@@ -210,39 +213,41 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     xs <- scl$xnor # Normalized X
     ys <- scl$ycen # Centered y (not for binomial, confusing)
     
-    # Fitting glmnet on best subset
-    ## NEW: branch based on binomial
+    # Fitting Case: Binomial (and scaling TRUE) 
     if (family == "binomial") {
       fit <- glmnet(x = xs[indexbest, ],
                     y = ys[indexbest, ],
-                    family = family,
+                    family = "binomial",
                     alpha = alphabest,
                     lambda = lambdabest,
                     standardize = FALSE, # Because already done
                     intercept = TRUE) # Because in logit standardize and intercept don't interact in the same way 
+    
+    # Case: Gaussian (and scaling TRUE)
     } else if (family == "gaussian") {
       fit <- glmnet(x = xs[indexbest, ], 
                     y = ys[indexbest, ], 
-                    family = family, 
+                    family = "gaussian", 
                     alpha = alphabest, 
                     lambda = lambdabest, 
                     standardize = FALSE, # Because already done
-                    intercept = FALSE) 
+                    intercept = FALSE)  # FALSE becasue for standardized data, a linear model goes through the origin
     }
     
+    #### Results handling of final fit (non-reweighted)
+    ### Intercept Handling
     ## Case: Binomial
-    # Binomial: Intercept handling
     if (family == "binomial") {
       if (isFALSE(intercept)) {
         a00 <- 0 # NEW: changed this from weird a00 <- if (intercept == FALSE) {0} style of notation
       } else {
-        #a00 <- drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx)) # NEW: same
-        a00 <- fit$a0 # NEW: I think this is the way
+        #a00 <- drop(fit$a0 - as.vector(as.matrix(fit$beta)) %*% (scl$mux / scl$sigx)) # NEW: same # THIS WOULD MAKE SENSE IN LINEAR CASES
+        a00 <- fit$a0 # NEW: I think this is the way (a0 is the way a glmnet object can have its intercept accessed)
       }
       
-      # Binomial: Extracting raw results
-      raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # TO DO Does this actually hold for logit??
-      beta_with_int <- coef(fit) # NEW # SOMETHING IS WRONG HERE! ######################################## # TO DO: still wrong? Don't think so
+      # Extracting coefficients
+      raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # This holds for all GLMs, invariance principle
+      beta_with_int <- coef(fit) # TODO (Check)
       #raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta))) # OLD
       raw.residuals <- -(ys * cbind(1, xs) %*% beta_with_int) + log(1 + exp(cbind(1, xs) %*% beta_with_int)) # NEW: cbind(1, xs) and beta_with_int
       raw.wt <- weight.binomial(x = xx, 
@@ -251,6 +256,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                 intercept = intercept, 
                                 del = del)
       
+      ### REWEIGHTING STEP
       # Again: Normalizing using outlier-free data (raw.wt == 1) # TODO: is raw.wt different from best index?
       sclw <- prepara(x = xx, 
                       y = yy, 
@@ -311,7 +317,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                  family = family, 
                                  lambda = lambdaw, 
                                  nfolds = 5, 
-                                 alpha = alphabest, 
+                                 #alpha = alphabest, # TODO: Check this
                                  standardize = FALSE, 
                                  intercept = TRUE, # NEW: changed to this to true 
                                  type.measure = "deviance") # NEW: changed from "MSE" to "deviance" for the Gaussian case it is the same anyways
@@ -457,7 +463,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                     y = y[which(raw.wt == 1)], 
                                     family = family, 
                                     nfolds = 10, 
-                                    #alpha = alphabest, 
+                                    #alpha = alphabest, # TODO (Check)
                                     standardize = FALSE, 
                                     intercept = FALSE)
         alphaw <- reweighted_cv$alpha[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]
