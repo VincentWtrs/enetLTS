@@ -253,7 +253,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       # TODO REMOVE DEBUG
       print("I am printing here the intercept to check if they are the same, USING coef()[0]")
-      print(as.vector(coef(fit, s = lambdabest))[0])
+      print(as.vector(coef(fit, s = lambdabest)))
       
       print("I am printing here the intercept to check if they are the same, USING object$a0 (printing a00)")
       print(a00)
