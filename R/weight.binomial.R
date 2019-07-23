@@ -1,6 +1,6 @@
 weight.binomial <- function(x, y, beta, intercept, del){
-  if(intercept == TRUE){
-    pi <- exp(cbind(1,x) %*% beta)/(1 + exp(cbind(1, x) %*% beta))
+  if(intercept) {
+    pi <- exp(cbind(1, x) %*% beta)/(1 + exp(cbind(1, x) %*% beta))
     res <- (y - pi) / sqrt(pi*(1-pi))
   } else{
     pi <- exp(x %*% beta[-1])/(1 + exp(x %*% beta[-1]))
