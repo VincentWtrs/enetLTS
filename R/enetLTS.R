@@ -336,6 +336,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       }
       
       # Fitting using optimal lambdaw (reweighted!)
+      print("alphabest:") # TODO REMOVE
+      print(alphabest) # TODO REMVOE
+      print("lambdaw:") # TODO REMOVE
+      print(lambdaw) # TODO REMOVE
       fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
                      y = yss[which(raw.wt == 1)], 
                      family = family, 
