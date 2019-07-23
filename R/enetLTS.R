@@ -248,15 +248,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       # Extracting coefficients from final fit (non-reweighted)
       raw.coefficients <- drop(as.matrix(fit$beta) / scl$sigx) # This holds for all GLMs, invariance principle
-      beta_with_int <- as.vector(coef(fit, s = lambdabest)) # Adding s = lambdabest as redundancy, if no lambdabest would be supplied to glmnet, it would be able to display it for all lambdas
+      beta_with_int <- drop(as.matrix((coef(fit, s = lambdabest)))) # Adding s = lambdabest as redundancy, if no lambdabest would be supplied to glmnet, it would be able to display it for all lambdas
+      # Note calling coef on a glmnet object will give those dcg sparse matrices. By forcing to matrix and dropping unnecessary dimensions we get a named vector
       #raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta))) # OLD
-      
-      # TODO REMOVE DEBUG
-      print("I am printing here the intercept to check if they are the same, USING coef()[0]")
-      print(as.vector(coef(fit, s = lambdabest)))
-      
-      print("I am printing here the intercept to check if they are the same, USING object$a0 (printing a00)")
-      print(a00)
       
       raw.residuals <- -(ys * cbind(1, xs) %*% beta_with_int) + log(1 + exp(cbind(1, xs) %*% beta_with_int)) # NEW: cbind(1, xs) and beta_with_int
       # NOTE: This shoulb be the formula of the residuals
@@ -295,9 +289,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                     nfolds = 5,
                                     standardize = FALSE,
                                     intercept = TRUE)
-        
-        # TEMP: DEBUGGING PURPOSES
-        print(coef(reweighted_cv))
+        print("I am trying to pring the reweighted_cv object")
+        print(reweighted_cv)
         
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
