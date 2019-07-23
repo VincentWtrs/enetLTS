@@ -354,7 +354,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         a0 <- fitw$a0
       }
       
+      print("Structure of coefficients:") # TODO REMOVE
+      print(str(coefficients)) # # TODO REMOVE
+      print("Structure of a0:") # # TODO REMOVE
+      print(str(a0)) # TODO REMOVE
+      
       coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
+      
       print("Calculated coefs")  # TODO REMOVE
       wgt <- weight.binomial(x = xx, 
                              y = yy, 
