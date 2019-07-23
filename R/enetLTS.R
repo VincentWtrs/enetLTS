@@ -253,7 +253,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       #raw.residuals <- -(ys * xs %*% as.matrix(fit$beta)) + log(1 + exp(xs %*% as.matrix(fit$beta))) # OLD
       
       raw.residuals <- -(ys * cbind(1, xs) %*% beta_with_int) + log(1 + exp(cbind(1, xs) %*% beta_with_int)) # NEW: cbind(1, xs) and beta_with_int
-      # NOTE: This shoulb be the formula of the residuals
+      # NOTE: This should be the formula of the residuals
       raw.wt <- weight.binomial(x = xx, 
                                 y = yy, 
                                 beta = c(a00, raw.coefficients),  # Or beta_with_int
@@ -289,9 +289,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                     nfolds = 5,
                                     standardize = FALSE,
                                     intercept = TRUE)
-        print("I am trying to pring the reweighted_cv object")
-        print(reweighted_cv)
-        
+
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
         # Maybe extract the used lambdaw also
@@ -316,19 +314,20 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         # Case: Multiple lambdaws given by user (less unlikely)
       } else if (!missing(lambdaw) & length(lambdaw) > 1) { # Multiple lambdaw given
         reweighted_cv <- cva.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit 
-                                 y = yss[which(raw.wt == 1)], 
-                                 family = family, 
-                                 lambda = lambdaw, 
-                                 nfolds = 5, 
-                                 #alpha = alphabest, # TODO: Check this
-                                 standardize = FALSE, 
-                                 intercept = TRUE, # NEW: changed to this to true 
-                                 type.measure = "deviance") # NEW: changed from "MSE" to "deviance" for the Gaussian case it is the same anyways
+                                    y = yss[which(raw.wt == 1)], 
+                                    family = family, 
+                                    lambda = lambdaw, 
+                                    nfolds = 5, 
+                                    #alpha = alphabest, # TODO: Check this
+                                    standardize = FALSE, 
+                                    intercept = TRUE, # NEW: changed to this to true 
+                                    type.measure = "deviance") # NEW: changed from "MSE" to "deviance" for the Gaussian case it is the same anyways
         
       }
       
       # Choosing lambda based on user-input (min vs. 1SE) # NEW
       if (type_lambdaw == "min") {
+        print("Extracting the optimal lambdaw from cva.glmnet") # TODO: REMOVE
         #lambdaw <- lambdaw_fit$lambda.min
         lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works 
       } else if (type_lambdaw == "1se") {
@@ -344,6 +343,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      lambda = lambdaw, 
                      standardize = FALSE, 
                      intercept = TRUE) # NEW: changed this to true!
+      # TODO REMOVE
+      print("I am past fitting the fitw object")
       
       # Intercept handling
       if (isFALSE(intercept)) {
