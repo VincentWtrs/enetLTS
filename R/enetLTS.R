@@ -322,7 +322,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                     standardize = FALSE, 
                                     intercept = TRUE, # NEW: changed to this to true 
                                     type.measure = "deviance") # NEW: changed from "MSE" to "deviance" for the Gaussian case it is the same anyways
-        
+      # TODO REMOVE
+      return(reweighted_cv)
       }
       
       # Choosing lambda based on user-input (min vs. 1SE) # NEW
