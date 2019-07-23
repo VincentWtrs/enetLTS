@@ -353,13 +353,18 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         #a0 <- drop(fitw$a0 - as.vector(as.matrix(fitw$beta)) %*% (sclw$mux/sclw$sigx)) # NEW: REPLACED
         a0 <- fitw$a0
       }
+      
       coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
+      print("Calculated coefs")  # TODO REMOVE
       wgt <- weight.binomial(x = xx, 
                              y = yy, 
                              beta = c(a0, coefficients), 
                              intercept = intercept, 
                              del = del)
+      print("ran weight binomial here")  # TODO REMOVE
+      
       reweighted.residuals <- -(yy * cbind(1, xx) %*% c(a0, coefficients)) + log(1 + exp(cbind(1, xx) %*% c(a0, coefficients)))
+      print("Calculated reweighed resids")  # TODO REMoVE
       
       # Case: Gaussian
     } else if (family == "gaussian") {
