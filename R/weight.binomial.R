@@ -1,8 +1,8 @@
 weight.binomial <- function(x, y, beta, intercept, del){
   # TODO REMOVE DEBUG
   print(dim(cbind(1, x)))
-  print(beta)
-  print(head(x))
+  print(dim(beta))
+  print(head(x[, 1:8]))
   
   
   if(intercept) {
