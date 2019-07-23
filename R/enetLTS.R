@@ -289,8 +289,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                     nfolds = 5,
                                     standardize = FALSE,
                                     intercept = TRUE)
-        # TODO REMOVE
-        return(reweighted_cv)
+        
+        # Extracting the models best alpha index
+        alphaw_index <- which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))
+        
+        # Assigning as the new alphabest
+        alphabest <- reweighted_cv$alpha[alphaw_index]
 
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
@@ -330,10 +334,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       if (type_lambdaw == "min") {
         print("Extracting the optimal lambdaw from cva.glmnet") # TODO: REMOVE
         #lambdaw <- lambdaw_fit$lambda.min
-        lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works 
+        #lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works 
+        lambdaw <- reweighted_cv$modlist[[alphaw_index]]$lambda.min # NEW!
       } else if (type_lambdaw == "1se") {
         #lambdaw <- lambdaw_fit$lambda.1se
-        lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works
+        #lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works
+        lambdaw <- reweighted_cv$modlist[[alphaw_index]]$lambda.1se
       }
       
       # Fitting using optimal lambdaw (reweighted!)
