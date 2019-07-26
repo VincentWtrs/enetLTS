@@ -22,20 +22,18 @@ ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
   
   
   # Checking if type is supported
-  if(type != "AIC"  &
-     type != "AIC_C" &
-     type != "BIC" &
-     type != "EBIC" &
-     type != "GIC" & 
-     type != "BIC_WLL" &
-     type != "BIC_FT" &
-     type != "HBIC" &
-     type != "BIC_HD" &
-     type != "EBIC2" &
-     type != "ERIC"){
-    stop("This type of information criterion not supported (or check for typos)")
-  }
-  
+  supported_ic = c("AIC",
+                   "AIC_C",
+                   "BIC",
+                   "EBIC",
+                   "GIC",
+                   "BIC_WLL",
+                   "BIC_FT",
+                   "HBIC",
+                   "BIC_HD",
+                   "EBIC2",
+                   "ERIC")
+
   # Extracting parameters
   nobs <- model$nobs
   
