@@ -126,8 +126,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                     normalize = scal, 
                     intercept = intercept)
     lambdas <- seq(l00, 0, by = -0.025 * l00) # DECREASING SEQUENCE (HIGH REGULARIZATION FIRST) # TO DO: CHECK PROBABLY MORE LOGIC TO DO OTHER WAY AROUND TO GET OUTLIERS SINCE OTHERWISE THEY WILL BE HIDDEN IN THE SPAGHETTI (WARM START SEQUENCE) WHERE THE DIMENSIONALITY COLLAPSES AND THE OUTLIERS WILL NOT BE FOUND ANWAY...
-    print("Sorting lambdas decreasingly: NEW FEATURE, seems more logical ")
-    lambdas <- sort(lambdas, decreasing = FALSE) # NEW: Sorting INCREASING 
+    #lambdas <- sort(lambdas, decreasing = FALSE) # NEW: Sorting INCREASING 
+    # TODO (Seeing if keeping in original order fixes the problems)
   }
   
   ## Data Preparation: robust centering and scaling
