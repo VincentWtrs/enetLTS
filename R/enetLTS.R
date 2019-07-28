@@ -707,7 +707,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    classsize = ntab, 
                    inputs = inputs, 
                    indexall = indexall, 
-                   call = sys.call())
+                   call = sys.call(),
+                   alphas = alphas,  # NEW: Added the alphas that were used
+                   lambdas = lambdas)  # NEW: Added the lambdas that were used
     
   } else if (family == "gaussian"){
     output <- list(objective = objective, 
@@ -731,7 +733,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    rmse = reweighted.rmse, 
                    inputs = inputs, 
                    indexall = indexall, 
-                   call = sys.call())
+                   call = sys.call(),
+                   alphas = alphas,  # NEW: Added the alphas that were used
+                   lambdas = lambdas)  # NEW: Added the lambdas that were used
   }
   class(output) <- "enetLTS"
   output$call <- matchedCall
