@@ -1,6 +1,6 @@
-ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
+ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25){
   # This function calculates the PENALTY factor associated with information criteria (which then needs to be ADDED to loglik(= minus loss))
-
+  
   ## INPUTS:
   # glmnet_in: a model fitted through glmnet()
   # type: the sort of information criterion wanted
@@ -17,30 +17,35 @@ ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
   #  stop("The input for ic_penalty() should be a glmnet model")
   #}
   
-  # TODO (TEMP - REMOVE ME - DEBUG PURPOSES)
-  print("Hallowkes, soep met bokes")
-  
+  if(length(model$lambda) > 1) {
+    stop("The ic_penalty function cannot handle multiple lambdas at the moment!, please supply with a single lambda")
+  }
   
   # Checking if type is supported
-  supported_ic = c("AIC",
-                   "AIC_C",
-                   "BIC",
-                   "EBIC",
-                   "GIC",
-                   "BIC_WLL",
-                   "BIC_FT",
-                   "HBIC",
-                   "BIC_HD",
-                   "EBIC2",
-                   "ERIC")
-
+  if(type != "AIC"  &
+     type != "AIC_C" &
+     type != "BIC" &
+     type != "EBIC" &
+     type != "GIC" & 
+     type != "BIC_WLL" &
+     type != "BIC_FT" &
+     type != "HBIC" &
+     type != "BIC_HD" &
+     type != "EBIC2" &
+     type != "ERIC"){
+    stop("This type of information criterion not supported (or check for typos)")
+  }
+  
   # Extracting parameters
   nobs <- model$nobs
   
-  # Amount of parameters (p of the design matrix basically)
-  if(intercept == TRUE){
-    stop("IC with intercept currently not implemented yet")
+  # Checking if intercept is in the model
+  all(model$a0 == 0){
+    intercept <- FALSE
+  } else {
+    intercept <- TRUE
   }
+  
   if(intercept == FALSE){
     p <- length(coefficients(model)) - 1 # Because intercept is always returned (hence - 1)
   }
@@ -83,7 +88,7 @@ ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
   # HBIC: High-dimensional BIC
   if(type == "HBIC"){
     sigma <- 1.5 # Empirically well-performing ]1, 2]
-    if(sigma < 1){
+    if(sigma > 1){
       stop("Sigma is required to be > 1 following Wang & Zhu (2011)")
     }
     penalty <- (2 * sigma * df * log(p))/nobs
@@ -102,7 +107,7 @@ ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
     penalty <- (df * log(nobs) + 2 * df * sigma * log(p))/nobs
   }
   
-  # EBIC2: EBIC with tau(s_j) notation (proportionality to size of amount of models for a certain size)
+  # EBIC2: Alternative EBIC - Chen & Chen (2008)
   if(type == "EBIC2"){
     sigma <- EBIC_sigma # 0.25 good default
     penalty <- (df * log(nobs) + 2 * sigma * log(choose(p, nonzeros)))/nobs
@@ -121,6 +126,5 @@ ic_penalty <- function(type, model, X, alpha, intercept, EBIC_sigma = 0.25){
     # Alternatively: penalty <-  (2 * nu * df * log(nobs/lambda))/nobs
   }
   
-  # OUTPUT: Penalty
   return(penalty)
 }
