@@ -61,6 +61,14 @@ logit_df <- function(model, X, alpha = NULL, intercept, s = NULL){
 
   # Extracting the active subset
   active_set <- which(coefs != 0) # Nonzero coefs INDICES (Note they start from 1, not 0)
+  
+  # TODO (REMOVE: DEBUG)
+  print("the active set is:")
+  print(active_set)
+  
+  print("the dimension of X_active")
+  print(dim(X_active))
+  
   X_active <- X[, active_set] # X subsetted with above indices
   
   # Extracting predictions
