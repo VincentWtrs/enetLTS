@@ -68,7 +68,8 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL){
   df <- logit_df(model = model,
                  X = X,
                  alpha = alpha,
-                 intercept = intercept)
+                 intercept = intercept,
+                 s = lambda) # NEW
   
   # Amount of nonzeros
   nonzeros <- model$df
