@@ -1,4 +1,4 @@
-ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25){
+ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL){
   # This function calculates the PENALTY factor associated with information criteria (which then needs to be ADDED to loglik(= minus loss))
   
   ## INPUTS:
@@ -18,7 +18,21 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25){
   #}
   
   if(length(model$lambda) > 1) {
-    stop("The ic_penalty function cannot handle multiple lambdas at the moment!, please supply with a single lambda")
+    if(length(s) > 1){
+      stop("The ic_penalty function cannot handle multiple lambdas without supplying a single value for lambda through the 's' argument!")
+    }
+  }
+  
+  # If the model was a full path of regularization, but a single s (lambda value) was supplied
+  if(length(model$lambda) > 1) {
+    if(length(s) == 1) {
+      lambda <- s
+    }
+  }
+  
+  # If no s given, extract s from the model object
+  if(is.null(s)) {
+    lambda = model$lambda
   }
   
   # Checking if type is supported
@@ -47,7 +61,7 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25){
   }
   
   if(intercept == FALSE){
-    p <- length(coefficients(model)) - 1 # Because intercept is always returned (hence - 1)
+    p <- length(coefficients(model), s = s) - 1 # Because intercept is always returned (hence - 1)
   }
   
   # Calculating Degrees of Freedom (Effective DF!)
