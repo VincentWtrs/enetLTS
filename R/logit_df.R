@@ -1,4 +1,4 @@
-logit_df <- function(model, X, alpha = NULL, intercept){
+logit_df <- function(model, X, alpha = NULL, intercept, s = NULL){
   ### logit_df() FUNCTION: calculating the effective degrees of freedom in a potentially penalized logistic regression using hat matrix trace
   
   ## INPUTS
