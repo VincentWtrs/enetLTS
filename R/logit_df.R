@@ -17,6 +17,20 @@ logit_df <- function(model, X, alpha = NULL, intercept){
   # 3. IDEA to work with the intercept is to see in coefficients(model) is it's 0, if yes: no intercept fitted, becuase it's always unpenalized!
   # 4. I was afraid this might break down at the matrix inversion when |Active set| > n, but seems to be okay!
   
+  if(length(model$lambda) > 1){
+    if(is.null(s)){
+      stop("Multiple models were provided but no lambda (s) argument was given.")
+    }
+  }
+  
+  # Setting lambda <- s if given regularization path
+  if(length(model$lambda) > 1){
+    lambda <- s
+  }
+  if(length(model$lambda) == 1){
+    lambda <- model$lambda
+  }
+  
   # Trying to retrieve alpha if missing in function call
   if(missing(alpha)){
     if(is.numeric(model$call$alpha)){
@@ -65,7 +79,7 @@ logit_df <- function(model, X, alpha = NULL, intercept){
   ## Calculating Hat matrix (H)
   
   # Getting lambda
-  lambda <- model$lambda
+  #lambda <- model$lambda
     
   # Weight matrix W (diagonal), see GLM theory!
   W <- diag(p_hat * (1 - p_hat))
