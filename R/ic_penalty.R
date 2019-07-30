@@ -40,7 +40,7 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25){
   nobs <- model$nobs
   
   # Checking if intercept is in the model
-  all(model$a0 == 0){
+  if(all(model$a0 == 0)){
     intercept <- FALSE
   } else {
     intercept <- TRUE
