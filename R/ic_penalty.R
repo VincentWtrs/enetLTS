@@ -1,4 +1,4 @@
-ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL){
+ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, intercept = NULL){
   # This function calculates the PENALTY factor associated with information criteria (which then needs to be ADDED to loglik(= minus loss))
   
   ## INPUTS:
@@ -52,6 +52,21 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL){
   
   # Extracting parameters
   nobs <- model$nobs
+  
+  ## Intercept can be given to function but we will perform a check if thats consistent with what the model has been fitted on
+  # If an intercept is given with the function call
+  if(!is.null(intercept)){
+    if(!intercept) { # If intercept FALSE
+      if(any(model$a0 != 0)){ # If there is one not equal to 0
+        stop("There is a discrepancy between the function call to ic_penalty and the given model, since the model has a fitted intercept, while the function was called with intercept=FALSE")
+      }
+    }
+    if(intercept) { # If intercept TRUE
+      if(all(model$a0 == 0)) {
+        stop("There is a discrepancy between the function call to ic_penalty and the given model, since the model appears to not have any fitted intercept but the function call states intercept=TRUE")
+      }
+    }
+  }
   
   # Checking if intercept is in the model
   if(all(model$a0 == 0)){
