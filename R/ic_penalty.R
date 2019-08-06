@@ -35,6 +35,9 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
     lambda = model$lambda
   }
   
+  print("printing lambda from within ic_penalty")
+  print(lambda)
+  
   # Checking if type is supported
   if(type != "AIC"  &
      type != "AIC_C" &
