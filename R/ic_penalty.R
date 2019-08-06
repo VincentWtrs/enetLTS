@@ -85,7 +85,7 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
   df <- logit_df(model = model,
                   X = X,
                   alpha = alpha,
-                  s = lambda) # NEW
+                  lambda = lambda) # NEW
   
   # Amount of nonzeros
   nonzeros <- sum(coefficients(model, s = lambda) != 0)
