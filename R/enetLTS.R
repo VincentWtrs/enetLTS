@@ -526,7 +526,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       }
       
       # Fitting using optimal lambdaw
-      
       fitw <- glmnet(x = x[which(raw.wt == 1), ], 
                      y = y[which(raw.wt == 1)], 
                      family = family, 
