@@ -82,7 +82,7 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
     p <- length(coefficients(model, s = s)) - 1 # Because intercept is always returned when using coefficients() (hence - 1)
   }
   # Calculating the effective degrees of freedom
-  df <- logit_df2(model = model,
+  df <- logit_df(model = model,
                   X = X,
                   alpha = alpha,
                   s = lambda) # NEW
