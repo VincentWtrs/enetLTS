@@ -63,16 +63,14 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL){
   if(intercept == FALSE){
     p <- length(coefficients(model), s = s) - 1 # Because intercept is always returned (hence - 1)
   }
-  
-  # Calculating Degrees of Freedom (Effective DF!)
-  df <- logit_df(model = model,
-                 X = X,
-                 alpha = alpha,
-                 intercept = intercept,
-                 s = lambda) # NEW
+  # Calculating the effective degrees of freedom
+  df <- logit_df2(model = model,
+                  X = X,
+                  alpha = alpha,
+                  s = lambda) # NEW
   
   # Amount of nonzeros
-  nonzeros <- model$df
+  nonzeros <- sum(coefficients(model, s = lambda) != 0)
   
   ## Calculating the information criteria penalty
   # Akaike Information Criterion (AIC)
@@ -140,7 +138,6 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL){
     penalty <- (2 * nu * nonzeros * log(nobs/lambda))/nobs
     # Alternatively: penalty <-  (2 * nu * df * log(nobs/lambda))/nobs
   }
-  
   
   return(penalty)
 }
