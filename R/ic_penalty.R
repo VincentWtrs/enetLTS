@@ -141,5 +141,6 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL){
     # Alternatively: penalty <-  (2 * nu * df * log(nobs/lambda))/nobs
   }
   
+  
   return(penalty)
 }
