@@ -228,7 +228,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         evalCritCV[[i]] <- CVresults_most[[i]]$evalCrit
         
         if (simulation_run) {
-          #return(CVresults)
+          return(CVresults) # NEW TODO
           output <- list(best = indexbest, 
                          #raw.wt = raw.wt, # ?
                          #wt = wgt, 
