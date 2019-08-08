@@ -2,7 +2,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                     lambdas, lambdaw, hsize = 0.75, intercept = TRUE, nsamp = 500, 
                     s1 = 10, nCsteps = 20, nfold = 5, seed = NULL, plot = TRUE, 
                     repl = 5, para = TRUE, ncores = 1, del = 0.0125, tol = -1e+06, 
-                    scal = TRUE, type = c("response", "class"), ic_type = NULL, type_lambdaw = "min", ic_type_reweighted = NULL, simulation_run = FALSE){
+                    scal = TRUE, type = c("response", "class"), ic_type = NULL, type_lambdaw = "min", ic_type_reweighted = NULL, simulation = FALSE){
   
   #### UPDATED VERSION ###
   # NEW: ic_type test test
