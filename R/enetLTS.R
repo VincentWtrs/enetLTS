@@ -2,7 +2,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                     lambdas, lambdaw, hsize = 0.75, intercept = TRUE, nsamp = 500, 
                     s1 = 10, nCsteps = 20, nfold = 5, seed = NULL, plot = TRUE, 
                     repl = 5, para = TRUE, ncores = 1, del = 0.0125, tol = -1e+06, 
-                    scal = TRUE, type = c("response", "class"), ic_type = NULL, type_lambdaw = "min", ic_type_reweighted = NULL){
+                    scal = TRUE, type = c("response", "class"), ic_type = NULL, type_lambdaw = "min", ic_type_reweighted = NULL, simulation_run = FALSE){
   
   #### UPDATED VERSION ###
   # NEW: ic_type test test
@@ -179,24 +179,83 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   # Case: bigger tuning grid
   if ((length(alphas) > 1) | (length(lambdas) > 1)) {
-    # NOTE: the results are called CV results can be from a IC search
-    CVresults <- cv.enetLTS(index = indexall, 
-                            xx = x, 
-                            yy = y, 
-                            family = family, 
-                            h = h, 
-                            alphas = alphas, 
-                            lambdas = lambdas, 
-                            nfold = nfold, 
-                            repl = repl, 
-                            ncores = ncores, 
-                            plot = plot, 
-                            ic_type = ic_type) # NEW: ic_type ## NEW(2): remove ic_type # NEW(3) Think we can remove this due to default NULL
-    # Gathering results from search
-    indexbest <- CVresults$indexbest
-    alphabest <- CVresults$alphaopt
-    lambdabest <- CVresults$lambdaopt
-    evalCritCV <- CVresults$evalCrit
+    if ((is.null(ic_type)) | (length(ic_type) == 1)) {
+      # NOTE: the results are called CV results can be from a IC search
+      CVresults <- cv.enetLTS(index = indexall, 
+                              xx = x, 
+                              yy = y, 
+                              family = family, 
+                              h = h, 
+                              alphas = alphas, 
+                              lambdas = lambdas, 
+                              nfold = nfold, 
+                              repl = repl, 
+                              ncores = ncores, 
+                              plot = plot, 
+                              ic_type = ic_type) # NEW: ic_type ## NEW(2): remove ic_type # NEW(3) Think we can remove this due to default NULL
+      # Gathering results from search
+      indexbest <- CVresults$indexbest
+      alphabest <- CVresults$alphaopt
+      lambdabest <- CVresults$lambdaopt
+      evalCritCV <- CVresults$evalCrit
+    } 
+    else if (length(ic_type) > 1) {
+      # Inits + names
+      CVresults_list <- vector("list", length = length(ic_type))
+      names(CVresults_list) <- ic_type
+      indexbest_list <- vector("list", length = length(ic_type))
+      names(indexbest_list) <- ic_type
+      alphabest_list <- vector("list", length = length(ic_type))
+      names(alphabest_list) <- ic_type
+      evalCritCV <- vector("list", length = length(ic_type))
+      names(evalCritCV) <- ic_type
+      for(i in 1:length(ic_type)){
+        ic_now <- ic_type[i] # Extract IC
+        CVresults[[i]] <- cv.enetLTS(index = indexall,
+                                     xx = x,
+                                     yy = y,
+                                     family = family,
+                                     alphas = alphas,
+                                     lambdas = lambdas,
+                                     nfold = nfold,
+                                     repl = repl,
+                                     ncores = ncores,
+                                     plot = plot,
+                                     ic_type = ic_now)
+        indexbest[[i]] <- CVresults_list[[i]]$indexbest
+        alphabest[[i]] <- CVresults_list[[i]]$alphaopt
+        lambdabest[[i]] <- CVresults_list[[i]]$lambdaopt
+        evalCritCV[[i]] <- CVresults_most[[i]]$evalCrit
+        
+        if (simulation_run) {
+          #return(CVresults)
+          output <- list(best = indexbest, 
+                         #raw.wt = raw.wt, # ?
+                         #wt = wgt, 
+                         #a00 = a00, 
+                         #raw.coefficients = raw.coefficients, 
+                         a0 = a0, 
+                         coefficients = coefficients, 
+                         alpha = alphabest, 
+                         lambda = lambdabest, 
+                         lambdaw = lambdaw, 
+                         num.nonzerocoef = num.nonzerocoef, 
+                         h = h, 
+                         raw.residuals = drop(raw.residuals), 
+                         residuals = drop(reweighted.residuals), 
+                         fitted.values = drop(fitted.values), 
+                         raw.fitted.values = drop(raw.fitted.values), 
+                         classnames = classnames, 
+                         classsize = ntab, 
+                         inputs = inputs, 
+                         indexall = indexall, 
+                         call = sys.call(),
+                         alphas = alphas,  # NEW: Added the alphas that were used
+                         lambdas = lambdas)  # NEW: Added the lambdas that were used
+          
+        }
+      }
+    }
   }
   
   #### FINAL FITTING OF THE MODEL USING THE OPTIMAL PARAMETERS (NON-REWEIGHTED FIT)
@@ -222,8 +281,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                     lambda = lambdabest,  # ... and the tuned lambda
                     standardize = FALSE, # Because already done in the prepara case (we are providing y standardized and x standardized)
                     intercept = TRUE) # Because only for linear models the standardization makes the regression line go through the origin, not true for GLMs in general
-    
-    # Case: Gaussian (and scaling TRUE)
+      
+      # Case: Gaussian (and scaling TRUE)
     } else if (family == "gaussian") {
       fit <- glmnet(x = xs[indexbest, ], 
                     y = ys[indexbest, ], 
@@ -275,7 +334,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       # Case: no given lambdaw (Default)
       if (missing(lambdaw)) {
         print("We are here, where I will do the cva.glmnet")
-         #reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit
+        #reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ], # NEW: changed name to lambdaw -> lambdaw_fit
         #                         y = yss[which(raw.wt == 1)], 
         #                         family = family, 
         #                         nfolds = 5, 
@@ -295,7 +354,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         
         # Assigning as the new alphabest
         alphabest <- reweighted_cv$alpha[alphaw_index]
-
+        
         # Note in case of no lambdaw given: it just uses the efficient algorithms!
         
         # Maybe extract the used lambdaw also
@@ -405,13 +464,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       if ((missing(lambdaw))) {
         reweighted_cv <- cv.glmnet(x = xss[which(raw.wt == 1), ],
-                                 y = yss[which(raw.wt == 1)], 
-                                 family = family, 
-                                 nfolds = 5, 
-                                 alpha = alphabest, 
-                                 standardize = FALSE, 
-                                 intercept = FALSE, 
-                                 type.measure = "mse") # NEW: REMOVED $lambda.min here because we extract it later anyways
+                                   y = yss[which(raw.wt == 1)], 
+                                   family = family, 
+                                   nfolds = 5, 
+                                   alpha = alphabest, 
+                                   standardize = FALSE, 
+                                   intercept = FALSE, 
+                                   type.measure = "mse") # NEW: REMOVED $lambda.min here because we extract it later anyways
       }
       else if (!missing(lambdaw) & length(lambdaw) == 1) {
         lambdaw <- lambdaw
@@ -556,13 +615,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       if (missing(lambdaw)) {
         reweighted_cv <- cv.glmnet(x = x[which(raw.wt == 1), ], 
-                                 y = y[which(raw.wt == 1)], 
-                                 family = family, 
-                                 nfolds = 5, 
-                                 alpha = alphabest, 
-                                 standardize = FALSE, 
-                                 intercept = FALSE, 
-                                 type.measure = "mse") # $lambda.min # NEW REMOVED
+                                   y = y[which(raw.wt == 1)], 
+                                   family = family, 
+                                   nfolds = 5, 
+                                   alpha = alphabest, 
+                                   standardize = FALSE, 
+                                   intercept = FALSE, 
+                                   type.measure = "mse") # $lambda.min # NEW REMOVED
         
       }
       else if (!missing(lambdaw) & length(lambdaw) == 1) {
@@ -570,14 +629,14 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       }
       else if (!missing(lambdaw) & length(lambdaw) > 1) {
         reweighted_cv <- cv.glmnet(x = x[which(raw.wt == 1), ], 
-                                 y = y[which(raw.wt == 1)], 
-                                 family = family, 
-                                 lambda = lambdaw, 
-                                 nfolds = 5, 
-                                 alpha = alphabest, 
-                                 standardize = FALSE, 
-                                 intercept = FALSE, 
-                                 type.measure = "mse")
+                                   y = y[which(raw.wt == 1)], 
+                                   family = family, 
+                                   lambda = lambdaw, 
+                                   nfolds = 5, 
+                                   alpha = alphabest, 
+                                   standardize = FALSE, 
+                                   intercept = FALSE, 
+                                   type.measure = "mse")
       }
       
       # NEW: lambda choosing part
@@ -585,7 +644,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         #lambdaw <- reweighted_cv$lambda.min
         lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) Correct, this is to see if it works
         
-
+        
       } else if (type_lambdaw == "1se") {
         #lambdaw <- reweighted_cv$lambda.1se
         lambdaw <- reweighted_cv$lambda[which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm)))]  # TODO (TEMP) correct this, this is to see if it works
