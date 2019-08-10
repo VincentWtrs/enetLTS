@@ -229,13 +229,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         alphabest[[i]] <- CVresults_list[[i]]$alphaopt
         lambdabest[[i]] <- CVresults_list[[i]]$lambdaopt
         evalCritCV[[i]] <- CVresults_most[[i]]$evalCrit
-      
       }
       
       if (simulation_run) {
         # TODO REMOVE
         print("I am just before the return statement now!")
-        return(CVresults) # NEW TODO
+        return(CVresults_list) # NEW TODO
       }
     }
   }
