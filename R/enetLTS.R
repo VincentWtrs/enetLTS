@@ -224,6 +224,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                           ncores = ncores,
                                           plot = plot,
                                           ic_type = ic_now)
+        print(CVresults_list[[i]]) # TEMP REMOVE ME TODO
         indexbest[[i]] <- CVresults_list[[i]]$indexbest
         alphabest[[i]] <- CVresults_list[[i]]$alphaopt
         lambdabest[[i]] <- CVresults_list[[i]]$lambdaopt
@@ -235,9 +236,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         # TODO REMOVE
         print("I am just before the return statement now!")
         return(CVresults) # NEW TODO
-        
       }
-      
     }
   }
   
