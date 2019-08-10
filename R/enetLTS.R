@@ -200,6 +200,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       evalCritCV <- CVresults$evalCrit
     } 
     else if (length(ic_type) > 1) {
+      print("I am in the multiple ic_type case! NOICE")
       # Inits + names
       CVresults_list <- vector("list", length = length(ic_type))
       names(CVresults_list) <- ic_type
