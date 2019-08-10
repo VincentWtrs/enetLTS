@@ -227,11 +227,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         return(CVresults_list[[i]]) # TODO REMOVE ME
         print(CVresults_list[[i]]) # TEMP REMOVE ME TODO
         print('I am just before the indexbest extraction') # TODO REMOVE
-        indexbest[[i]] <- CVresults_list[[i]]$indexbest
+        indexbest_list[[i]] <- CVresults_list[[i]]$indexbest
         print("I got past the indexbest extraction") # TODO REMOVE
-        alphabest[[i]] <- CVresults_list[[i]]$alphaopt
-        lambdabest[[i]] <- CVresults_list[[i]]$lambdaopt
-        evalCritCV[[i]] <- CVresults_most[[i]]$evalCrit
+        alphabest_list[[i]] <- CVresults_list[[i]]$alphaopt
+        lambdabest_list[[i]] <- CVresults_list[[i]]$lambdaopt
+        evalCritCV_list[[i]] <- CVresults_most[[i]]$evalCrit
       }
       
       if (simulation_run) {
