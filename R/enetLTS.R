@@ -225,8 +225,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                           plot = plot,
                                           ic_type = ic_now)
         print(CVresults_list[[i]]) # TEMP REMOVE ME TODO
+        print('I am just before the indexbest extraction') # TODO REMOVE
         indexbest[[i]] <- CVresults_list[[i]]$indexbest
-        print("I got past the indexbest extraction") # TODO remove
+        print("I got past the indexbest extraction") # TODO REMOVE
         alphabest[[i]] <- CVresults_list[[i]]$alphaopt
         lambdabest[[i]] <- CVresults_list[[i]]$lambdaopt
         evalCritCV[[i]] <- CVresults_most[[i]]$evalCrit
