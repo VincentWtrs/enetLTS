@@ -210,8 +210,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       names(alphabest_list) <- ic_type
       lambdabest_list <- vector("list", length = length(ic_type))
       names(lambdabest_list) <- ic_type
-      evalCritCV <- vector("list", length = length(ic_type))
-      names(evalCritCV) <- ic_type
+      evalCritCV_list <- vector("list", length = length(ic_type))
+      names(evalCritCV_list) <- ic_type
       for(i in 1:length(ic_type)) {
         print(paste0("Currently running for: ", ic_type[i]))
         ic_now <- ic_type[i] # Extract IC
