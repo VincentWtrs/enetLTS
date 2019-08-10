@@ -210,7 +210,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       names(alphabest_list) <- ic_type
       evalCritCV <- vector("list", length = length(ic_type))
       names(evalCritCV) <- ic_type
-      for(i in 1:length(ic_type)){
+      for(i in 1:length(ic_type)) {
         print(paste0("Currently running for: ", ic_type[i]))
         ic_now <- ic_type[i] # Extract IC
         CVresults_list[[i]] <- cv.enetLTS(index = indexall,
@@ -228,14 +228,16 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         alphabest[[i]] <- CVresults_list[[i]]$alphaopt
         lambdabest[[i]] <- CVresults_list[[i]]$lambdaopt
         evalCritCV[[i]] <- CVresults_most[[i]]$evalCrit
-        
-        if (simulation_run) {
-          # TODO REMOVE
-          print("I am just before the return statement now!")
-          return(CVresults) # NEW TODO
-          
-        }
+      
       }
+      
+      if (simulation_run) {
+        # TODO REMOVE
+        print("I am just before the return statement now!")
+        return(CVresults) # NEW TODO
+        
+      }
+      
     }
   }
   
