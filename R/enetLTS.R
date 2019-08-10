@@ -237,7 +237,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         print("I have finished the first IC calculations")
       }
       
-      if (simulation_run) {
+      if (simulation) {
         # TODO REMOVE
         print("I am just before the return statement now!")
         return(CVresults_list) # NEW TODO
