@@ -229,30 +229,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         evalCritCV[[i]] <- CVresults_most[[i]]$evalCrit
         
         if (simulation_run) {
+          # TODO REMOVE
+          print("I am just before the return statement now!")
           return(CVresults) # NEW TODO
-          output <- list(best = indexbest, 
-                         #raw.wt = raw.wt, # ?
-                         #wt = wgt, 
-                         #a00 = a00, 
-                         #raw.coefficients = raw.coefficients, 
-                         a0 = a0, 
-                         coefficients = coefficients, 
-                         alpha = alphabest, 
-                         lambda = lambdabest, 
-                         lambdaw = lambdaw, 
-                         num.nonzerocoef = num.nonzerocoef, 
-                         h = h, 
-                         raw.residuals = drop(raw.residuals), 
-                         residuals = drop(reweighted.residuals), 
-                         fitted.values = drop(fitted.values), 
-                         raw.fitted.values = drop(raw.fitted.values), 
-                         classnames = classnames, 
-                         classsize = ntab, 
-                         inputs = inputs, 
-                         indexall = indexall, 
-                         call = sys.call(),
-                         alphas = alphas,  # NEW: Added the alphas that were used
-                         lambdas = lambdas)  # NEW: Added the lambdas that were used
           
         }
       }
