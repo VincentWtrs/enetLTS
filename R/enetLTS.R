@@ -245,10 +245,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     }
   }
   
-  
-  
   ### STEP: REWEIGHTING AND REFITTING
-  # Running function
+  ## Running function
+  # Case for missing lambdaw (call function without)
   if(missing(lambdaw)){
     enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
                                                                yy = yy,
@@ -261,6 +260,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                                intercept = intercept,
                                                                scal = scal,
                                                                type_lambdaw = type_lambdaw)
+  # Case for non-missing lambdaw
   } else {
     enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
                                                                yy = yy,
@@ -276,7 +276,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   }
 
   ## Extracting results
-  # Common for both families
+  # Common for both families (Gaussian, Binomial)
   raw.wt <- enetLTS_reweighting_refit$raw.wt
   wgt <- enetLTS_reweighting_refit$wgt
   a00 <- enetLTS_reweighting_refit$a00
@@ -298,39 +298,53 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     reweighted.rmse <- enetLTS_reweighting_refit.reweighted.rmse
   }
   
-  # Plotting CV Plot 
+  ## Plotting CV Plot 
   plot(reweighted_cv)
   print(paste0("The optimal reweighted lambda is: ", lambdaw_best)) # Printing chosen lambdaw
   print(paste0("The optimal alpha used in the reweighting step is: ", alphaw_best)) # Printing chosen alpha
   # Note: I put this here at the end because otherwise I would need to repeat the statement multiple times
   
-  ## PREPARING OUTPUT
+  ## PREPARING OUTPUT (Already given in the reweighting step...)
   # Counting number of nonzero coefficients
   #num.nonzerocoef <- sum(coefficients != 0)
   
-  # Adding intercept
+  ## Intercept handling
   intercept <- isTRUE(intercept)
   if (intercept) { 
-    xx <- addIntercept(x = xx)
+    xx <- addIntercept(x = xx) # Adding a column of 1s
     coefficients <- c(a0, coefficients)
     raw.coefficients <- c(a00, raw.coefficients)
-  } else {
+  } else if (!intercept) {
     coefficients <- coefficients
     raw.coefficients <- raw.coefficients
   }
+  
+  ### Fitted values BINOMIAL (NEW!)
   if (family == "binomial") {
-    u <- xx %*% raw.coefficients # XBeta?
-    raw.fitted.values <- if (type == "class") {
-      ifelse(test = u <= 0.5, yes = 0, no = 1)
-    } else if (type == "response"){
-      1/(1 + exp(-u))
-    }
+    ## RAW FIT
+    # Raw linear predictor (eta raw)
+    u <- xx %*% raw.coefficients
+    
+    # Raw fitted (predicted) probabilities
+    raw.fitted.values <- 1/(1 + exp(-u))
+    
+    # Raw fitted (predicted) classes based on 0.5 cutoff
+    raw.fitted.values.class <- ifelse(test = fitted.values > 0.5,
+                                  yes = 1,
+                                  no = 0)
+    
+    ## REWEIGHTED FIT
+    # Reweighted linear predictor (eta reweighted)
     uu <- xx %*% coefficients
-    fitted.values <- if (type == "class") {
-      ifelse(test = uu <= 0.5, yes = 0, no = 1)
-    } else if (type == "response") {
-      1/(1 + exp(-uu))
-    }
+    
+    # Reweighted fitted (predicted) probabilities
+    fitted.values <- 1/(1 + exp(-uu))
+    
+    # Reweighted fitted (predicted) classes based on 0.5 cutoff
+    fitted.values.class <- ifelse(test = fitted.values > 0.5,
+                                  yes = 1,
+                                  no = 0)
+    ### Fitted values GAUSSIAN
   } else if (family == "gaussian") {
     raw.fitted.values <- xx %*% raw.coefficients
     fitted.values <- xx %*% coefficients
@@ -389,7 +403,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    raw.residuals = drop(raw.residuals), 
                    residuals = drop(reweighted.residuals), 
                    fitted.values = drop(fitted.values), 
+                   fitted.values.class = drop(fitted.values.class), # NEW
                    raw.fitted.values = drop(raw.fitted.values), 
+                   raw.fitted.Values.class = drop(raw.fitted.Values.class), # NEW
                    classnames = classnames, 
                    classsize = ntab, 
                    inputs = inputs, 
