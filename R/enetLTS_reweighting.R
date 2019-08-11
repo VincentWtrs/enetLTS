@@ -191,7 +191,7 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
       ## STEP 8a. INTERCEPT HANDLING OF REWEIGHTED FIT
       if (isFALSE(intercept)) {
         a0 <- 0
-      } else (isTRUE(intercept)) {
+      } else if (isTRUE(intercept)) {
         a0 <- fitw$a0  # Just get it from the model object
       }
       
