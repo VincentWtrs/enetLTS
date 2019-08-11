@@ -248,13 +248,14 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   ### STEP: REWEIGHTING AND REFITTING
   # Running function
   enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
-                                                                 yy = yy,
-                                                                 family = family, 
-                                                                 indexbest = indexbest, 
-                                                                 alphabest = alphabest, 
-                                                                 lambdabest = lambdabest, 
-                                                                 lambdaw = lambdaw,
-                                                                 intercept = intercept)
+                                                             yy = yy,
+                                                             family = family, 
+                                                             indexbest = indexbest, 
+                                                             alphabest = alphabest, 
+                                                             lambdabest = lambdabest, 
+                                                             lambdaw = lambdaw,
+                                                             intercept = intercept,
+                                                             scal = scal)
   ## Extracting results
   # Common for both families
   raw.wt <- enetLTS_reweighting_refit$raw.wt
@@ -274,7 +275,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     reweighted.rmse <- enetLTS_reweighting_refit.reweighted.rmse
   }
   
-
+  
   # Plotting CV Plot 
   plot(reweighted_cv)
   print(paste0("The optimal reweighted lambda is: ", lambdaw)) # Printing chosen lambdaw
