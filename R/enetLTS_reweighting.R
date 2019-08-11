@@ -1,4 +1,4 @@
-enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest, lambdabest, intercept) {
+enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest, lambdabest, lambdaw, intercept) {
   
   # In this part we will get a final fit. Common practice in machine learning, after the optimal hyperparameters have been found
   # ... to take this hyperparameter and fit it to all data. Here, this case, it is slightly more complex: there is (i) the tuned model
