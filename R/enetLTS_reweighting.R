@@ -6,6 +6,14 @@ enetLTS_raw_fit <- function (xx, yy, family, indexbest, alphabest, lambdabest, i
   # ... a final fit can be obtained as well. The issue is that not all data is used but only the 'supposed' outlier-free set, of course.
   # ... The reweighting step also complicates things even further since the amount of outliers will be reduced.
   
+  ## INPUTS
+  # xx: data
+  # yy: data
+  # family: "binomial", "gaussian" is WiP
+  # indexbest: the found outlier-free indices
+  # alphabest: Best raw alpha
+  # lambdabest: Best raw lambda
+  # intercept: If intercept to be used or not (FALSE is WiP)
   
   #### FINAL FITTING OF THE MODEL USING THE OPTIMAL PARAMETERS (NON-REWEIGHTED FIT)
   
@@ -27,7 +35,13 @@ enetLTS_raw_fit <- function (xx, yy, family, indexbest, alphabest, lambdabest, i
   ## STEP 8b. INTERCEPT HANDLING OF REWEIGHTED FIT
   ## STEP 8b. COEFFICIENT HANDLING OF REWEIGHTED FIT
   
-  
+  ### STEP 0. Printing some warnings
+  if (family == "gaussian") {
+    warning("Currently the functionality is not properly tested for the Gaussian family, this might throw errors or not work as desired")
+  }
+  if (isFALSE(intercept)) {
+    warning("Currently the functionality is not properly tested for the no-intercept situation (FALSE), this might throw errors or not work as expected")
+  }
   
   ### STEP 1. Scaling of data
   if (isTRUE(scal)) {
@@ -538,80 +552,7 @@ enetLTS_raw_fit <- function (xx, yy, family, indexbest, alphabest, lambdabest, i
     } # End family = "gaussian"
   } # End scal == FALSE
   
-  # OUTPUT PREPARATION
-  
-  # Plotting CV Plot 
-  plot(reweighted_cv)
-  print(paste0("The optimal reweighted lambda is: ", lambdaw_best)) # Printing chosen lambdaw
-  print(paste0("The optimal alpha used in the reweighting step is: ", alphaw_best)) # Printing chosen alpha
-  # Note: I put this here at the end because otherwise I would need to repeat the statement multiple times
-  
   ## PREPARING OUTPUT
-  # Counting number of nonzero coefficients
-  num.nonzerocoef <- sum(coefficients != 0)
-  
-  # Adding intercept
-  intercept <- isTRUE(intercept)
-  if (intercept) { 
-    xx <- addIntercept(x = xx)
-    coefficients <- c(a0, coefficients)
-    raw.coefficients <- c(a00, raw.coefficients)
-  } else {
-    coefficients <- coefficients
-    raw.coefficients <- raw.coefficients
-  }
-  if (family == "binomial") {
-    u <- xx %*% raw.coefficients # XBeta?
-    raw.fitted.values <- if (type == "class") {
-      ifelse(test = u <= 0.5, yes = 0, no = 1)
-    } else if (type == "response"){
-      1/(1 + exp(-u))
-    }
-    uu <- xx %*% coefficients
-    fitted.values <- if (type == "class") {
-      ifelse(test = uu <= 0.5, yes = 0, no = 1)
-    } else if (type == "response") {
-      1/(1 + exp(-uu))
-    }
-  } else if (family == "gaussian") {
-    raw.fitted.values <- xx %*% raw.coefficients
-    fitted.values <- xx %*% coefficients
-  }
-  
-  # TO DO: CHECK THIS
-  if (family == "binomial") {
-    objective <- h * (mean((-yy[indexbest] * (xx[indexbest, ] %*% coefficients)) + log(1 + exp(xx[indexbest, ] %*% coefficients))) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
-  } else if (family == "gaussian") {
-    objective <- h * ((1/2) * mean((yy[indexbest] - xx[indexbest, ] %*% coefficients)^2) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
-  }
-  if (intercept) {
-    coefficients <- coefficients[-1] # Removing first element
-    raw.coefficients <- raw.coefficients[-1]  # Removing first element
-  } else {
-    coefficients <- coefficients
-    raw.coefficients <- raw.coefficients
-  }
-  inputs <- list(xx = xx, 
-                 yy = yy, 
-                 family = family, 
-                 alphas = alphas, 
-                 lambdas = lambdas, 
-                 lambdaw = lambdaw, 
-                 hsize = hsize, 
-                 h = h, 
-                 nsamp = nsamp, 
-                 s1 = s1, 
-                 nCsteps = nCsteps, 
-                 nfold = nfold, 
-                 intercept = intercept, 
-                 repl = repl, 
-                 para = para, 
-                 ncores = ncores, 
-                 del = del, 
-                 scal = scal)
-  
-  ## OUTPUTS
-  # Case: binomial
   if(family == "binomial"){
     output <- list(objective = objective, 
                    best = sort(indexbest), 
@@ -625,19 +566,8 @@ enetLTS_raw_fit <- function (xx, yy, family, indexbest, alphabest, lambdabest, i
                    alphaw = alphaw_best,
                    lambda = lambdabest, 
                    lambdaw = lambdaw_best,
-                   num.nonzerocoef = num.nonzerocoef, 
-                   h = h, 
                    raw.residuals = drop(raw.residuals), 
-                   residuals = drop(reweighted.residuals), 
-                   fitted.values = drop(fitted.values), 
-                   raw.fitted.values = drop(raw.fitted.values), 
-                   classnames = classnames, 
-                   classsize = ntab, 
-                   inputs = inputs, 
-                   indexall = indexall, 
-                   call = sys.call(),
-                   alphas = alphas,  # NEW: Added the alphas that were used
-                   lambdas = lambdas)  # NEW: Added the lambdas that were used
+                   residuals = drop(reweighted.residuals))
     
   } else if (family == "gaussian"){
     output <- list(objective = objective, 
@@ -652,21 +582,9 @@ enetLTS_raw_fit <- function (xx, yy, family, indexbest, alphabest, lambdabest, i
                    alphaw = alphaw_best,
                    lambda = lambdabest, 
                    lambdaw = lambdaw_best, 
-                   num.nonzerocoef = num.nonzerocoef, 
-                   h = h, 
                    raw.residuals = drop(raw.residuals), 
                    residuals = drop(reweighted.residuals), 
-                   fitted.values = drop(fitted.values), 
-                   raw.fitted.values = drop(raw.fitted.values), 
                    raw.rmse = raw.rmse, 
-                   rmse = reweighted.rmse, 
-                   inputs = inputs, 
-                   indexall = indexall, 
-                   call = sys.call(),
-                   alphas = alphas,  # NEW: Added the alphas that were used
-                   lambdas = lambdas)  # NEW: Added the lambdas that were used
+                   rmse = reweighted.rmse)
   }
-  class(output) <- "enetLTS"
-  output$call <- matchedCall
-  output
 }
