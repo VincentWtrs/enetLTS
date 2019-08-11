@@ -584,4 +584,7 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
                    reweighted.rmse = reweighted.rmse,
                    num.nonzerocoef = num.nonzerocoef)
   }
+  print("I have finished the enetTLS reweighting and refitting step") # TODO Remove
+  return(output)
+  
 }
