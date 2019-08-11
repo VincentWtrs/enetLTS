@@ -394,6 +394,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   # Case: binomial
   if(family == "binomial"){
     output <- list(objective = objective, 
+                   xx = xx, # TEMP REMOVE ME
                    best = sort(indexbest), 
                    raw.wt = raw.wt, 
                    wt = wgt, 
