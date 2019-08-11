@@ -329,7 +329,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     raw.fitted.values <- 1/(1 + exp(-u))
     
     # TODO REMOVE
-    print(raw.fitted.values)
+    print(xx)
     
     # Raw fitted (predicted) classes based on 0.5 cutoff
     raw.fitted.values.class <- ifelse(test = raw.fitted.values > 0.5,
