@@ -159,6 +159,7 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
         alphaw_index <- which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm))) # Extracting index (bit weird but OK)
         alphaw_best <- reweighted_cv$alpha[alphaw_index] # Actual value of the best alpha!
         
+        
         ## STEP 6c. CHOOSING OPTIMAL LAMBDA WITHIN OPTIMAL ALPHA # TODO: MIGHT DO THIS MORE INDEPENDENTLY
         if (type_lambdaw == "min") {
           lambdaw_best <- reweighted_cv$modlist[[alphaw_index]]$lambda.min # NEW!
@@ -168,10 +169,14 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
         }
       }
       
+      print("Printing alphaw_best") # TODO REMOVE
+      print(alphaw_best)
+      
+      
       ## STEP 7: FITTING FINAL REWEIGHTED MODEL USING OPTIMAL HYPERPARAMETERS (I.E. ON REWEIGHTED DATA)
       fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
                        y = yss[which(raw.wt == 1)], 
-                       family = family, 
+                       family = "binomial", 
                        alpha = alphaw_best, 
                        lambda = lambdaw_best, 
                        standardize = FALSE, 
