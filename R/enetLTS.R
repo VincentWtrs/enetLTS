@@ -280,6 +280,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   raw.wt <- enetLTS_reweighting_refit$raw.wt
   wgt <- enetLTS_reweighting_refit$wgt
   a00 <- enetLTS_reweighting_refit$a00
+  a0 <- enetLTS_reweighting_refit$a0
+  coefficients <-  enetLTS_reweighting_refit$coefficients
   raw.coefficients <- enetLTS_reweighting_refit$raw.coefficients
   alphabest <- enetLTS_reweighting_refit$alphabest
   alphaw_best <- enetLTS_reweighting_refit$alphaw_best
