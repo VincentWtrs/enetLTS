@@ -295,11 +295,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     reweighted.rmse <- enetLTS_reweighting_refit.reweighted.rmse
   }
   
-  
   # Plotting CV Plot 
   plot(reweighted_cv)
-  print(paste0("The optimal reweighted lambda is: ", lambdaw)) # Printing chosen lambdaw
-  print(paste0("The optimal alpha used in the reweighting step is: ", alphabest)) # Printing chosen alpha
+  print(paste0("The optimal reweighted lambda is: ", lambdaw_best)) # Printing chosen lambdaw
+  print(paste0("The optimal alpha used in the reweighting step is: ", alphaw_best)) # Printing chosen alpha
   # Note: I put this here at the end because otherwise I would need to repeat the statement multiple times
   
   ## PREPARING OUTPUT
@@ -377,9 +376,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    raw.coefficients = raw.coefficients, 
                    a0 = a0, 
                    coefficients = coefficients, 
-                   alpha = alphabest, 
+                   alpha = alphabest,
+                   alphaw = alphaw_best,
                    lambda = lambdabest, 
-                   lambdaw = lambdaw, 
+                   lambdaw = lambdaw_best, 
                    num.nonzerocoef = num.nonzerocoef, 
                    h = h, 
                    raw.residuals = drop(raw.residuals), 
@@ -403,9 +403,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    raw.coefficients = raw.coefficients, 
                    a0 = a0, 
                    coefficients = coefficients, 
-                   alpha = alphabest, 
+                   alpha = alphabest,
+                   alphaw = alphaw_best,
                    lambda = lambdabest, 
-                   lambdaw = lambdaw, 
+                   lambdaw = lambdaw_best, 
                    num.nonzerocoef = num.nonzerocoef, 
                    h = h, 
                    raw.residuals = drop(raw.residuals), 
