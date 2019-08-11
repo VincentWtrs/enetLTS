@@ -61,7 +61,7 @@ enetLTS_raw_fit <- function(xx, yy, family, indexbest, alphabest, lambdabest, in
     ### STEP 3: HANDLING RESULTS OF THE FINAL (NON-REWEIGHTED) FIT
     ## STEP 3a. Intercept Handling
     # STEP 3a. Intercept handling: Case Binomial
-    if (family == "binomial") {
+    if (family == "binomial") { # THIS GOES ON FOR A LONG WHILE
       if (isFALSE(intercept)) {
         a00 <- 0 # NEW: Changed this from weird a00 <- if (intercept == FALSE) {0} style of notation, this is clearer, does the same
       } else {
@@ -102,7 +102,6 @@ enetLTS_raw_fit <- function(xx, yy, family, indexbest, alphabest, lambdabest, in
       ## STEP 6a: FITTING ALL HYPERPARAMETERS THEIR MODELS ()
       # STEP 6a: Fitting all hyperparameters their models if no lambdaw is given (full regularization path for alphas)
       if (missing(lambdaw)) {
-        if (family == "binomial"){
           reweighted_cv <- cva.glmnet(x = xss[which(raw.wt == 1), ],
                                       y = yss[which(raw.wt == 1)],
                                       family = "binomial",
@@ -120,16 +119,6 @@ enetLTS_raw_fit <- function(xx, yy, family, indexbest, alphabest, lambdabest, in
           #                         standardize = FALSE, 
           #                         intercept = TRUE, # NEW: changed this to true
           #                         type.measure = "deviance")
-        } else if (family == "gaussian") {
-          reweighted_cv <- cva.glmnet(x = xss[which(raw.wt == 1), ],
-                                      y = yss[which(raw.wt == 1)],
-                                      family = "gaussian",
-                                      nfolds = 10,
-                                      typ.measure = "mse", # This should be passable to lower lying functions such as cv.glmnet. Quid: is deviance basically the same in this case?
-                                      standardize = FALSE,
-                                      intercept = FALSE) # Since for Gaussian, this actually holds when having standardized the data
-        }
-        
         # TODO Maybe extract the used lambdaw also
         
       # STEP 6a: 'Tuning' hyperparameters with if single lambdaw is given (UNLIKELY, i.e. the best lambdaw is the only one given!)
@@ -138,7 +127,6 @@ enetLTS_raw_fit <- function(xx, yy, family, indexbest, alphabest, lambdabest, in
         
       # STEP 6a. Tuning hyperparamters if vector of lambdaw is given (UNLIKELY)
       } else if (!missing(lambdaw) & length(lambdaw) > 1) { # Multiple lambdaw given
-        if (family == "binomial"){
           reweighted_cv <- cva.glmnet(x = xss[which(raw.wt == 1), ],  # With the new reweighted dataset
                                       y = yss[which(raw.wt == 1)],  # With the new reweighted dataset
                                       family = "binomial", 
@@ -147,16 +135,6 @@ enetLTS_raw_fit <- function(xx, yy, family, indexbest, alphabest, lambdabest, in
                                       type.measure = "deviance",  # For binomial models negative loglikelihood
                                       standardize = FALSE, 
                                       intercept = TRUE)
-        } else if (family == "gaussian") {
-          reweighted_cv <- cva.glmnet(x = xss[which(raw.wt == 1), ],
-                                      y = yss[which(raw.wt == 1)],
-                                      family = "gaussian",
-                                      lambda = lambdaw, # Passing on lambdaw vector given by user
-                                      nfolds = 10, # TODO CHOOSE
-                                      type.measure = "mse",  # Usually for Gaussian models
-                                      standardize = FALSE,
-                                      intercept = FALSE)
-        }
       }
       
       ## STEP 6b. CHOOSING OPTIMAL ALPHA (JUST MIN)
@@ -233,8 +211,7 @@ enetLTS_raw_fit <- function(xx, yy, family, indexbest, alphabest, lambdabest, in
                              del = del)
       
       reweighted.residuals <- -(yy * cbind(1, xx) %*% c(a0, coefficients)) + log(1 + exp(cbind(1, xx) %*% c(a0, coefficients)))
-      print("Calculated reweighed resids")  # TODO REMoVE
-      
+
       # Case: Gaussian
     } else if (family == "gaussian") {
       a00 <- if (intercept == FALSE) 
