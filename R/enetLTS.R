@@ -249,6 +249,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   ### STEP: REWEIGHTING AND REFITTING
   # Running function
+  if(missing(lambdaw)){
+    lambdaw <- NULL # Trying to circumvent issues trough this TODO
+  }
   enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
                                                              yy = yy,
                                                              family = family, 
