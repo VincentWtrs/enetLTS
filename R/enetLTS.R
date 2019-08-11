@@ -250,19 +250,31 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   ### STEP: REWEIGHTING AND REFITTING
   # Running function
   if(missing(lambdaw)){
-    lambdaw <- NULL # Trying to circumvent issues trough this TODO
+    enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
+                                                               yy = yy,
+                                                               family = family, 
+                                                               indexbest = indexbest, 
+                                                               alphabest = alphabest, 
+                                                               lambdabest = lambdabest, 
+                                                               #lambdaw = lambdaw, # If missing don't call with lambdaw
+                                                               del = del,
+                                                               intercept = intercept,
+                                                               scal = scal,
+                                                               type_lambdaw = type_lambdaw)
+  } else {
+    enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
+                                                               yy = yy,
+                                                               family = family, 
+                                                               indexbest = indexbest, 
+                                                               alphabest = alphabest, 
+                                                               lambdabest = lambdabest, 
+                                                               lambdaw = lambdaw, # otherwise call with
+                                                               del = del,
+                                                               intercept = intercept,
+                                                               scal = scal,
+                                                               type_lambdaw = type_lambdaw)
   }
-  enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
-                                                             yy = yy,
-                                                             family = family, 
-                                                             indexbest = indexbest, 
-                                                             alphabest = alphabest, 
-                                                             lambdabest = lambdabest, 
-                                                             lambdaw = lambdaw,
-                                                             del = del,
-                                                             intercept = intercept,
-                                                             scal = scal,
-                                                             type_lambdaw = type_lambdaw)
+
   ## Extracting results
   # Common for both families
   raw.wt <- enetLTS_reweighting_refit$raw.wt
