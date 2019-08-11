@@ -169,22 +169,14 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
       }
       
       ## STEP 7: FITTING FINAL REWEIGHTED MODEL USING OPTIMAL HYPERPARAMETERS (I.E. ON REWEIGHTED DATA)
-      print("alphabest:") # TODO REMOVE
-      print(alphabest) # TODO REMVOE
-      print("lambdaw:") # TODO REMOVE
-      print(lambdaw) # TODO REMOVE
-      
-      # STEP 7: Binomial fitting final model using optimal hyperparameters on reweighted data
-      if (family == "binomial") {
-        fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
+      fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
                        y = yss[which(raw.wt == 1)], 
                        family = family, 
                        alpha = alphabest, 
                        lambda = lambdaw, 
                        standardize = FALSE, 
                        intercept = TRUE) # NEW: changed this to TRUE for binomial because standardization doesn't work that way for binomial
-      }
-      
+
       # TODO REMOVE
       print("I am past fitting the final reweighted fit object")
       
