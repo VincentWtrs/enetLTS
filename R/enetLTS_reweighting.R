@@ -172,8 +172,8 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
       fitw <- glmnet(x = xss[which(raw.wt == 1), ], 
                        y = yss[which(raw.wt == 1)], 
                        family = family, 
-                       alpha = alphabest, 
-                       lambda = lambdaw, 
+                       alpha = alphaw_best, 
+                       lambda = lambdaw_best, 
                        standardize = FALSE, 
                        intercept = TRUE) # NEW: changed this to TRUE for binomial because standardization doesn't work that way for binomial
 
@@ -519,8 +519,8 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
       fitw <- glmnet(x = x[which(raw.wt == 1), ], 
                      y = y[which(raw.wt == 1)], 
                      family = "gaussian", 
-                     alpha = alphabest, 
-                     lambda = lambdaw, 
+                     alpha = alphaw_best, 
+                     lambda = lambdaw_best, 
                      standardize = FALSE, 
                      intercept = FALSE) # DOES THIS MAKE SENSE STILLL -> NO NOT IF NOT STANDARDIZED BY ITSELF SOMEWHERE BEFORE...
       
