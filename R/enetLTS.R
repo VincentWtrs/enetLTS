@@ -254,6 +254,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                              alphabest = alphabest, 
                                                              lambdabest = lambdabest, 
                                                              lambdaw = lambdaw,
+                                                             del = del,
                                                              intercept = intercept,
                                                              scal = scal)
   ## Extracting results
