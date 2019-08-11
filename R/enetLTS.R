@@ -325,6 +325,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     # Raw linear predictor (eta raw)
     u <- xx %*% raw.coefficients
     
+    print(head(u, 100)) # TODO REMOVE
+    
     # Raw fitted (predicted) probabilities
     raw.fitted.values <- 1/(1 + exp(-u))
     
