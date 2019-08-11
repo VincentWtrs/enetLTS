@@ -288,6 +288,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   lambdaw_best <- enetLTS_reweighting_refit$lambdaw_best
   raw.residuals <- enetLTS_reweighting_refit$raw.residuals
   raw.rmse <- enetLTS_reweighting_refit$raw.residuals
+  reweighted.residuals <- enetLTS_reweighting_refit$reweighted.residuals
   num.nonzerocoef <- enetLTS_reweighting_refit$num.nonzerocoef
   reweighted_cv <- enetLTS_reweighting_refit$reweighted_cv
   
@@ -367,7 +368,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                  ncores = ncores, 
                  del = del, 
                  scal = scal)
-
   
   ## OUTPUTS
   # Case: binomial
