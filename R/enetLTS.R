@@ -256,7 +256,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                              lambdaw = lambdaw,
                                                              del = del,
                                                              intercept = intercept,
-                                                             scal = scal)
+                                                             scal = scal,
+                                                             type_lambdaw = type_lambdaw)
   ## Extracting results
   # Common for both families
   raw.wt <- enetLTS_reweighting_refit$raw.wt
