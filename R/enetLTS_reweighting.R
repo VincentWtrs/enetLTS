@@ -569,7 +569,8 @@ enetLTS_raw_fit <- function (xx, yy, family, indexbest, alphabest, lambdabest, i
                    lambda = lambdabest, 
                    lambdaw_best = lambdaw_best, 
                    raw.residuals = raw.residuals, 
-                   residuals = reweighted.residuals)
+                   residuals = reweighted.residuals,
+                   num.nonzerocoef = num.nonzerocoef)
     
   } else if (family == "gaussian"){
     output <- list(indexbest = indexbest, 
@@ -586,6 +587,7 @@ enetLTS_raw_fit <- function (xx, yy, family, indexbest, alphabest, lambdabest, i
                    raw.residuals = raw.residuals, 
                    residuals = reweighted.residuals, 
                    raw.rmse = raw.rmse, 
-                   reweighted.rmse = reweighted.rmse)
+                   reweighted.rmse = reweighted.rmse,
+                   num.nonzerocoef = num.nonzerocoef)
   }
 }
