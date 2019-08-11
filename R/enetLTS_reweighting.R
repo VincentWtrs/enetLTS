@@ -552,6 +552,9 @@ enetLTS_raw_fit <- function (xx, yy, family, indexbest, alphabest, lambdabest, i
     } # End family = "gaussian"
   } # End scal == FALSE
   
+  # Calculating number of nonzero coefficients
+  num.nonzerocoef <- sum(coefficients != 0)
+
   ## PREPARING OUTPUT
   if(family == "binomial"){
     output <- list(indexbest = indexbest, 
