@@ -348,12 +348,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     coefficients <- coefficients
     raw.coefficients <- raw.coefficients
   }
+  
   inputs <- list(xx = xx, 
                  yy = yy, 
                  family = family, 
                  alphas = alphas, 
                  lambdas = lambdas, 
-                 lambdaw = lambdaw, 
+                 #lambdaw = lambdaw, # TODO REMOVED BECAUSE CAUSING SOME ISSUES IN NEW FUNCTION
                  hsize = hsize, 
                  h = h, 
                  nsamp = nsamp, 
@@ -366,6 +367,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                  ncores = ncores, 
                  del = del, 
                  scal = scal)
+
   
   ## OUTPUTS
   # Case: binomial
