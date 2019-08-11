@@ -287,6 +287,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   raw.residuals <- enetLTS_reweighting_refit$raw.residuals
   raw.rmse <- enetLTS_reweighting_refit$raw.residuals
   num.nonzerocoef <- enetLTS_reweighting_refit$num.nonzerocoef
+  reweighted_cv <- enetLTS_reweighting_refit$reweighted_cv
   
   # For Gaussian only:
   if(family == "gaussian") {

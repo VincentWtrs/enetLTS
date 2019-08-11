@@ -569,7 +569,8 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
                    lambdaw_best = lambdaw_best, 
                    raw.residuals = raw.residuals, 
                    residuals = reweighted.residuals,
-                   num.nonzerocoef = num.nonzerocoef)
+                   num.nonzerocoef = num.nonzerocoef,
+                   reweighted_cv = reweighted_cv)
     
   } else if (family == "gaussian"){
     output <- list(indexbest = indexbest, 
@@ -587,7 +588,8 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
                    residuals = reweighted.residuals, 
                    raw.rmse = raw.rmse, 
                    reweighted.rmse = reweighted.rmse,
-                   num.nonzerocoef = num.nonzerocoef)
+                   num.nonzerocoef = num.nonzerocoef,
+                   reweighted_cv = reweighted_cv)
   }
   print("I have finished the enetTLS reweighting and refitting step") # TODO Remove
   return(output)
