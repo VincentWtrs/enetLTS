@@ -35,6 +35,8 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
   ## STEP 8b. INTERCEPT HANDLING OF REWEIGHTED FIT
   ## STEP 8b. COEFFICIENT HANDLING OF REWEIGHTED FIT
   
+  print("Currently running the newly separated enetLTS_reweighting_refitting() function") # TODO remove
+  
   ### STEP 0. Printing some warnings
   if (family == "gaussian") {
     warning("Currently the functionality is not properly tested for the Gaussian family, this might throw errors or not work as desired")
