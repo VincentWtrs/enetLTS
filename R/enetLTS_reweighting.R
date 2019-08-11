@@ -554,37 +554,35 @@ enetLTS_raw_fit <- function (xx, yy, family, indexbest, alphabest, lambdabest, i
   
   ## PREPARING OUTPUT
   if(family == "binomial"){
-    output <- list(objective = objective, 
-                   best = sort(indexbest), 
+    output <- list(indexbest = indexbest, 
                    raw.wt = raw.wt, 
-                   wt = wgt, 
+                   wgt = wgt, 
                    a00 = a00, 
                    raw.coefficients = raw.coefficients, 
                    a0 = a0, 
                    coefficients = coefficients, 
                    alpha = alphabest,
-                   alphaw = alphaw_best,
+                   alphaw_best = alphaw_best,
                    lambda = lambdabest, 
-                   lambdaw = lambdaw_best,
-                   raw.residuals = drop(raw.residuals), 
-                   residuals = drop(reweighted.residuals))
+                   lambdaw_best = lambdaw_best, 
+                   raw.residuals = raw.residuals, 
+                   residuals = reweighted.residuals)
     
   } else if (family == "gaussian"){
-    output <- list(objective = objective, 
-                   best = sort(indexbest), 
+    output <- list(indexbest = indexbest, 
                    raw.wt = raw.wt, 
-                   wt = wgt, 
+                   wgt = wgt, 
                    a00 = a00, 
                    raw.coefficients = raw.coefficients, 
                    a0 = a0, 
                    coefficients = coefficients, 
                    alpha = alphabest,
-                   alphaw = alphaw_best,
+                   alphaw_best = alphaw_best,
                    lambda = lambdabest, 
-                   lambdaw = lambdaw_best, 
-                   raw.residuals = drop(raw.residuals), 
-                   residuals = drop(reweighted.residuals), 
+                   lambdaw_best = lambdaw_best, 
+                   raw.residuals = raw.residuals, 
+                   residuals = reweighted.residuals, 
                    raw.rmse = raw.rmse, 
-                   rmse = reweighted.rmse)
+                   reweighted.rmse = reweighted.rmse)
   }
 }
