@@ -95,7 +95,7 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
   
   # Corrected AIC (AIC_C)
   if(type == "AIC_C"){
-    penalty <- (2 * df * (nobs/(n - df - 1)))/nobs
+    penalty <- (2 * df * (nobs/(nobs - df - 1)))/nobs
   }
   
   # Bayesian Information Criterion (BIC)
