@@ -65,7 +65,7 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
                     lambda = lambdabest,  # ... and the tuned lambda
                     standardize = FALSE, # Because already done in the prepara case (we are providing y standardized and x standardized)
                     intercept = TRUE) # Because only for linear models the standardization makes the regression line go through the origin, not true for GLMs in general
-      
+      print('I am past a first run (raw fit) of a glmnet object in enetLTS_reweighting_refitting')
       ## STEP 2: Final fitting: Case Gaussian
     } else if (family == "gaussian") {
       fit <- glmnet(x = xs[indexbest, ], 
@@ -128,6 +128,7 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
                                     type.measure = "deviance", # This should be passable to lower lying functions such as cv.glmnet
                                     standardize = FALSE, # Since data already standardized!
                                     intercept = TRUE) # True for binomial!
+        print('I am past the cva.glmnet fitting in enetLTS_reweighting_refitting') # TODO REMOVE
         
         ## STEP 6b. CHOOSING OPTIMAL ALPHA (JUST MIN)
         alphaw_index <- which.min(sapply(reweighted_cv$modlist, function(mod) min(mod$cvm))) # Extracting index (bit weird but OK)
