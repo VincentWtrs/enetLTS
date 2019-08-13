@@ -267,7 +267,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   
   for (i in 1:length(ic_type)){
-    if (simulation) { # NEW
+    if (simulation) { # NEW # TODO CHECK / SIMPLIFY THIS
       # Results extraction from list
       print("I am extracting the results from the CVresults_list")
       indexbest = indexbest_list[[i]]
