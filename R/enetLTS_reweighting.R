@@ -59,6 +59,17 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
     ## STEP 2: Final fitting: Case Binomial
     print('I am just before a first run (raw fit) of a glmnet object in enetLTS_reweighting_refitting') #TODO REMOVE
     if (family == "binomial") {
+      # TODO REMOVE
+      print('xs[indexbest, ]')
+      print(head(xs[indexbest, ]))
+      print('ys[indexbest, ]')
+      print(head(ys[indexbest, ]))
+      print("alphabest:")
+      print(alphabest)
+      print("lambdabest:")
+      print(lambabest)
+      
+      
       fit <- glmnet(x = xs[indexbest, ],
                     y = ys[indexbest, ],
                     family = "binomial",
