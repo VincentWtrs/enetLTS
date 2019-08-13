@@ -219,8 +219,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         ic_now <- ic_type[i] # Extract current IC
         print(paste0("Currently running for: ", ic_type[i]))
         CVresults_list[[i]] <- cv.enetLTS(index = indexall,
-                                          xx = x,
-                                          yy = y,
+                                          xx = x, # x Is the normalized data, xx is raw
+                                          yy = y, # y Is the normalized data, yy is raw
                                           family = family,
                                           alphas = alphas,
                                           lambdas = lambdas,
@@ -247,6 +247,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         # TODO REMOVE
         print("I am just before the return statement now!")
         return(CVresults_list) # CHECK WHAT'S IN THERE
+        
       }
     }
   }
@@ -280,7 +281,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                                scal = scal,
                                                                type_lambdaw = type_lambdaw)
   }
-
+  
   ## Extracting results
   # Common for both families (Gaussian, Binomial)
   raw.wt <- enetLTS_reweighting_refit$raw.wt
