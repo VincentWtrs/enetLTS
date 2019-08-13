@@ -177,6 +177,13 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     lambdabest <- lambdas # Obviously the only one is the best
   } 
   
+  # INITIALIZING # TODO TEMP REMOVE ME / IMPROVE ME
+  if(is.null(ic_type)){
+    CVresults_list <- vector("list", length = 1) # TODO
+  } else if (length(ic_type) >= 1){
+    CVresults_list <- vector("list", length = length(ic_type)) # TODO
+  }
+  
   # Case: bigger tuning grid
   if ((length(alphas) > 1) | (length(lambdas) > 1)) {
     if ((is.null(ic_type)) | (length(ic_type) == 1)) {
@@ -198,12 +205,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       alphabest <- CVresults$alphaopt
       lambdabest <- CVresults$lambdaopt
       evalCritCV <- CVresults$evalCrit
-    } 
-    else if (length(ic_type) > 1) {
+    }  else if (length(ic_type) > 1) {
       print("I am in the multiple ic_type case! NOICE")
       
       # Initialization of lists and indices
-      CVresults_list <- vector("list", length = length(ic_type))
+      #CVresults_list <- vector("list", length = length(ic_type)) # TODO CHECK WITH EARLIER INITIALIZATION ADDED
       names(CVresults_list) <- ic_type
       indexbest_list <- vector("list", length = length(ic_type))
       names(indexbest_list) <- ic_type
