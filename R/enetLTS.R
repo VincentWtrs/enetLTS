@@ -306,6 +306,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                                  type_lambdaw = type_lambdaw)
     }
     
+    print("I am past running the enetLTS_reweighting_refitting function") # TODO REMOVE 
+    
     ## Extracting results
     # Common for both families (Gaussian, Binomial)
     raw.wt <- enetLTS_reweighting_refit$raw.wt
