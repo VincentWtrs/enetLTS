@@ -57,6 +57,7 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
     
     ### STEP 2: Final fitting elastic net with optimal hyperparameters and outlier-free set (non-reweighted)
     ## STEP 2: Final fitting: Case Binomial
+    print('I am just before a first run (raw fit) of a glmnet object in enetLTS_reweighting_refitting') #TODO REMOVE
     if (family == "binomial") {
       fit <- glmnet(x = xs[indexbest, ],
                     y = ys[indexbest, ],
@@ -65,7 +66,7 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
                     lambda = lambdabest,  # ... and the tuned lambda
                     standardize = FALSE, # Because already done in the prepara case (we are providing y standardized and x standardized)
                     intercept = TRUE) # Because only for linear models the standardization makes the regression line go through the origin, not true for GLMs in general
-      print('I am past a first run (raw fit) of a glmnet object in enetLTS_reweighting_refitting')
+      print('I am past a first run (raw fit) of a glmnet object in enetLTS_reweighting_refitting') # TODO REMOVE
       ## STEP 2: Final fitting: Case Gaussian
     } else if (family == "gaussian") {
       fit <- glmnet(x = xs[indexbest, ], 
