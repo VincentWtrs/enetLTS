@@ -280,6 +280,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     ## Running function
     # Case for missing lambdaw (call function without)
     if(missing(lambdaw)){
+      print('Printing lambdabest before calling enetLTS_reweighting_refitting')
+      print(lambdabest)
       enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
                                                                  yy = yy,
                                                                  family = family, 
