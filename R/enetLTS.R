@@ -243,7 +243,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         indexbest_list[[i]] <- CVresults_list[[i]]$indexbest
         #print("I got past the indexbest extraction") # TODO REMOVE
         alphabest_list[[i]] <- CVresults_list[[i]]$alphaopt
-        print(paste0("I am printing the extracted best alpha", alphabest_list[[i]])) # TODO REMOVE
+        print(paste0("I am printing the extracted best alpha: ", alphabest_list[[i]])) # TODO REMOVE
         lambdabest_list[[i]] <- CVresults_list[[i]]$lambdaopt
         evalCritCV_list[[i]] <- CVresults_list[[i]]$evalCrit
         
@@ -267,15 +267,14 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   
   for (i in 1:length(ic_type)){
-    
-    #if (simulation) { # NEW
-    #  # Results extraction from list
-    #  print("I am extracting the results from the CVresults_list")
-    #  indexbest = CVresults_list[[i]]$indexbest
-    #  alphabest <- CVresults_list[[i]]$alphaopt
-    #  lambdabest <- CVresults_list[[i]]$lambdaopt
-    #  evalCritCV <- CVresults_list[[i]]$evalCrit
-    #}
+    if (simulation) { # NEW
+      # Results extraction from list
+      print("I am extracting the results from the CVresults_list")
+      indexbest = indexbest_list[[i]]
+      alphabest <- alphabest_list[[i]]
+      lambdabest <- lambdabest_list[[i]]
+      evalCritCV <- evalCritCV_list[[i]]
+    }
     
     ### STEP: REWEIGHTING AND REFITTING
     ## Running function
