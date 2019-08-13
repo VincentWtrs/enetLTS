@@ -69,6 +69,11 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
       print("lambdabest:")
       print(lambdabest)
       
+      print("Checking for NAs:")
+      print(is.na(xs[indexbest, ]))
+      print(is.na(ys[indexbest, ]))
+      
+      
       
       fit <- glmnet(x = xs[indexbest, ],
                     y = ys[indexbest, ],
