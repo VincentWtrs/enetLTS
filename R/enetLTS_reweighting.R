@@ -67,7 +67,7 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
       print("alphabest:")
       print(alphabest)
       print("lambdabest:")
-      print(lambabest)
+      print(lambdabest)
       
       
       fit <- glmnet(x = xs[indexbest, ],
