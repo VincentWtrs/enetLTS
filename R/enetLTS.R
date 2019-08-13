@@ -272,6 +272,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       print("I am extracting the results from the CVresults_list")
       indexbest = CVresults_list[[i]]$indexbest
       alphabest <- CVresults_list[[i]]$alphaopt
+      print("Printing alphabest")
       print(alphabest)
       lambdabest <- CVresults_list[[i]]$lambdaopt
       evalCritCV <- CVresults_list[[i]]$evalCrit
