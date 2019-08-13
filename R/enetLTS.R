@@ -490,7 +490,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     class(output) <- "enetLTS"
     output$call <- matchedCall
     output[[i]] <- output
+    print("I have done everything for the IC: ")
+    print(ic_type[i])
   }
+  
   if(!simulation) {
     output <- output[[1]] # In this case: just single run, hence just give it the single element
   }
