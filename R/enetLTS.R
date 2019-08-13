@@ -201,7 +201,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     } 
     else if (length(ic_type) > 1) {
       print("I am in the multiple ic_type case! NOICE")
-      # Inits + names
+      
+      # Initialization of lists and indices
       CVresults_list <- vector("list", length = length(ic_type))
       names(CVresults_list) <- ic_type
       indexbest_list <- vector("list", length = length(ic_type))
@@ -212,9 +213,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       names(lambdabest_list) <- ic_type
       evalCritCV_list <- vector("list", length = length(ic_type))
       names(evalCritCV_list) <- ic_type
+      
+      # Looping over all requires ICs
       for(i in 1:length(ic_type)) {
+        ic_now <- ic_type[i] # Extract current IC
         print(paste0("Currently running for: ", ic_type[i]))
-        ic_now <- ic_type[i] # Extract IC
         CVresults_list[[i]] <- cv.enetLTS(index = indexall,
                                           xx = x,
                                           yy = y,
@@ -227,20 +230,23 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                           plot = plot,
                                           ic_type = ic_now)
         #return(CVresults_list[[i]]) # TODO REMOVE ME
-        print(CVresults_list[[i]]) # TEMP REMOVE ME TODO
-        print('I am just before the indexbest extraction') # TODO REMOVE
+        #print(CVresults_list[[i]]) # TEMP REMOVE ME TODO
+        #print('I am just before the indexbest extraction') # TODO REMOVE
+        
+        # Extracting results
         indexbest_list[[i]] <- CVresults_list[[i]]$indexbest
-        print("I got past the indexbest extraction") # TODO REMOVE
+        #print("I got past the indexbest extraction") # TODO REMOVE
         alphabest_list[[i]] <- CVresults_list[[i]]$alphaopt
         lambdabest_list[[i]] <- CVresults_list[[i]]$lambdaopt
         evalCritCV_list[[i]] <- CVresults_list[[i]]$evalCrit
-        print("I have finished the first IC calculations")
+        
+        print("I have finished a IC calculations and extracting pass")
       }
       
       if (simulation) {
         # TODO REMOVE
         print("I am just before the return statement now!")
-        return(CVresults_list) # NEW TODO
+        return(CVresults_list) # CHECK WHAT'S IN THERE
       }
     }
   }
