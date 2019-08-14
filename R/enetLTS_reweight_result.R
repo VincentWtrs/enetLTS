@@ -75,7 +75,7 @@ enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, la
                                       a00 = a00,
                                       coefficients = coefficients,
                                       raw.coefficients = raw.coefficients,
-                                      alphabest = alphabes,
+                                      alphabest = alphabest,
                                       lambdabest = lambdabest)
   
   # Extracting elements of results
