@@ -220,7 +220,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       evalCritCV_list <- vector("list", length = length(ic_type))
       names(evalCritCV_list) <- ic_type
       
-      # Looping over all requires ICs
+      # Looping over all required ICs
       for(i in 1:length(ic_type)) {
         ic_now <- ic_type[i] # Extract current IC
         print(paste0("Currently running for: ", ic_type[i]))
@@ -249,17 +249,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         
         print("I have finished a IC calculations and extracting pass")
       }
-      
-      if (simulation) {
-        # TODO REMOVE
-        print("I am just before the return statement now!")
-        #return(CVresults_list) # CHECK WHAT'S IN THERE
-      }
     }
   }
   
   ## SIMULATION-RELATED CODE
-  if(simulation){
+  if (simulation) {
     output_list <- vector("list", length = length(ic_type)) # Used to loop the results later
   } else {
     output_list <- vector("list", length = 1) # A single length list that will later be extracted so the original output is as before again
@@ -349,12 +343,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     ## Intercept handling
     intercept <- isTRUE(intercept)
     if (intercept) { 
-      xx <- addIntercept(x = xx) # Adding a column of 1s
-      coefficients <- c(a0, coefficients)
+      xx_ <- addIntercept(x = xx) # Adding a column of 1s
+      coefficients_ <- c(a0, coefficients)
       raw.coefficients <- c(a00, raw.coefficients)
     } else if (!intercept) {
-      coefficients <- coefficients
-      raw.coefficients <- raw.coefficients
+      coefficients_ <- coefficients
+      raw.coefficients_ <- raw.coefficients
     }
     
     ### Fitted values BINOMIAL (NEW!)
@@ -362,10 +356,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       ## RAW FIT
       # Raw linear predictor (eta raw)
       u <- xx %*% raw.coefficients
-      
-      print("structure of xx")
-      print(str(xx))
-      
+
       print(head(u, 100)) # TODO REMOVE
       
       # Raw fitted (predicted) probabilities
@@ -402,11 +393,11 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       objective <- h * ((1/2) * mean((yy[indexbest] - xx[indexbest, ] %*% coefficients)^2) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
     }
     if (intercept) {
-      coefficients <- coefficients[-1] # Removing first element
-      raw.coefficients <- raw.coefficients[-1]  # Removing first element
+      coefficients_ <- coefficients[-1] # Removing first element
+      raw.coefficients_ <- raw.coefficients[-1]  # Removing first element
     } else {
-      coefficients <- coefficients
-      raw.coefficients <- raw.coefficients
+      coefficients_ <- coefficients
+      raw.coefficients_ <- raw.coefficients
     }
     
     inputs <- list(xx = xx, 
@@ -437,9 +428,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                      raw.wt = raw.wt, 
                      wt = wgt, 
                      a00 = a00, 
-                     raw.coefficients = raw.coefficients, 
+                     raw.coefficients = raw.coefficients_, 
                      a0 = a0, 
-                     coefficients = coefficients, 
+                     coefficients = coefficients_, 
                      alpha = alphabest,
                      alphaw = alphaw_best,
                      lambda = lambdabest, 
