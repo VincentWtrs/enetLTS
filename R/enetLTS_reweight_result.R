@@ -1,4 +1,9 @@
-enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, lambdabest, lambdaw = NULL, del, intercept, scal, type_lambdaw) {
+enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, lambdabest, lambdaw = NULL,num.nonzerocoef, 
+                                     del, intercept, scal, type_lambdaw, classnames, classsize, indexall, alphas, lambdas, 
+                                     ic_type, ic_type_reweighted) {
+
+
+
   ## WRAPPER FUNCTION
   
   ### STEP: REWEIGHTING AND REFITTING
