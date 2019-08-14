@@ -69,6 +69,7 @@ enetLTS_reweight_results <- function(xx, yy, family, indexbest, alphabest, lambd
   results <- enetLTS_results_handling(xx = xx,
                                       indexbest = indexbest,
                                       intercept = intercept,
+                                      family = family,
                                       a0 = a0,
                                       a00 = a00,
                                       coefficients = coefficients,
