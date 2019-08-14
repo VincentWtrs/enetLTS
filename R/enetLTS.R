@@ -65,9 +65,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   }
   
   # Output/Family consistency (class requires binomial)
-  if (type == "class" & family == "gaussian") {
-    stop("class type is not available for gaussian family")
-  }
+  #if (type == "class" & family == "gaussian") {
+  #  stop("class type is not available for gaussian family")
+  #}
   
   # CPU cores (requires valid and <= than available cores)
   ncores <- rep(ncores, length.out = 1)
