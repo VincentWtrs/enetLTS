@@ -1,8 +1,27 @@
-enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, lambdabest, lambdaw = NULL, 
-                                     del, intercept, scal, type_lambdaw, classnames, ntab, indexall, alphas, lambdas, 
+enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCsteps, nfold, para, ncores, repl,
+                                     indexbest, alphabest, lambdabest, lambdaw = NULL, del, intercept, 
+                                     scal, type_lambdaw, classnames, ntab, indexall, alphas, lambdas, 
                                      ic_type, ic_type_reweighted=NULL) {
-
-
+  
+  
+  inputs <- list(xx = xx, 
+                 yy = yy, 
+                 family = family, 
+                 alphas = alphas, 
+                 lambdas = lambdas, 
+                 lambdaw = lambdaw, 
+                 hsize = hsize, 
+                 h = h, 
+                 nsamp = nsamp, 
+                 s1 = s1, 
+                 nCsteps = nCsteps, 
+                 nfold = nfold, 
+                 intercept = intercept, 
+                 repl = repl, 
+                 para = para, 
+                 ncores = ncores, 
+                 del = del, 
+                 scal = scal)
 
   ## WRAPPER FUNCTION
   

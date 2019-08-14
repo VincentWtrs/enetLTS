@@ -261,6 +261,14 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                       alphabest = alphabest_list[[i]],
                                                       lambdabest = lambdabest_list[[i]],
                                                       h = h,
+                                                      hsize = hsize,
+                                                      nsamp = nsamp,
+                                                      s1 = s1,
+                                                      nCsteps = nCsteps,
+                                                      nfold = nfold,
+                                                      repl = repl,
+                                                      para = para,
+                                                      ncores = ncores,
                                                       ic_type = ic_type_now,
                                                       #lambdaw = lambdaw,
                                                       del = del,
@@ -272,6 +280,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                       indexall = indexall,
                                                       alphas = alphas,
                                                       lambdas = lambdas)
+    
 
   }
   
