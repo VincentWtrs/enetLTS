@@ -17,7 +17,7 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
   #  stop("The input for ic_penalty() should be a glmnet model")
   #}
   
-  if(length(model$lambda) > 1) {
+  if (length(model$lambda) > 1) {
     if(length(s) > 1){
       stop("The ic_penalty function cannot handle multiple lambdas without supplying a single value for lambda through the 's' argument!")
     }
