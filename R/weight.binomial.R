@@ -21,7 +21,7 @@ weight.binomial <- function(x, y, beta, intercept, del) {
     intersection_na_sure <- intersect(res_na_indx, correct_sure_indx)
     
     # Assigning 0 to these (we are very sure and correct!)
-    res[res_intersection_na_sure] <- 0
+    res[intersection_na_sure] <- 0
     
     # Taking difference with the sure ones
     incorrect_sure_indx <- setdiff(res_na_indx, correct_sure_indx)
