@@ -1,6 +1,6 @@
 enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, lambdabest, lambdaw = NULL, 
                                      del, intercept, scal, type_lambdaw, classnames, ntab, indexall, alphas, lambdas, 
-                                     ic_type, ic_type_reweighted) {
+                                     ic_type, ic_type_reweighted=NULL) {
 
 
 
