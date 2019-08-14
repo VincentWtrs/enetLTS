@@ -253,6 +253,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   ### STEP: REWEIGHTING AND REFITTING
   reweight_results <- vector("list", length = length(ic_type)) # Initialization # TODO: MAKE MORE FLEXIBLE 
   for(i in 1:length(ic_type)){
+    ic_type_now = ic_type[i]
     reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
                                                       yy = yy,
                                                       family = family,
@@ -260,6 +261,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                       alphabest = alphabest_list[[i]],
                                                       lambdabest = lambdabest_list[[i]],
                                                       h = h,
+                                                      ic_type = ic_type_now,
                                                       #lambdaw = lambdaw,
                                                       del = del,
                                                       intercept = intercept,
