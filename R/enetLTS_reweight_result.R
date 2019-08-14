@@ -67,6 +67,7 @@ enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, la
   ## NEW FUNCTION TO HANDLE RESULTS!
   # Looping over iCS
   results <- enetLTS_results_handling(xx = xx,
+                                      yy = yy,
                                       indexbest = indexbest,
                                       intercept = intercept,
                                       family = family,
