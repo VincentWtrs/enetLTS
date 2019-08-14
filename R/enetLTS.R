@@ -64,7 +64,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     stop("nCsteps has to be a positive number")
   }
   
-  # Output/Family consistency (class requires binomial)
+  # Output/Family consistency (class requires binomial) # TODO: TEMP: RE-ENABLE
   #if (type == "class" & family == "gaussian") {
   #  stop("class type is not available for gaussian family")
   #}
