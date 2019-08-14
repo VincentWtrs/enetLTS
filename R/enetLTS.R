@@ -207,7 +207,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       alphabest <- CVresults$alphaopt
       lambdabest <- CVresults$lambdaopt
       evalCritCV <- CVresults$evalCrit
-    }  else if (length(ic_type) > 1) {
+    } else if (length(ic_type) > 1) {
       
       print("I am in the multiple ic_type case! NOICE")
       
@@ -249,25 +249,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     }
     return(CVresults_list) # TODO REMOVE TEMP
   }
-  
-  ## SIMULATION-RELATED CODE
-  #if (simulation) {
-  #  output_list <- vector("list", length = length(ic_type)) # Used to loop the results later
-  #} else {
-  #  output_list <- vector("list", length = 1) # A single length list that will later be extracted so the original output is as before again
-  #}
-  
-  
-  #for (i in 1:length(ic_type)){
-  #  if (simulation) { # NEW # TODO CHECK / SIMPLIFY THIS
-  #    # Results extraction from list
-  #    print("I am extracting the results from the CVresults_list")
-  #   indexbest = indexbest_list[[i]]
-  #    alphabest <- alphabest_list[[i]]
-  #    lambdabest <- lambdabest_list[[i]]
-  #    evalCritCV <- evalCritCV_list[[i]]
-  #  }
-  
+
   ### STEP: REWEIGHTING AND REFITTING
   ## Running function
   # Case for missing lambdaw (Calling function without lambdaw (commented out))
@@ -298,8 +280,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                                type_lambdaw = type_lambdaw)
   }
   
-  print("I am past running the enetLTS_reweighting_refitting function") # TODO REMOVE 
-  
   ## Extracting results back into the enetLTS function
   # Common for both families (Gaussian, Binomial)
   raw.wt <- enetLTS_reweighting_refit$raw.wt
@@ -317,9 +297,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   num.nonzerocoef <- enetLTS_reweighting_refit$num.nonzerocoef
   reweighted_cv <- enetLTS_reweighting_refit$reweighted_cv
   
-  print("printing raw coefs just after extraction")
-  print(raw.coefficients)
-  
   # For Gaussian only:
   if(family == "gaussian") {
     raw.rmse <- enetLTS_reweighting_refit$raw.rmse
@@ -336,65 +313,28 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   # Counting number of nonzero coefficients
   #num.nonzerocoef <- sum(coefficients != 0)
   
-  ## Intercept handling
-  intercept <- isTRUE(intercept)
-  if (intercept) { 
-    xx_ <- addIntercept(x = xx) # Adding a column of 1s
-    coefficients_ <- c(a0, coefficients)
-    raw.coefficients <- c(a00, raw.coefficients)
-  } else if (!intercept) {
-    coefficients_ <- coefficients
-    raw.coefficients_ <- raw.coefficients
-  }
+  ## NEW FUNCTION TO HANDLE RESULTS!
+  results <- enetLTS_results_handling(xx = xx,
+                                      indexbest = indexbest,
+                                      intercept = intercept,
+                                      a0 = a0,
+                                      a00 = a00,
+                                      coefficients = coefficients,
+                                      raw.coefficients = raw.coefficients,
+                                      alphabest = alphabes,
+                                      lambdabest = lambdabest)
   
-  ### Fitted values BINOMIAL (NEW!)
-  if (family == "binomial") {
-    ## RAW FIT
-    # Raw linear predictor (eta raw)
-    u <- xx %*% raw.coefficients
-    
-    print(head(u, 100)) # TODO REMOVE
-    
-    # Raw fitted (predicted) probabilities
-    raw.fitted.values <- 1/(1 + exp(-u))
-    
-    head(raw.fitted.values)
-    
-    # Raw fitted (predicted) classes based on 0.5 cutoff
-    raw.fitted.values.class <- ifelse(test = raw.fitted.values > 0.5,
-                                      yes = 1,
-                                      no = 0)
-    
-    ## REWEIGHTED FIT
-    # Reweighted linear predictor (eta reweighted)
-    uu <- xx %*% coefficients
-    
-    # Reweighted fitted (predicted) probabilities
-    fitted.values <- 1/(1 + exp(-uu))
-    
-    # Reweighted fitted (predicted) classes based on 0.5 cutoff
-    fitted.values.class <- ifelse(test = fitted.values > 0.5,
-                                  yes = 1,
-                                  no = 0)
-    ### Fitted values GAUSSIAN
-  } else if (family == "gaussian") {
-    raw.fitted.values <- xx %*% raw.coefficients
-    fitted.values <- xx %*% coefficients
-  }
-  
-  # TO DO: CHECK THIS
-  if (family == "binomial") {
-    objective <- h * (mean((-yy[indexbest] * (xx[indexbest, ] %*% coefficients)) + log(1 + exp(xx[indexbest, ] %*% coefficients))) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
-  } else if (family == "gaussian") {
-    objective <- h * ((1/2) * mean((yy[indexbest] - xx[indexbest, ] %*% coefficients)^2) + lambdabest * sum(1/2 * (1 - alphabest) * coefficients^2 + alphabest * abs(coefficients)))
-  }
-  if (intercept) {
-    coefficients_ <- coefficients[-1] # Removing first element
-    raw.coefficients_ <- raw.coefficients[-1]  # Removing first element
-  } else {
-    coefficients_ <- coefficients
-    raw.coefficients_ <- raw.coefficients
-  }
+  # Extracting elements of results
+  objective <- results$objective
+  xx <- results$xx
+  raw.coefficients <- results$raw.coefficients
+  coefficients <- results$coefficients
+  a0 <- results$a0
+  a00 <- results$a00
+  raw.fitted.values <- results$raw.fitted.values
+  raw.fitted.values.class <- results$raw.fitted.values.class
+  fitted.values <- results$fitted.values
+  fitted.values.class <- results$fitted.values.class
   
   inputs <- list(xx = xx, 
                  yy = yy, 
@@ -424,9 +364,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                    raw.wt = raw.wt, 
                    wt = wgt, 
                    a00 = a00, 
-                   raw.coefficients = raw.coefficients_, 
+                   raw.coefficients = raw.coefficients, 
                    a0 = a0, 
-                   coefficients = coefficients_, 
+                   coefficients = coefficients, 
                    alpha = alphabest,
                    alphaw = alphaw_best,
                    lambda = lambdabest, 
