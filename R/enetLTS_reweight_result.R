@@ -160,6 +160,6 @@ enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, la
                    lambdas = lambdas)  # NEW: Added the lambdas that were used
   }
   class(output) <- "enetLTS"
-  output$call <- matchedCall
+  #output$call <- matchedCall # TODO FIX
   return(output)
 }
