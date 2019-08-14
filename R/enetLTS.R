@@ -349,7 +349,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     ## Intercept handling
     intercept <- isTRUE(intercept)
     if (intercept) { 
-      #xx <- addIntercept(x = xx) # Adding a column of 1s # TEMPO REMOVE THIS BECAUSE I WANT TO TEST SOMETHING
+      xx <- addIntercept(x = xx) # Adding a column of 1s
       coefficients <- c(a0, coefficients)
       raw.coefficients <- c(a00, raw.coefficients)
     } else if (!intercept) {
