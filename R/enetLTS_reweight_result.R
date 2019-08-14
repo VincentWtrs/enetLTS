@@ -96,7 +96,25 @@ enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, la
   fitted.values <- results$fitted.values
   fitted.values.class <- results$fitted.values.class
   
-  
+  # Defining list of inputs
+  inputs <- list(xx = xx, 
+                 yy = yy, 
+                 family = family, 
+                 alphas = alphas, 
+                 lambdas = lambdas, 
+                 lambdaw = lambdaw, 
+                 hsize = hsize, 
+                 h = h, 
+                 nsamp = nsamp, 
+                 s1 = s1, 
+                 nCsteps = nCsteps, 
+                 nfold = nfold, 
+                 intercept = intercept, 
+                 repl = repl, 
+                 para = para, 
+                 ncores = ncores, 
+                 del = del, 
+                 scal = scal)
   
   ## OUTPUTS
   # Case: binomial
@@ -124,7 +142,7 @@ enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, la
                    raw.fitted.values.class = drop(raw.fitted.values.class), # NEW
                    classnames = classnames, 
                    classsize = ntab, 
-                   #inputs = inputs, # TODO FIX
+                   inputs = inputs,
                    indexall = indexall, 
                    call = sys.call(),
                    alphas = alphas,  # NEW: Added the alphas that were used
@@ -153,7 +171,7 @@ enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, la
                    raw.fitted.values = drop(raw.fitted.values), 
                    raw.rmse = raw.rmse, 
                    rmse = reweighted.rmse, 
-                   #inputs = inputs, # TODO FIX
+                   inputs = inputs,
                    indexall = indexall, 
                    call = sys.call(),
                    alphas = alphas,  # NEW: Added the alphas that were used
