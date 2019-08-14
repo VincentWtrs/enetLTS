@@ -1,4 +1,4 @@
-enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, lambdabest, lambdaw = NULL,num.nonzerocoef, 
+enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, lambdabest, lambdaw = NULL, 
                                      del, intercept, scal, type_lambdaw, classnames, classsize, indexall, alphas, lambdas, 
                                      ic_type, ic_type_reweighted) {
 
@@ -67,7 +67,7 @@ enetLTS_reweight_results <- function(xx, yy, family, h, indexbest, alphabest, la
   
   ## PREPARING OUTPUT (Already given in the reweighting step...)
   # Counting number of nonzero coefficients
-  #num.nonzerocoef <- sum(coefficients != 0)
+  num.nonzerocoef <- sum(coefficients != 0)
   
   ## NEW FUNCTION TO HANDLE RESULTS!
   # Looping over iCS

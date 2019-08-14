@@ -264,11 +264,15 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                       del = del,
                                                       intercept = intercept,
                                                       scal = scal,
-                                                      type_lambdaw = type_lambdaw)
-    
+                                                      type_lambdaw = type_lambdaw,
+                                                      classnames = classnames,
+                                                      classsize = classize,
+                                                      indexall = indexall,
+                                                      alphas = alphas,
+                                                      lambdas = lambdas)
+
   }
   
   # OUTPUT
   return(reweight_results)
-
 }
