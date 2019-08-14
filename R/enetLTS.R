@@ -250,6 +250,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         print("I have finished a IC calculations and extracting pass")
       }
     }
+    return(CVresults_list[[i]]) # TEMP REMOVE
   }
   
   ## SIMULATION-RELATED CODE
