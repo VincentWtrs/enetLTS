@@ -1,4 +1,4 @@
-enetLTS_results_handling <- function(intercept, family, xx, a0, coefficients, raw.coefficients, indexbest, alphabest, lambdabest) {
+enetLTS_results_handling <- function(intercept, family, xx, a0, a00, coefficients, raw.coefficients, indexbest, alphabest, lambdabest) {
   ## Intercept handling
   intercept <- isTRUE(intercept)
   if (intercept) { 
