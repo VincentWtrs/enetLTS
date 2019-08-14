@@ -11,26 +11,28 @@ weight.binomial <- function(x, y, beta, intercept, del) {
     res <- (y - pi) / sqrt(pi*(1-pi))
     
     ## Catching some NAs for very high predicted probabilities
-    # Catching the indices that are NA
-    res_na_indx <- which(is.na(res))
-    
-    # Catching indices that are very sure of their predictions and are CORRECT
-    correct_sure_indx <- which(y - pi < 0.000000001)
-    
-    # Intersection of these both
-    intersection_na_sure <- intersect(res_na_indx, correct_sure_indx)
-    
-    # Assigning 0 to these (we are very sure and correct!)
-    res[intersection_na_sure] <- 0
-    
-    # Taking difference with the sure ones
-    incorrect_sure_indx <- setdiff(res_na_indx, correct_sure_indx)
-    
-    # Setting those incorrect sure ones rather big
-    print("The residuals before replacing had the following y - pi_hat values:")
-    print(y[incorrect_sure_indx] - pi[incorrect_sure_indx])
-    res[incorrect_sure_indx] <- 3 # 3 Standard deviations away so will be flagged
-    
+    if (sum(is.na(res)) > 1){
+      # Catching the indices that are NA
+      res_na_indx <- which(is.na(res))
+      
+      # Catching indices that are very sure of their predictions and are CORRECT
+      correct_sure_indx <- which(y - pi < 0.000000001)
+      
+      # Intersection of these both
+      intersection_na_sure <- intersect(res_na_indx, correct_sure_indx)
+      
+      # Assigning 0 to these (we are very sure and correct!)
+      res[intersection_na_sure] <- 0
+      
+      # Taking difference with the sure ones
+      incorrect_sure_indx <- setdiff(res_na_indx, correct_sure_indx)
+      
+      # Setting those incorrect sure ones rather big
+      print("The residuals before replacing had the following y - pi_hat values:")
+      print(y[incorrect_sure_indx] - pi[incorrect_sure_indx])
+      res[incorrect_sure_indx] <- 3 # 3 Standard deviations away so will be flagged
+    }
+
   ## Case: No intercept 
   } else {
     
