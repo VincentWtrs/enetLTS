@@ -110,7 +110,7 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
   
   # BIC-type: Fang & Tang (2012) -> GIC
   if(type == "BIC_FT"){ 
-    penalty <- (df * log(log(n)) * log(p))/nobs
+    penalty <- (df * log(log(nobs)) * log(p))/nobs
   }
   
   # HBIC: High-dimensional BIC
