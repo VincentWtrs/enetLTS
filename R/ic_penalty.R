@@ -105,7 +105,7 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
   
   # BIC-type: Wang, Li & Leng (2009)
   if(type == "BIC_WLL"){
-    penalty <- (df * log(n) * log(log(p)))/nobs
+    penalty <- (df * log(nobs) * log(log(p)))/nobs
   }
   
   # BIC-type: Fang & Tang (2012) -> GIC
