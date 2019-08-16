@@ -59,22 +59,6 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
     ## STEP 2: Final fitting: Case Binomial
     print('I am just before a first run (raw fit) of a glmnet object in enetLTS_reweighting_refitting') #TODO REMOVE
     if (family == "binomial") {
-      # TODO REMOVE
-      print('xs[indexbest, ]')
-      print(head(xs[indexbest, ]))
-      print('ys[indexbest, ]')
-      print(head(ys[indexbest, ]))
-      print("alphabest:")
-      print(alphabest)
-      print("lambdabest:")
-      print(lambdabest)
-      
-      print("Checking for NAs:")
-      print(is.na(xs[indexbest, ]))
-      print(is.na(ys[indexbest, ]))
-      
-      
-      
       fit <- glmnet(x = xs[indexbest, ],
                     y = ys[indexbest, ],
                     family = "binomial",
@@ -83,7 +67,8 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
                     standardize = FALSE, # Because already done in the prepara case (we are providing y standardized and x standardized)
                     intercept = TRUE) # Because only for linear models the standardization makes the regression line go through the origin, not true for GLMs in general
       print('I am past a first run (raw fit) of a glmnet object in enetLTS_reweighting_refitting') # TODO REMOVE
-      ## STEP 2: Final fitting: Case Gaussian
+    
+    ## STEP 2: Final fitting: Case Gaussian
     } else if (family == "gaussian") {
       fit <- glmnet(x = xs[indexbest, ], 
                     y = ys[indexbest, ], 

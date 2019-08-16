@@ -16,7 +16,7 @@ enetLTS_results_handling <- function(intercept, h, family, xx, yy, a0, a00, coef
     # Raw linear predictor (eta raw)
     u <- xx %*% raw.coefficients
     
-    print(head(u, 100)) # TODO REMOVE
+    #print(head(u, 100)) # TODO CHECK THIS WAS THE SAME AT CERTAIN POINTS
     
     # Raw fitted (predicted) probabilities
     raw.fitted.values <- 1/(1 + exp(-u))
