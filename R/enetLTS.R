@@ -209,8 +209,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       evalCritCV <- CVresults$evalCrit
     } else if (length(ic_type) > 1) {
       
-      print("I am in the multiple ic_type case! NOICE")
-      
       # Initialization of lists and indices
       #CVresults_list <- vector("list", length = length(ic_type)) # TODO CHECK WITH EARLIER INITIALIZATION ADDED
       names(CVresults_list) <- ic_type
@@ -226,7 +224,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       # Looping over all required ICs
       for(i in 1:length(ic_type)) {
         ic_now <- ic_type[i] # Extract current IC
-        print(paste0("Currently running for: ", ic_type[i]))
+        print(paste0("Currently running the cv.enetLTS() function for: ", ic_type[i]))
         CVresults_list[[i]] <- cv.enetLTS(index = indexall,
                                           xx = x, # x Is the normalized data, xx is raw
                                           yy = y, # y Is the normalized data, yy is raw
@@ -247,13 +245,14 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         print("I have finished a IC calculations and extracting pass") # TODO REMOVE
       }
     }
-    #return(CVresults_list) # TODO REMOVE TEMP
   }
 
   ### STEP: REWEIGHTING AND REFITTING
   reweight_results <- vector("list", length = length(ic_type)) # Initialization # TODO: MAKE MORE FLEXIBLE 
   for(i in 1:length(ic_type)){
     ic_type_now = ic_type[i]
+    print("Entering the rweighting/results step for IC:")
+    print(ic_type_now)
     reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
                                                       yy = yy,
                                                       family = family,
