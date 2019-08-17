@@ -93,6 +93,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     min_lambda <- 1e-08
   } else {
     min_lambda <- 0
+  }
   
   ## Binomial response preparation
   if (family == "binomial") {
