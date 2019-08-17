@@ -1,18 +1,24 @@
 
 prepara <- function(x, y, family, index = NULL, robu = NULL){
+  
   ## GOAL
   # Handles centering and scaling of the input data using classic or robust estimators of location and scale.
-  # Default: Classic scaling. If robu = 1: robust scaling
+  # ... Default: Classic scaling. If robu = 1: robust scaling is used based on median for y (Gaussian only)
+  # ... and median + MAD for the predictors.
   
-  print("Printing head x in the prepara function:")
-  print(x)
-  
-  print("printing head y in the prepara function")
-  print(y)
+  ## INPUTS
+  # x: Predictor matrix X
+  # y: Outcome matrix y
+  # family: GLM family argument, currently supported: "gaussian", "binomial"
+  # index: Indices to apply on the standardization of the data
+  # robu: Use of robust scale/location standardization (1) or not (0)
 
+  # If no robu parameter given: will go to default: NULL: set robu <- 0
   if (is.null(robu)) {
     robu <- 0
   }
+  
+  # 
   if (is.null(index)) {
     if (robu > 0){
       if (family == "binomial") {
@@ -60,7 +66,7 @@ prepara <- function(x, y, family, index = NULL, robu = NULL){
     ycen <- scale(y, muy, FALSE)
   }
   
-  
+  # OUTPUT
   return(list(xnor = xnor,
               ycen = ycen, 
               mux = mux, 
