@@ -3,7 +3,7 @@ enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCstep
                                      scal, type_lambdaw, classnames, ntab, indexall, alphas, lambdas, 
                                      ic_type, ic_type_reweighted=NULL) {
   
-  
+  # Gathering inputs (But won't make much sense, needs to be moved outside of this to top function to maybe make some sense) # TODO
   inputs <- list(xx = xx, 
                  yy = yy, 
                  family = family, 
@@ -23,12 +23,10 @@ enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCstep
                  del = del, 
                  scal = scal)
 
-  ## WRAPPER FUNCTION
-  
   ### STEP: REWEIGHTING AND REFITTING
   ## Running function
   # Case for missing lambdaw (Calling function without lambdaw (commented out))
-  if(is.null(lambdaw)){
+  if (is.null(lambdaw)) {
     enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
                                                                yy = yy,
                                                                family = family, 
@@ -40,7 +38,7 @@ enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCstep
                                                                intercept = intercept,
                                                                scal = scal,
                                                                type_lambdaw = type_lambdaw)
-    # Case for non-missing lambdaw
+  # Case for non-missing lambdaw
   } else {
     enetLTS_reweighting_refit <- enetLTS_reweighting_refitting(xx = xx,
                                                                yy = yy,
@@ -89,7 +87,6 @@ enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCstep
   num.nonzerocoef <- sum(coefficients != 0)
   
   ## NEW FUNCTION TO HANDLE RESULTS!
-  # Looping over iCS
   results <- enetLTS_results_handling(xx = xx,
                                       yy = yy,
                                       indexbest = indexbest,
@@ -134,6 +131,7 @@ enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCstep
                  ncores = ncores, 
                  del = del, 
                  scal = scal)
+  # TODO SEE ABOVE AS WELL WHERE INPUTS WAS DEFINED
   
   ## OUTPUTS
   # Case: binomial

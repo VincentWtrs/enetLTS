@@ -194,6 +194,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   # Case: Tuning grid (more than single value of alpha and/or lambda)
   if ((length(alphas) > 1) | (length(lambdas) > 1)) {
+    
+    # Case: no ICs or single IC
     if ((is.null(ic_type)) | (length(ic_type) == 1)) {
       # NOTE: the results are called CV results can be from a IC search
       CVresults <- cv.enetLTS(index = indexall, 
@@ -214,6 +216,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       alphabest <- CVresults$alphaopt
       lambdabest <- CVresults$lambdaopt
       evalCritCV <- CVresults$evalCrit
+      
+      # Case: multiple ICs provided
     } else if (length(ic_type) > 1) {
       
       # Initialization of lists and indices
@@ -253,40 +257,74 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       }
     }
   }
-
+  
   ### STEP: REWEIGHTING AND REFITTING
-  reweight_results <- vector("list", length = length(ic_type)) # Initialization # TODO: MAKE MORE FLEXIBLE 
-  for(i in 1:length(ic_type)){
-    ic_type_now = ic_type[i]
-    print("Entering the rweighting/results step for IC:")
-    print(ic_type_now)
-    reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
-                                                      yy = yy,
-                                                      family = family,
-                                                      indexbest = indexbest_list[[i]],
-                                                      alphabest = alphabest_list[[i]],
-                                                      lambdabest = lambdabest_list[[i]],
-                                                      h = h,
-                                                      hsize = hsize,
-                                                      nsamp = nsamp,
-                                                      s1 = s1,
-                                                      nCsteps = nCsteps,
-                                                      nfold = nfold,
-                                                      repl = repl,
-                                                      para = para,
-                                                      ncores = ncores,
-                                                      ic_type = ic_type_now,
-                                                      #lambdaw = lambdaw,
-                                                      del = del,
-                                                      intercept = intercept,
-                                                      scal = scal,
-                                                      type_lambdaw = type_lambdaw,
-                                                      classnames = classnames,
-                                                      ntab = ntab,
-                                                      indexall = indexall,
-                                                      alphas = alphas,
-                                                      lambdas = lambdas)
+  ## Reweighting/Refitting with cross-validation
+  if (is.null(ic_type)) {
+    reweight_results <- enetLTS_reweight_results(xx = xx,
+                                                 yy = yy,
+                                                 family = family,
+                                                 indexbest = indexbest,
+                                                 alphabest = alphabest,
+                                                 lambdabest = lambdabest,
+                                                 h = h,
+                                                 hsize = hsize,
+                                                 nsamp = nsamp,
+                                                 s1 = s1,
+                                                 nCsteps = nCsteps,
+                                                 nfold = nfold,
+                                                 repl = repl,
+                                                 para = para,
+                                                 ncores = ncores,
+                                                 ic_type = NULL, # TODO CHECK THIS IF WE CAN REMOVE THE THING
+                                                 #lambdaw = lambdaw,
+                                                 del = del,
+                                                 intercept = intercept,
+                                                 scal = scal,
+                                                 type_lambdaw = type_lambdaw,
+                                                 classnames = classnames,
+                                                 ntab = ntab,
+                                                 indexall = indexall,
+                                                 alphas = alphas,
+                                                 lambdas = lambdas)
+  } else if (length(ic_type) > 1) {
     
+    # Initializing list to save results in
+    reweight_results <- vector("list", length = length(ic_type)) # Initialization # TODO: MAKE MORE FLEXIBLE 
+    
+    # Looping over all ICs
+    for (i in 1:length(ic_type)) {
+      ic_type_now = ic_type[i] # Extracting current IC
+      print("Entering the rweighting/results step for IC:")
+      print(ic_type_now)
+      
+      reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
+                                                        yy = yy,
+                                                        family = family,
+                                                        indexbest = indexbest_list[[i]],
+                                                        alphabest = alphabest_list[[i]],
+                                                        lambdabest = lambdabest_list[[i]],
+                                                        h = h,
+                                                        hsize = hsize,
+                                                        nsamp = nsamp,
+                                                        s1 = s1,
+                                                        nCsteps = nCsteps,
+                                                        nfold = nfold,
+                                                        repl = repl,
+                                                        para = para,
+                                                        ncores = ncores,
+                                                        ic_type = ic_type_now,
+                                                        #lambdaw = lambdaw,
+                                                        del = del,
+                                                        intercept = intercept,
+                                                        scal = scal,
+                                                        type_lambdaw = type_lambdaw,
+                                                        classnames = classnames,
+                                                        ntab = ntab,
+                                                        indexall = indexall,
+                                                        alphas = alphas,
+                                                        lambdas = lambdas)
+    }
   }
   # OUTPUT
   return(reweight_results)
