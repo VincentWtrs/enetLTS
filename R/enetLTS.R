@@ -187,9 +187,9 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   
   # INITIALIZING # TODO TEMP REMOVE ME / IMPROVE ME
   if (is.null(ic_type)) {
-    CVresults_list <- vector("list", length = 1) # TODO
+    CVresults <- vector("list", length = 1) # TODO
   } else if (length(ic_type) >= 1){
-    CVresults_list <- vector("list", length = length(ic_type)) # TODO
+    CVresults <- vector("list", length = length(ic_type)) # TODO
   }
   
   # Case: Tuning grid (more than single value of alpha and/or lambda)
@@ -222,23 +222,23 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       
       # Initialization of lists and indices
       #CVresults_list <- vector("list", length = length(ic_type)) # TODO CHECK WITH EARLIER INITIALIZATION ADDED
-      names(CVresults_list) <- ic_type
-      indexbest_list <- vector("list", length = length(ic_type))
-      names(indexbest_list) <- ic_type
-      print("structure of indexbest_list")
-      print(str(indexbest_list))
-      alphabest_list <- vector("list", length = length(ic_type))
-      names(alphabest_list) <- ic_type
-      lambdabest_list <- vector("list", length = length(ic_type))
-      names(lambdabest_list) <- ic_type
-      evalCritCV_list <- vector("list", length = length(ic_type))
-      names(evalCritCV_list) <- ic_type
+      names(CVresults) <- ic_type
+      indexbest <- vector("list", length = length(ic_type))
+      names(indexbest) <- ic_type
+      print("structure of indexbest")
+      print(str(indexbest))
+      alphabest <- vector("list", length = length(ic_type))
+      names(alphabest) <- ic_type
+      lambdabest <- vector("list", length = length(ic_type))
+      names(lambdabest) <- ic_type
+      evalCritCV <- vector("list", length = length(ic_type))
+      names(evalCritCV) <- ic_type
       
       # Looping over all required ICs
       for(i in 1:length(ic_type)) {
         ic_now <- ic_type[i] # Extract current IC
         print(paste0("Currently running the cv.enetLTS() function for: ", ic_type[i]))
-        CVresults_list[[i]] <- cv.enetLTS(index = indexall,
+        CVresults[[i]] <- cv.enetLTS(index = indexall,
                                           xx = x, # x Is the normalized data, xx is raw
                                           yy = y, # y Is the normalized data, yy is raw
                                           family = family,
@@ -251,10 +251,10 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                           ic_type = ic_now)
         
         # Extracting results
-        indexbest_list[[i]] <- CVresults_list[[i]]$indexbest
-        alphabest_list[[i]] <- CVresults_list[[i]]$alphaopt
-        lambdabest_list[[i]] <- CVresults_list[[i]]$lambdaopt
-        evalCritCV_list[[i]] <- CVresults_list[[i]]$evalCrit
+        indexbest[[i]] <- CVresults[[i]]$indexbest
+        alphabest[[i]] <- CVresults[[i]]$alphaopt
+        lambdabest[[i]] <- CVresults[[i]]$lambdaopt
+        evalCritCV[[i]] <- CVresults[[i]]$evalCrit
         print("I have finished a IC calculations and extracting pass") # TODO REMOVE
       }
     }
