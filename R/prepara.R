@@ -3,8 +3,16 @@ prepara <- function(x, y, family, index = NULL, robu = NULL){
   ## GOAL
   # Handles centering and scaling of the input data using classic or robust estimators of location and scale.
   # Default: Classic scaling. If robu = 1: robust scaling
+  
+  print("Printing head x in the prepara function:")
+  print(x)
+  
+  print("printing head y in the prepara function")
+  print(y)
 
-  if (is.null(robu)) robu <- 0
+  if (is.null(robu)) {
+    robu <- 0
+  }
   if (is.null(index)) {
     if (robu > 0){
       if (family == "binomial") {
