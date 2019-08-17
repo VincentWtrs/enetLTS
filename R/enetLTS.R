@@ -300,6 +300,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       print("Entering the rweighting/results step for IC:")
       print(ic_type_now)
       
+      print("Printing indexbest in the case of multiple IC (we are in enetLTS() now...")
+      print(indexbest)
+      
+      print("Printing indexbest[[i]] in the case of multiple IC (we are in enetLTS() now...")
+      print(indexbest[[i]])
+      
       reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
                                                         yy = yy,
                                                         family = family,
