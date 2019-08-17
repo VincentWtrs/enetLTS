@@ -196,5 +196,6 @@ enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCstep
   }
   class(output) <- "enetLTS"
   #output$call <- matchedCall # TODO FIX
+  print("I am at the end of the enetLTS_reweight_result.R function")
   return(output)
 }
