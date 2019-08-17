@@ -20,6 +20,7 @@ print.enetLTS <- function(x, vers = c("reweighted", "raw"), zeros = FALSE, ...){
 
       cat(paste("\n alpha:", x$alpha))
       cat(paste("\n lambda:", x$lambda))
+      cat(paste("\n alphaw:", x$alphaw))
       cat(paste("\n lambdaw:", x$lambdaw))
 
 }
