@@ -47,6 +47,16 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
   
   ### STEP 1. Scaling of data
   if (isTRUE(scal)) {
+    print("Printing the xx matrix head just before the first prepara call") # TODO REMOVE
+    print(head(xx)) # TODO REMOVE
+    
+    print("printing the yy head just before the first prepara call") # TODO REMOVE
+    print(head(yy)) # TODO REMOVE
+    
+    print("printing the indexbest just before the first prepara call")
+    print(indexbest)
+    
+    
     scl <- prepara(x = xx, 
                    y = yy, 
                    family = family, 
