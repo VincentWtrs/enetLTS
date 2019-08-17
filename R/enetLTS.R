@@ -225,6 +225,8 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       names(CVresults_list) <- ic_type
       indexbest_list <- vector("list", length = length(ic_type))
       names(indexbest_list) <- ic_type
+      print("structure of indexbest_list")
+      print(str(indexbest_list))
       alphabest_list <- vector("list", length = length(ic_type))
       names(alphabest_list) <- ic_type
       lambdabest_list <- vector("list", length = length(ic_type))
