@@ -88,6 +88,12 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
     repl <- 1
   }
   
+  # Check if in n < p problem such that at least some nonzero lambda is needed (only when no lambdas given)
+  if(ncol(xx) > nrow(xx)) {
+    min_lambda <- 1e-08
+  } else {
+    min_lambda <- 0
+  
   ## Binomial response preparation
   if (family == "binomial") {
     rnames <- rownames(yy) # Saving rownames (TO DO: why?)
@@ -126,7 +132,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                     y = yy, 
                     normalize = scal, 
                     intercept = intercept)
-    lambdas <- seq(l00, 0, by = -0.025 * l00) # DECREASING SEQUENCE (HIGH REGULARIZATION FIRST) # TO DO: CHECK PROBABLY MORE LOGIC TO DO OTHER WAY AROUND TO GET OUTLIERS SINCE OTHERWISE THEY WILL BE HIDDEN IN THE SPAGHETTI (WARM START SEQUENCE) WHERE THE DIMENSIONALITY COLLAPSES AND THE OUTLIERS WILL NOT BE FOUND ANWAY...
+    lambdas <- seq(l00, lambda_min, by = -0.025 * l00) # DECREASING SEQUENCE (HIGH REGULARIZATION FIRST) # TO DO: CHECK PROBABLY MORE LOGIC TO DO OTHER WAY AROUND TO GET OUTLIERS SINCE OTHERWISE THEY WILL BE HIDDEN IN THE SPAGHETTI (WARM START SEQUENCE) WHERE THE DIMENSIONALITY COLLAPSES AND THE OUTLIERS WILL NOT BE FOUND ANWAY...
     #lambdas <- sort(lambdas, decreasing = FALSE) # NEW: Sorting INCREASING 
     # TODO (Seeing if keeping in original order fixes the problems)
   }
