@@ -287,7 +287,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                  indexall = indexall,
                                                  alphas = alphas,
                                                  lambdas = lambdas)
-  } else if (length(ic_type) > 1) {
+  } else if (length(ic_type) >= 1) {
     
     # Initializing list to save results in
     reweight_results <- vector("list", length = length(ic_type)) # Initialization # TODO: MAKE MORE FLEXIBLE 
