@@ -92,7 +92,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
   if(ncol(xx) > nrow(xx)) {
     min_lambda <- 1e-08
   } else {
-    min_lambda <- 0
+    min_lambda <- 1e-08 #0 # TEMP NOT SETTING AT 0 BUT AT 1e-08
   }
   
   ## Binomial response preparation
