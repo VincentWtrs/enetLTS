@@ -239,16 +239,16 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
         ic_now <- ic_type[i] # Extract current IC
         print(paste0("Currently running the cv.enetLTS() function for: ", ic_type[i]))
         CVresults[[i]] <- cv.enetLTS(index = indexall,
-                                          xx = x, # x Is the normalized data, xx is raw
-                                          yy = y, # y Is the normalized data, yy is raw
-                                          family = family,
-                                          alphas = alphas,
-                                          lambdas = lambdas,
-                                          nfold = nfold,
-                                          repl = repl,
-                                          ncores = ncores,
-                                          plot = plot,
-                                          ic_type = ic_now)
+                                     xx = x, # x Is the normalized data, xx is raw
+                                     yy = y, # y Is the normalized data, yy is raw
+                                     family = family,
+                                     alphas = alphas,
+                                     lambdas = lambdas,
+                                     nfold = nfold,
+                                     repl = repl,
+                                     ncores = ncores,
+                                     plot = plot,
+                                     ic_type = ic_now)
         
         # Extracting results
         indexbest[[i]] <- CVresults[[i]]$indexbest
@@ -289,7 +289,7 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                  indexall = indexall,
                                                  alphas = alphas,
                                                  lambdas = lambdas)
-  } else if (length(ic_type) >= 1) {
+  } else if (length(ic_type) > 1) {
     
     # Initializing list to save results in
     reweight_results <- vector("list", length = length(ic_type)) # Initialization # TODO: MAKE MORE FLEXIBLE 
@@ -333,6 +333,35 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
                                                         alphas = alphas,
                                                         lambdas = lambdas)
     }
+  }
+  
+  if (length(ic_type) == 1) {
+    reweight_results <- enetLTS_reweight_results(xx = xx,
+                                                 yy = yy,
+                                                 family = family,
+                                                 indexbest = indexbest,
+                                                 alphabest = alphabest,
+                                                 lambdabest = lambdabest,
+                                                 h = h,
+                                                 hsize = hsize,
+                                                 nsamp = nsamp,
+                                                 s1 = s1,
+                                                 nCsteps = nCsteps,
+                                                 nfold = nfold,
+                                                 repl = repl,
+                                                 para = para,
+                                                 ncores = ncores,
+                                                 ic_type = ic_type_now,
+                                                 #lambdaw = lambdaw,
+                                                 del = del,
+                                                 intercept = intercept,
+                                                 scal = scal,
+                                                 type_lambdaw = type_lambdaw,
+                                                 classnames = classnames,
+                                                 ntab = ntab,
+                                                 indexall = indexall,
+                                                 alphas = alphas,
+                                                 lambdas = lambdas)
   }
   # OUTPUT
   return(reweight_results)
