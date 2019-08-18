@@ -197,14 +197,7 @@ enetLTS_reweighting_refitting <- function (xx, yy, family, indexbest, alphabest,
       
       ## STEP 8b. COEFFICIENT HANDLING OF REWEIGHTED FIT
       coefficients <- drop(as.matrix(fitw$beta)/sclw$sigx)
-      
-      # TODO REMOVE SOME PRINT STATEMENTS
-      print("Structure of coefficients:") # TODO REMOVE
-      print(str(coefficients)) # # TODO REMOVE
-      print("Structure of a0:") # # TODO REMOVE
-      print(str(a0)) # TODO REMOVE
-      print("Calculated coefs")  # TODO REMOVE
-      
+    
       ## STEP 9 CALCULATING WEIGHTS
       wgt <- weight.binomial(x = xx, 
                              y = yy, 
