@@ -122,6 +122,8 @@ enetLTS <- function(xx, yy, family, alphas,
   ## lambdas sequence
   # Case: No user given lambdas and gaussian
   if (missing(lambdas) & family == "gaussian") {
+    print("Printing family because I can only reach this state if weirdly it is Gaussian again...:")
+    print(family)
     # Bivariate winsorization method
     l0 <- robustHD::lambda0(xx, yy, normalize = scal, intercept = intercept)
     lambdas <- seq(l0, 0, by = -0.025 * l0) # DECREASING SEQUENCE (HIGHEST REGULARIZATION FIRST) # TO DO: CHECK PROBABLY MORE LOGIC TO DO OTHER WAY AROUND TO GET OUTLIERS SINCE OTHERWISE THEY WILL BE HIDDEN IN THE SPAGHETTI (WARM START SEQUENCE) WHERE THE DIMENSIONALITY COLLAPSES AND THE OUTLIERS WILL NOT BE FOUND ANWAY...
