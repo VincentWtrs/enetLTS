@@ -225,8 +225,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       names(CVresults) <- ic_type
       indexbest <- vector("list", length = length(ic_type))
       names(indexbest) <- ic_type
-      print("structure of indexbest")
-      print(str(indexbest))
       alphabest <- vector("list", length = length(ic_type))
       names(alphabest) <- ic_type
       lambdabest <- vector("list", length = length(ic_type))
@@ -299,12 +297,6 @@ enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas,
       ic_type_now = ic_type[i] # Extracting current IC
       print("Entering the rweighting/results step for IC:")
       print(ic_type_now)
-      
-      print("Printing indexbest in the case of multiple IC (we are in enetLTS() now...")
-      print(indexbest)
-      
-      print("Printing indexbest[[i]] in the case of multiple IC (we are in enetLTS() now...")
-      print(indexbest[[i]])
       
       reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
                                                         yy = yy,
