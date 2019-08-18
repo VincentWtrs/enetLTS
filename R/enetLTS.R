@@ -1,4 +1,4 @@
-enetLTS <- function(xx, yy, family = c("gaussian", "binomial"), alphas, 
+enetLTS <- function(xx, yy, family, alphas, 
                     lambdas, lambdaw, hsize = 0.75, intercept = TRUE, nsamp = 500, 
                     s1 = 10, nCsteps = 20, nfold = 5, seed = NULL, plot = TRUE, 
                     repl = 5, para = TRUE, ncores = 1, del = 0.0125, tol = -1e+06, 
