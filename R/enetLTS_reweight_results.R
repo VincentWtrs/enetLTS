@@ -195,7 +195,7 @@ enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCstep
                    lambdas = lambdas)  # NEW: Added the lambdas that were used
   }
   class(output) <- "enetLTS"
-  output$call <- matchedCall
+  output$call <- cal
   output$ic_type <- get("ic_type") # NEW TESTING IF IC_TYPE STRING CAN BE PUT HERE
   return(output)
 }
