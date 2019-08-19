@@ -18,9 +18,9 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     stop("provide an lambdas sequence")
   
   # NEW MAKING ARRAY WHEN MULTIPLE IC TYPES
-  if(length(ic_type) > 1){
+  if (length(ic_type) > 1) {
     evalCrit <- array(NA, dim = c(length(ic_type), length(lambdas), length(alphas))) # NEW
-    dimnames(evalCrit) <- list(ic_type, paste("lambdas", lambdas), paste("alpha", alphas))
+    dimnames(evalCrit) <- list(paste("IC", ic_type), paste("lambdas", lambdas), paste("alpha", alphas))
   } else {
     evalCrit <- matrix(NA, nrow = length(lambdas), ncol = length(alphas))
     dimnames(evalCrit) <- list(paste("lambdas", lambdas), paste("alpha", alphas))
