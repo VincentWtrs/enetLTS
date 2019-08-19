@@ -32,7 +32,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   # tol: Tolerance for stopping while loops in the C-step procedures, default: -1e+06
   # type: type of predictions required, default: c("response", "class")
   
-  print("USING UPDATED VERSION OF enetLTS: WITH THE INTERCEPT FIX") # So I can see that the new function is effectively called
+  print("USING UPDATED VERSION enetLTS(): 19-08-2019") # So I can see that the new function is effectively called
   ########################
   
   matchedCall <- match.call() # Use match.call() if there are a lot of optional arguments
@@ -122,8 +122,6 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   ## lambdas sequence
   # Case: No user given lambdas and gaussian
   if (missing(lambdas) & family == "gaussian") {
-    print("Printing family because I can only reach this state if weirdly it is Gaussian again...:")
-    print(family)
     # Bivariate winsorization method
     l0 <- robustHD::lambda0(xx, yy, normalize = scal, intercept = intercept)
     lambdas <- seq(l0, 0, by = -0.025 * l0) # DECREASING SEQUENCE (HIGHEST REGULARIZATION FIRST) # TO DO: CHECK PROBABLY MORE LOGIC TO DO OTHER WAY AROUND TO GET OUTLIERS SINCE OTHERWISE THEY WILL BE HIDDEN IN THE SPAGHETTI (WARM START SEQUENCE) WHERE THE DIMENSIONALITY COLLAPSES AND THE OUTLIERS WILL NOT BE FOUND ANWAY...
@@ -255,7 +253,6 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
         alphabest[[i]] <- CVresults[[i]]$alphaopt
         lambdabest[[i]] <- CVresults[[i]]$lambdaopt
         evalCritCV[[i]] <- CVresults[[i]]$evalCrit
-        print("I have finished a IC calculations and extracting pass") # TODO REMOVE
       }
     }
   }
@@ -297,9 +294,9 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
     # Looping over all ICs
     for (i in 1:length(ic_type)) {
       ic_type_now = ic_type[i] # Extracting current IC
-      print("Entering the rweighting/results step for IC:")
-      print(ic_type_now)
-      
+      print("Entering the rweighting/results step for IC:") # TODO REMOVE
+      print(ic_type_now) # TODO REMOVE
+  
       reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
                                                         yy = yy,
                                                         family = family,
