@@ -46,12 +46,18 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   temp_result2 <- matrix(unlist(temp_result), 
                          ncol = repl + 2, # + 2
                          byrow = TRUE)
+  print("printing temp_result2 in cv.enetLTS")
+  print(temp_result2)
+  
   
   for (k in 1:nrow(temp_result2)) {
     i <- temp_result2[k, 1]
     j <- temp_result2[k, 2]
     evalCrit[i, j] <- mean(temp_result2[k, 3:(repl + 2)])
   }
+  
+  print("I am printing evalCrit in cv.enetLTS:")
+  print(evalCrit)
   
   optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
   minevalCrit <- evalCrit[optind[1], optind[2]]
