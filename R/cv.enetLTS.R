@@ -43,20 +43,15 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   temp_result2 <- matrix(unlist(temp_result), 
                          ncol = repl + 2, # + 2
                          byrow = TRUE)
-  # # NEW:
-  # if(percentile_method == TRUE){
-  #   for (k in 1:nrow(temp_result2)) {
-  #     i <- temp_result2[k, 1]
-  #     j <- temp_result2[k, 2]
-  #     evalCrit[i, j] <- quantile(temp_result2[k, 3:(repl + 2)])
-  #   }
-  # }
-  
+
   for (k in 1:nrow(temp_result2)) {
     i <- temp_result2[k, 1]
     j <- temp_result2[k, 2]
     evalCrit[i, j] <- mean(temp_result2[k, 3:(repl + 2)])
   }
+  print("I am printing which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE) now") # TODO REMOVE
+  print(which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)) # TODO REMOVE
+  
   optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
   minevalCrit <- evalCrit[optind[1], optind[2]]
   indexbest <- index[, optind[1], optind[2]]
