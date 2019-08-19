@@ -38,11 +38,15 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
   ## For each replication
   evalCritl <- rep(NA, repl) # Initiating
   for (l in 1:repl) {
+    print("printing family")
+    print(family)
     
     ## NEW: if(ic == FALSE): Keep old functionality
     if (isFALSE(ic_type)) {
+      print("I am in the CV case")
       # Binomial Case
       if (family == "binomial") {
+        print("I am creating the folds using cvTools")
         folds0 <- cvTools:::cvFolds(length(y[y == 0]), K = nfold, R = 1, type = "random")
         folds1 <- cvTools:::cvFolds(length(y[y == 1]), K = nfold, R = 1, type = "random")
         loss0 <- rep(NA, sum(y == 0))
