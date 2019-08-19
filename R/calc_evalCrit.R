@@ -2,17 +2,13 @@
 calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas, 
                           index, xx, yy, nfold, repl, family, ic_type = NULL) {
   # family argument defined as well, because it was defined within cv.enetLTS and calc_evalCrit just used it there as well
-  
-  # Test printing statement
-  print("Using new version of calc_evalCrit()")
-  
-  
+
   ## NEW: Handling information criterion case ## NEW(2) moved the nfold and repl correcting part to top-layer enetLTS() function
   if(!is.null(ic_type)){
-    ic <- TRUE
-    #nfold <- 1 # Forcing nfold to 1 (> 1 makes no sense)
-    #repl <- 1 # Forcing repl to 1  (> 1 makes no sense)
-    #print("Information Criterion option selected (ic_type), nfold and repl forced to 1.")
+    ic <- TRUE 
+    #nfold <- 1 # Forcing nfold to 1 (> 1 makes no sense) # TODO CHECK
+    #repl <- 1 # Forcing repl to 1  (> 1 makes no sense) # TODO CHECK
+    #print("Information Criterion option selected (ic_type), nfold and repl forced to 1.") # TODO CHECK
   } else if (is.null(ic_type)) {
     ic <- FALSE
   }
@@ -23,10 +19,9 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
   alpha <- alphas[j]
   
   # Printing which alpha-lambda combination is currently used
-  #print(paste("cross-validating for WEJOOOOWABUDABI alpha: ", alpha, " and lambda :", lambda), sep = "")
   if(isFALSE(ic)){
     print(paste("Tuning with cross-validation approach, currently fitting for: ", alpha, " and lambda :", lambda), sep = "")
-  } else if(isTRUE(ic)){
+  } else if (isTRUE(ic)) {
     print(paste("Tuning with information criterion approach, currently fitting for: ", alpha, " and lambda :", lambda), sep = "")
   }
   
@@ -44,7 +39,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
   for (l in 1:repl) {
     
     ## NEW: if(ic == FALSE): Keep old functionality
-    if(ic == FALSE){
+    if(isFALSE(ic_type)){
       # Binomial Case
       if (family == "binomial") {
         folds0 <- cvTools:::cvFolds(length(y[y == 0]), K = nfold, R = 1, type = "random")
