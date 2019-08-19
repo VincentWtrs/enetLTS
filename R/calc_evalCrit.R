@@ -200,6 +200,8 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
             evalCritl <- matrix(NA, ncol = length(ic_type), nrow = repl)
             for (i in 1:length(ic_type)) {
               print("I am in the multiple ic_type case")
+              print("I am printing l")
+              print(l)
               evalCritl[l, i] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, # NEW
                                                                            type = ic_type[i], # NEW
                                                                            X = xtrain,
