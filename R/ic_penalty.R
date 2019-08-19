@@ -1,4 +1,4 @@
-ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, intercept = NULL){
+ic_penalty <- function(type, model, X, alpha, EBIC_gamma = NULL, s = NULL, intercept = NULL){
   # This function calculates the PENALTY factor associated with information criteria (which then needs to be ADDED to loglik(= minus loss))
   
   ## INPUTS:
@@ -42,11 +42,13 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
      type != "EBIC" &
      type != "GIC" & 
      type != "BIC_WLL" &
-     type != "BIC_FT" &
+     type != "GIC_FT" &
      type != "HBIC" &
      type != "BIC_HD" &
      type != "EBIC2" &
-     type != "ERIC"){
+     type != "ERIC" &
+     type != "RIC" &
+     type != "CAIC") {
     stop("This type of information criterion not supported (or check for typos)")
   }
   
@@ -80,9 +82,9 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
   }
   # Calculating the effective degrees of freedom
   df <- logit_df(model = model,
-                  X = X,
-                  alpha = alpha,
-                  lambda = lambda) # NEW
+                 X = X,
+                 alpha = alpha,
+                 lambda = lambda) # NEW
   
   # Amount of nonzeros
   nonzeros <- sum(coefficients(model, s = lambda) != 0)
@@ -94,12 +96,12 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
   }
   
   # Corrected AIC (AIC_C)
-  if(type == "AIC_C"){
+  if (type == "AIC_C") {
     penalty <- (2 * df * (nobs/(nobs - df - 1)))/nobs
   }
   
   # Bayesian Information Criterion (BIC)
-  if(type == "BIC"){
+  if (type == "BIC") {
     penalty <- (df * log(nobs))/nobs
   }
   
@@ -108,51 +110,73 @@ ic_penalty <- function(type, model, X, alpha, EBIC_sigma = 0.25, s = NULL, inter
     penalty <- (df * log(nobs) * log(log(p)))/nobs
   }
   
-  # BIC-type: Fang & Tang (2012) -> GIC
-  if(type == "BIC_FT"){ 
-    penalty <- (df * log(log(nobs)) * log(p))/nobs
+  # GIC-type: Fang & Tang (2012) -> GIC
+  if(type == "GIC_FT"){ 
+    penalty <- (df * (log(log(nobs)) * log(p)))/nobs
   }
   
   # HBIC: High-dimensional BIC
-  if(type == "HBIC"){
-    sigma <- 1.5 # Empirically well-performing ]1, 2]
-    if(sigma < 1){ # TODO CHECK
-      stop("Sigma is required to be > 1 following Wang & Zhu (2011)")
+  if (type == "HBIC") {
+    if (is.null(HBIC_gamma)) {
+      HBIC_gamma <- 1.5  # Empirically well-performing ]1, 2]
     }
-    penalty <- (2 * sigma * df * log(p))/nobs
-  } # I don't see how this comes
+    if(HBIC_gamma > 0){
+      stop("HBIC_gamma is required to be > 1 following Wang & Zhu (2011)")
+    }
+    if (HBIC_gamma < 1) {
+      warning("HBIC_gamma ideally set above 1 to become selection consistent")
+    }
+    penalty <- (2 * HBIC_gamma * df * log(p))/nobs
+  } 
   
-  # BIC for High Dimensions (Gao, ...)
-  if(type == "BIC_HD"){
-    c <- 1 # Common choices: 1 or 2
-    penalty <- (c * log(p) * df)/nobs
+  # BIC for High Dimensions (Gao & Carroll (2017))
+  if(type == "BIC_HD") {
+    if (is.null(BIC_HD_c)) {
+      BIC_HD_c <- 1 # Common choices: 1 or 2
+    }
+    penalty <- (BIC_HD_c * log(p) * df)/nobs
   }
   
   # Extended Bayesian Information Criterion (EBIC)
-  if(type == "EBIC"){
-    sigma <- EBIC_sigma # Some default value! (e.g. 0.25)
+  if (type == "EBIC") {
+    if(EBIC_gamma > 1 | EBIC_gamma < 0) {
+      stop("This EBIC_gamma parameter is not allowed, choose a value in [0, 1]")
+    }
+    if (is.null(EBIC_gamma)) {
+      EBIC_gamma <- 0.25
+    }
     #penalty <- (coefs_nonzero * log(nobs) + 2 * coefs_nonzero * sigma * log(p))/nobs # THEORY
-    penalty <- (df * log(nobs) + 2 * df * sigma * log(p))/nobs
+    penalty <- (df * log(nobs) + 2 * df * EBIC_gamma * log(p))/nobs
   }
   
   # EBIC2: Alternative EBIC - Chen & Chen (2008)
-  if(type == "EBIC2"){
-    sigma <- EBIC_sigma # 0.25 good default
-    penalty <- (df * log(nobs) + 2 * sigma * log(choose(p, nonzeros)))/nobs
+  if (type == "EBIC2") {
+    if (is.null(EBIC_gamma)) {
+      EBIC_gamma <- 0.25 # 0.25 good default
+    }
+    penalty <- (df * log(nobs) + 2 * EBIC_gamma * log(choose(p, nonzeros)))/nobs
   }
   
   # Generalized Information Criterion (GIC)
-  if(type == "GIC"){
+  if(type == "GIC"){ 
     a_n <- log(log(nobs)) * log(p) # Also possible: log(p)
     penalty <- (a_n * df)/nobs
   }
   
   # Extended Regularized Information Criterion (ERIC)
-  if(type == "ERIC"){
-    nu <- 0.5 # Often suggested values: 0.5 or 1
-    penalty <- (2 * nu * nonzeros * log(nobs/lambda))/nobs
+  if (type == "ERIC") {
+    if (is.null(ERIC_nu)) {
+      ERIC_nu <- 0.5 # Often suggested values: 0.5 or 1
+    }
+    penalty <- (2 * ERIC_nu * nonzeros * log(nobs/lambda))/nobs
     # Alternatively: penalty <-  (2 * nu * df * log(nobs/lambda))/nobs
   }
   
+  # RIC
+  if (type == "RIC") {
+    penalty <- (2 * log(p) * df)/nobs # Simplified version of HBIC (HBIC_gamma == 1)
+  }
+  
+  # OUTPUT
   return(penalty)
 }
