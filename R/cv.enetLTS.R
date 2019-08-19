@@ -121,7 +121,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
       for (k in 1:nrow(temp_result2[[m]])) {
         i <- temp_result2[[m]][k, 1]
         j <- temp_result2[[m]][k, 2]
-        evalCrit[m, i, j] <- mean(temp_result2[[m]][k, 3:(repl + 2)]) # Array
+        evalCrit[i, j, m] <- mean(temp_result2[[m]][k, 3:(repl + 2)]) # Array
       }
     }
 
@@ -136,7 +136,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
       for(m in 1:dim(evalCrit)[1]){
         optind[m] <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ,] # NEW
         minevalCrit[m] <- evalCrit[optind[1], optind[2]]
-        indexbest[m] <- index[, optind[1], optind[2]]
+        indexbest[m] <- index[optind[1], optind[2],]
       }
     } else { # If NOT multiple ic
       optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
