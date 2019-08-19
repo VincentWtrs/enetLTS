@@ -31,9 +31,13 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   # del: 1-del: is the quantile to give 0-weight to an observation (hence this is flagged as outlier) in the reweighing step!
   # tol: Tolerance for stopping while loops in the C-step procedures, default: -1e+06
   # type: type of predictions required, default: c("response", "class")
+
   
   print("USING UPDATED VERSION enetLTS(): 19-08-2019") # So I can see that the new function is effectively called
   ########################
+  
+  # Recording starting time (later to get difference, to get run time)
+  start_time <- Sys.time()
   
   matchedCall <- match.call() # Use match.call() if there are a lot of optional arguments
   matchedCall[[1]] <- as.name("enetLTS")
@@ -354,6 +358,16 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                  alphas = alphas,
                                                  lambdas = lambdas)
   }
-  # OUTPUT
-  return(reweight_results)
+  # Record end time and diff
+  end_time <- Sys.time()
+  run_time <- difftime(time1 = end_time,
+                       time2 = start_time,
+                       units = "secs")
+  
+  # Creating output list
+  output <- reweight_results
+  
+  # Adding run time
+  output$run_time <- run_time
+  return(output)
 }
