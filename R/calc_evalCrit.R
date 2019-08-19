@@ -202,6 +202,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
               print("I am in the multiple ic_type case")
               evalCritl[l, i] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, # NEW
                                                                            type = ic_type[i], # NEW
+                                                                           X = xtrain,
                                                                            alpha = alpha,
                                                                            intercept = TRUE) 
             }
