@@ -37,8 +37,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
   ### LOOPING OVER REPS AND FOLDS
   ## For each replication
   evalCritl <- rep(NA, repl) # Initiating
-  print("Printing repl") # TODO REMOVE
-  print(repl) # TODO REMOVE
   for (l in 1:repl) {
     
     ## NEW: if(ic == FALSE): Keep old functionality
@@ -49,9 +47,9 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
         folds1 <- cvTools:::cvFolds(length(y[y == 1]), K = nfold, R = 1, type = "random")
         loss0 <- rep(NA, sum(y == 0))
         loss1 <- rep(NA, sum(y == 1))
-        
-      } # Gaussian Case
-      else if (family == "gaussian") {
+      
+      # Gaussian Case
+      } else if (family == "gaussian") {
         folds <- cvTools:::cvFolds(length(y), K = nfold, R = 1, type = "random")
         loss <- rep(NA, nrow(x))
       }
@@ -61,6 +59,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
         ### Creating folds
         ## Binomial Case
         if (family == "binomial") {
+          print("I am in the binomial case")
           
           # 0-outcomes
           xtrain0 <- x[y == 0, ][folds0$subsets[folds0$which != f, 1], ]
@@ -82,17 +81,16 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
           
           
           print("printing head xtrain within calc_evalcrit") # TODO REMOVE
-          print(head(x_train, 1)) # TODO REMOVE
-          
-        } ## Gaussian Case
-        else if (family == "gaussian") {
+          print(head(xtrain, 1)) # TODO REMOVE
+        
+        ## Gaussian Case  
+        }  else if (family == "gaussian") {
           xtrain <- x[folds$subsets[folds$which != f, 1], ]
           ytrain <- y[folds$subsets[folds$which != f, 1]]
           xtest <- x[folds$subsets[folds$which == f, 1], ]
           ytest <- y[folds$subsets[folds$which == f, 1]]
         }
 
-        
         ### Fitting elastic net for each fold
         res <- tryCatch({
           hpen <- length(ytrain)
