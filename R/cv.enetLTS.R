@@ -96,6 +96,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     print("I am printing temp_result in cv.enetLTS for multipe IC case!!!!!")
     print(temp_result)
     
+    temp_result2 <- vector("list", length = length(ic_type)) # Initializing
     # NEW UNPACKING
     for(i in 1:length(ic_type)) {
       temp_result2[[i]] <- matrix(unlist(temp_result[[i]]),
