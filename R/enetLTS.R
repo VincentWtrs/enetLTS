@@ -224,7 +224,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       
       # Case: multiple ICs provided
     #} 
-    else if (length(ic_type) == 999) { # TEMP
+     if (length(ic_type) == 999) { # TEMP
       
       # Initialization of lists and indices
       #CVresults_list <- vector("list", length = length(ic_type)) # TODO CHECK WITH EARLIER INITIALIZATION ADDED
