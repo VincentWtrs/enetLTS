@@ -39,12 +39,15 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
                           ic_type = ic_type, # NEW
                           mc.cores = ncores, 
                           mc.allow.recursive = FALSE)
+  print("printing object temp_result to see") # TODO REMOVE
+  print(temp_result) # TODO REMOVE
+  
   # Restructuring output
   temp_result2 <- matrix(unlist(temp_result), 
                          ncol = repl + 2, # + 2
                          byrow = TRUE)
-  print("printing object temp_result2 to see")
-  print(temp_result2)
+  print("printing object temp_result2 to see") # TODO REMOVE
+  print(temp_result2) # TODO REMOVE
 
   for (k in 1:nrow(temp_result2)) {
     i <- temp_result2[k, 1]

@@ -86,11 +86,12 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
           ytest <- y[folds$subsets[folds$which == f, 1]]
         }
         
+        print("printing head xtrain within calc_evalcrit") # TODO REMOVE
+        print(head(x_train, 1)) # TODO REMOVE
+        
         ### Fitting elastic net for each fold
         res <- tryCatch({
           hpen <- length(ytrain)
-          print("printing head xtrain within calc_evalcrit") # TODO REMOVE
-          print(head(x_train, 1)) # TODO REMOVE
           trainmod <- glmnet(x = xtrain, 
                              y = ytrain, 
                              family = family, 
