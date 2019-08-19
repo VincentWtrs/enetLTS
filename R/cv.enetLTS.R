@@ -114,9 +114,9 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     
     for(m in 1:length(ic_type)){
       for (k in 1:nrow(temp_result2[[m]])) {
-        i <- temp_result2[k, 1]
-        j <- temp_result2[k, 2]
-        evalCrit[m, i, j] <- mean(temp_result2[k, 3:(repl + 2)]) # Array
+        i <- temp_result2[[m]][k, 1]
+        j <- temp_result2[[m]][k, 2]
+        evalCrit[m, i, j] <- mean(temp_result2[[m]][k, 3:(repl + 2)]) # Array
       }
     }
 
