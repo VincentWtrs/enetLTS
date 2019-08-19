@@ -51,6 +51,10 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   }
   print("I am printing which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE) now") # TODO REMOVE
   print(which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)) # TODO REMOVE
+  print("str of evalCrit as well:") # TODO
+  print(str(evalCrit)) # TODO
+  print("And evalCrit itself as well:") # TODO
+  print(evalCrit)# TODO
   
   optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
   minevalCrit <- evalCrit[optind[1], optind[2]]
