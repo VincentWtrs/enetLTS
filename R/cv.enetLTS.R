@@ -105,6 +105,25 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     print("I am printing temp_result in cv.enetLTS for multipe IC case!!!!!")
     print(temp_result)
     
+    for (k in 1:length(ic_type)) {
+      best_for_this_ic <- which(temp_result[, , k] == min(temp_result[, , k]), arr.ind = TRUE)
+      print("printing best for this ic:")
+      print(best_for_this_ic)
+    }
+    
+    
+
+    
+    for(k in 1:length(ic_type)){
+      result_for_one_ic <- temp_result[[k]]
+      for(l in 1:length(lambdas)){
+        for(m in 1:length(alphas)) {
+          mat_list[[k]][l, m] <- temp_result[[]]$in # GET INDICE
+        }
+      }
+      
+    }
+    
     temp_result2 <- vector("list", length = length(ic_type)) # Initializing
     # NEW UNPACKING
     for(m in 1:length(ic_type)) {

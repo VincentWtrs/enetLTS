@@ -197,24 +197,19 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
                                                                       alpha = alpha,
                                                                       intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
           } else if (length(ic_type) > 1) {
-            evalCritl_list <- vector("list", length = length(ic_type))
+            evalCritl_array <- array(NA, dim = c(length(lambdas), length(alphas), length(ic_type)))
             for (m in 1:length(ic_type)) {
-              evalCritl_list[[m]]$evalCritl <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
-                                                                                         type = ic_type[m], # CURRENT IC TYPE
-                                                                                         X = xtrain, 
-                                                                                         alpha = alpha,
-                                                                                         intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
-              evalCritl_list[[m]]$lambda_ind <- i
-              evalCritl_list[[m]]$alpha_ind <- j
+              evalCritl_array[i, j, m] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
+                                                                                    type = ic_type[m], # CURRENT IC TYPE
+                                                                                    X = xtrain, 
+                                                                                    alpha = alpha,
+                                                                                    intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
+              
+
+              evalCritl_array[i, ,] <- i
+              evalCritl_array[, j, ] <- j
             }
-            print("I am printing evalCritl_list in calc_evalcrit2:")
-            print(evalCritl_list)
-            print("I am printing the structure of evalCritl_list")
-            print(str(evalCritl_list))
-            print('and length:')
-            print(length(evalCritl_list))
-            print("length of first [[1]]")
-            print(length(evalCritl_list[[1]]))
+        
           }
 
           # Note: the intercept setting needs to be the same as used to fit the respective model that is given to ic_penalty
@@ -235,5 +230,5 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
     # END OF if(ic == TRUE)
   } # END OF REPL. LOOP
   # OUTPUT
-  return(evalCritl_list)
+  return(evalCritl_array)
 }
