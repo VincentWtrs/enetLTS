@@ -40,7 +40,8 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
                           mc.cores = ncores, 
                           mc.allow.recursive = FALSE)
   
-  
+  print("I am printing temp_result in cv.enetLTS")
+  print(temp_result)
   
   # Restructuring output
   temp_result2 <- matrix(unlist(temp_result), 
