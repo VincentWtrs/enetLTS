@@ -192,7 +192,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   # INITIALIZING # TODO TEMP REMOVE ME / IMPROVE ME
   if (is.null(ic_type)) {
     CVresults <- vector("list", length = 1) # TODO
-  } else if (length(ic_type) >= 1){
+  } else if (length(ic_type) >= 1) {
     CVresults <- vector("list", length = length(ic_type)) # TODO
   }
   
