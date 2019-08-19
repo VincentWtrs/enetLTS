@@ -198,9 +198,9 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
                                                                       intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
           } else if (length(ic_type) > 1) {
             evalCritl_list <- vector("list", length = length(ic_type))
-            for (i in 1:length(ic_type)){
-              evalCritl_list[[i]] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
-                                                                             type = ic_type[i], # CURRENT IC TYPE
+            for (m in 1:length(ic_type)) {
+              evalCritl_list[[m]] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
+                                                                             type = ic_type[m], # CURRENT IC TYPE
                                                                              X = xtrain, 
                                                                              alpha = alpha,
                                                                              intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
