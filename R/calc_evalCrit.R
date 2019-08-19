@@ -195,6 +195,8 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                                                                     X = xtrain, 
                                                                     alpha = alpha,
                                                                     intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
+          print("I am printing evalCritl")
+          print(evalCritl)
           # Note: the intercept setting needs to be the same as used to fit the respective model that is given to ic_penalty
         }
       } # Gaussian Case
@@ -206,6 +208,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                                                         X = xtrain, 
                                                         alpha = alpha,
                                                         intercept = FALSE) # Minus loss + Penalty
+
         }
       }
       
