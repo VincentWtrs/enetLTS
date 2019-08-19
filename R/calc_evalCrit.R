@@ -42,7 +42,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     print(family)
     
     ## NEW: if(ic == FALSE): Keep old functionality
-    if (isFALSE(ic_type)) {
+    if (isFALSE(ic)) {
       print("I am in the CV case")
       # Binomial Case
       if (family == "binomial") {
