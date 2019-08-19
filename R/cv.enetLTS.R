@@ -39,24 +39,26 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
                           ic_type = ic_type, # NEW
                           mc.cores = ncores, 
                           mc.allow.recursive = FALSE)
-
+  
+  
+  
   # Restructuring output
   temp_result2 <- matrix(unlist(temp_result), 
                          ncol = repl + 2, # + 2
                          byrow = TRUE)
-
+  
   for (k in 1:nrow(temp_result2)) {
     i <- temp_result2[k, 1]
     j <- temp_result2[k, 2]
     evalCrit[i, j] <- mean(temp_result2[k, 3:(repl + 2)])
   }
-
+  
   optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
   minevalCrit <- evalCrit[optind[1], optind[2]]
   indexbest <- index[, optind[1], optind[2]]
-  alphas <- round(alphas, 10)
+  #alphas <- round(alphas, 10) # NEW: REMOVED ROUNDING
   alpha <- alphas[optind[2]] 
-  lambdas <- round(lambdas, 10) # NEW: less rounding
+  #lambdas <- round(lambdas, 10) # NEW: less rounding # NEW: REMOVED ROUNDING
   lambda <- lambdas[optind[1]] # NEW: less rounding
   
   ## PLOTTING
