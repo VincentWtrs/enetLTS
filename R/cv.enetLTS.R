@@ -93,7 +93,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
                             ic_type = ic_type, # NEW
                             mc.cores = ncores, 
                             mc.allow.recursive = FALSE)
-    print("I am printing temp_result in cv.enetLTS")
+    print("I am printing temp_result in cv.enetLTS for multipe IC case!!!!!")
     print(temp_result)
     
     # NEW UNPACKING
@@ -109,6 +109,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     #                       byrow = TRUE)
     print("printing temp_result2 in cv.enetLTS")
     print(temp_result2)
+
     
     for(m in 1:length(ic_type)){
       for (k in 1:nrow(temp_result2)) {
