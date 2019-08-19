@@ -130,13 +130,26 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     print(evalCrit)
     
     optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
-    minevalCrit <- evalCrit[optind[1], optind[2]]
-    indexbest <- index[, optind[1], optind[2]]
-    #alphas <- round(alphas, 10) # NEW: REMOVED ROUNDING
-    alpha <- alphas[optind[2]] 
-    #lambdas <- round(lambdas, 10) # NEW: less rounding # NEW: REMOVED ROUNDING
-    lambda <- lambdas[optind[1]] # NEW: less rounding
     
+    # NEW
+    if(length(ic_type) > 1){
+      minevalCrit <- rep(NA, length = length(ic_type))
+      indexbest <- rep(NA, length = length(ic_type))
+      for(m in 1:dim(evalCrit)[1]){
+        minevalCrit[m] <- evalCrit[optind[1], optind[2]]
+        indexbest[m] <- index[, optind[1], optind[2]]
+      }
+    } else { # If NOT multiple ic
+      optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
+      minevalCrit <- evalCrit[optind[1], optind[2]]
+      indexbest <- index[, optind[1], optind[2]]
+      #alphas <- round(alphas, 10) # NEW: REMOVED ROUNDING
+      alpha <- alphas[optind[2]] 
+      #lambdas <- round(lambdas, 10) # NEW: less rounding # NEW: REMOVED ROUNDING
+      lambda <- lambdas[optind[1]] # NEW: less rounding
+    }
+    
+
     ## PLOTTING
     # NEW: was fully defined inside this function but split off to new function
     if(isTRUE(plot)){
@@ -151,6 +164,12 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   }
   
   # OUTPUT
+  print("Printing output list: ")
+  print(list(evalCrit = evalCrit, 
+             minevalCrit = minevalCrit, 
+             indexbest = indexbest, 
+             lambdaopt = lambda, 
+             alphaopt = alpha))
   return(list(evalCrit = evalCrit, 
               minevalCrit = minevalCrit, 
               indexbest = indexbest, 
