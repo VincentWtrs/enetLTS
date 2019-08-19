@@ -1,7 +1,7 @@
 enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCsteps, nfold, para, ncores, repl,
                                      indexbest, alphabest, lambdabest, lambdaw = NULL, del, intercept, 
                                      scal, type_lambdaw, classnames, ntab, indexall, alphas, lambdas, 
-                                     ic_type, ic_type_reweighted=NULL, call = NULL) {
+                                     ic_type, ic_type_reweighted=NULL) {
   
   # Gathering inputs (But won't make much sense, needs to be moved outside of this to top function to maybe make some sense) # TODO
   inputs <- list(xx = xx, 

@@ -290,8 +290,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                  ntab = ntab,
                                                  indexall = indexall,
                                                  alphas = alphas,
-                                                 lambdas = lambdas,
-                                                 call = matchedCall)
+                                                 lambdas = lambdas)
   } else if (length(ic_type) > 1) {
     
     # Initializing list to save results in
@@ -328,8 +327,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                         ntab = ntab,
                                                         indexall = indexall,
                                                         alphas = alphas,
-                                                        lambdas = lambdas,
-                                                        call = matchedCall)
+                                                        lambdas = lambdas)
     }
   }
   
@@ -359,8 +357,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                  ntab = ntab,
                                                  indexall = indexall,
                                                  alphas = alphas,
-                                                 lambdas = lambdas,
-                                                 call = matchedCall)
+                                                 lambdas = lambdas)
   }
   # Record end time and diff
   end_time <- Sys.time()
@@ -373,7 +370,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   
   # Adding run time
   output$run_time <- run_time
-  #output$call <- matchedCall # NEW
+  output$call <- matchedCall # NEW
   
   # OUTPUT
   return(output)
