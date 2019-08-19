@@ -189,38 +189,36 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
       # Binomial Case
       if (family == "binomial") {
         evalCritl[l] <- mean(loss, na.rm = TRUE)
-        if(ic == TRUE){
-          evalCritl[l] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
-                                                                    type = ic_type, 
-                                                                    X = xtrain, 
-                                                                    alpha = alpha,
-                                                                    intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
+        if (ic == TRUE){
+          if (length(ic_type) == 1){
+            evalCritl[l] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
+                                                                      type = ic_type, 
+                                                                      X = xtrain, 
+                                                                      alpha = alpha,
+                                                                      intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
+          } else if (length(ic_type) > 1) {
+            evalCritl_list <- vector("list", length = ic_type)
+            for (i in 1:length(ic_type)){
+              evalCritl_list[[i]] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
+                                                                             type = ic_type[i], # CURRENT IC TYPE
+                                                                             X = xtrain, 
+                                                                             alpha = alpha,
+                                                                             intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
+            }
+          }
+
           # Note: the intercept setting needs to be the same as used to fit the respective model that is given to ic_penalty
         }
       } # Gaussian Case
       else if (family == "gaussian") {
         evalCritl[l] <- sqrt(mean(loss^2))
         if(ic == TRUE) {
-          if (length(ic_type) == 1) {
-            evalCritl[l] <- 2 * evalCritl[l] + ic_penalty(model = trainmod, 
-                                                          type = ic_type, 
-                                                          X = xtrain, 
-                                                          alpha = alpha,
-                                                          intercept = FALSE) # Minus loss + Penalty
-            print(evalCritl)
-          } else if (length(ic_type) > 1) {
-            print("I am in the multiple ic type situation in calc_evalcrit2")
-            evalCritl_list <- vector("list", length = length(ic_type))
-            evalCritl <- rep(NA, length = length(ic_type))
-            for (i in 1:length(ic_type)) {
-              evalCritl[i] <-  evalCritl[i] + ic_penalty(model = trainmod, 
-                                                         type = ic_type, 
-                                                         X = xtrain, 
-                                                         alpha = alpha,
-                                                         intercept = FALSE) # Minus loss + Penalty
-              evalCritl_list[[i]] <- list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl)
-            }
-          }
+          evalCritl[l] <- 2 * evalCritl[l] + ic_penalty(model = trainmod, 
+                                                        type = ic_type, 
+                                                        X = xtrain, 
+                                                        alpha = alpha,
+                                                        intercept = FALSE) # Minus loss + Penalty
+          
         }
       }
     } 
