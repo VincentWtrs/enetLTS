@@ -10,6 +10,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     ic <- FALSE
   }
   
+  # EXtracting the lambda and alpha currently under analysis
   i <- combis_ind[rowind, 1]
   j <- combis_ind[rowind, 2]
   lambda <- lambdas[i]
@@ -22,17 +23,20 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     print(paste("Tuning with information criterion approach, currently fitting for: ", alpha, " and lambda :", lambda), sep = "")
   }
   
+  ## Index handling
+  # No index: use all data
   if (is.null(index)) {
     x <- xx
     y <- yy
+  # Yes index: use the subsetted data by the given indices
   } else {
     x <- xx[index[, i, j], ]
     y <- yy[index[, i, j]]
   }
   
-  evalCritl <- rep(NA, repl) # Initiating
-  
+  ### LOOPING OVER REPS AND FOLDS
   ## For each replication
+  evalCritl <- rep(NA, repl) # Initiating
   for (l in 1:repl) {
     
     ## NEW: if(ic == FALSE): Keep old functionality
@@ -92,6 +96,8 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                              alpha = alpha, 
                              standardize = FALSE, 
                              intercept = FALSE)
+         print("printing trainmod") # TODO REMOVE
+         print(trainmod) # TODO REMOVE
         }, error = function(err) {
           error <- TRUE
           return(error)

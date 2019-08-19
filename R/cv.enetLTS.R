@@ -43,6 +43,8 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   temp_result2 <- matrix(unlist(temp_result), 
                          ncol = repl + 2, # + 2
                          byrow = TRUE)
+  print("printing object temp_result2 to see")
+  print(temp_result2)
 
   for (k in 1:nrow(temp_result2)) {
     i <- temp_result2[k, 1]
