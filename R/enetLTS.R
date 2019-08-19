@@ -369,5 +369,8 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   
   # Adding run time
   output$run_time <- run_time
+  output$call <- matchedCall # NEW
+  
+  # OUTPUT
   return(output)
 }
