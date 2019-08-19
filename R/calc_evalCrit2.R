@@ -213,7 +213,7 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
             print(str(evalCritl_list))
             print('and length:')
             print(length(evalCritl_list))
-            prin("length of first [[1]]")
+            print("length of first [[1]]")
             print(length(evalCritl_list[[1]]))
           }
 
