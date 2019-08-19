@@ -96,7 +96,8 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                                lambda = lambda/hpen, # hpen !=h because of folds!
                                alpha = alpha, 
                                standardize = FALSE, # Because already robustly standardized!
-                               intercept = TRUE) # WITH INTERCEPT BECAUSE BINOMIAL
+                               intercept = TRUE,  # WITH INTERCEPT BECAUSE BINOMIAL
+                               maxit = 10^6) # Allowing for additional extra iterations (default: 10^5) in case of nonconvergence
           } else if(family == "gaussian"){
             trainmod <- glmnet(x = xtrain, 
                                y = ytrain, 
@@ -151,7 +152,8 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                              alpha = alpha, 
                              lambda = lambda/hpen, # Note: hpen != h
                              standardize = FALSE, # NOT NEEDED BECAUSE ALREADY STANDARDIZED
-                             intercept = TRUE) # BECAUSE BINOMIAL
+                             intercept = TRUE, # BECAUSE BINOMIAL
+                             maxit = 10^6) 
           
         } else if (family == "gaussian") {
           trainmod <- glmnet(xtrain, 
