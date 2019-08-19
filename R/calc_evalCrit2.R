@@ -209,13 +209,15 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
                                                           intercept = FALSE) # Minus loss + Penalty
             print(evalCritl)
           } else if (length(ic_type) > 1) {
-            evalCritl[l] <- 2 * evalCritl[l] + ic_penalty(model = trainmod, 
-                                                          type = ic_type, 
-                                                          X = xtrain, 
-                                                          alpha = alpha,
-                                                          intercept = FALSE) # Minus loss + Penalty
+            evalCritl <- rep(NA, length = length(ic_type))
+            for (i in 1:length(ic_type)) {
+              evalCritl[i] <-  evalCritl[l] + ic_penalty(model = trainmod, 
+                                                         type = ic_type, 
+                                                         X = xtrain, 
+                                                         alpha = alpha,
+                                                         intercept = FALSE) # Minus loss + Penalty
+            }
           }
-          
         }
       }
     } 
