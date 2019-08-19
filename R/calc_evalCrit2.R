@@ -209,13 +209,15 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
                                                           intercept = FALSE) # Minus loss + Penalty
             print(evalCritl)
           } else if (length(ic_type) > 1) {
+            evalCritl_list <- vector("list", length = length(ic_type))
             evalCritl <- rep(NA, length = length(ic_type))
             for (i in 1:length(ic_type)) {
-              evalCritl[i] <-  evalCritl[l] + ic_penalty(model = trainmod, 
+              evalCritl[i] <-  evalCritl[i] + ic_penalty(model = trainmod, 
                                                          type = ic_type, 
                                                          X = xtrain, 
                                                          alpha = alpha,
                                                          intercept = FALSE) # Minus loss + Penalty
+              evalCritl_list[[i]] <- list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl)
             }
           }
         }
@@ -223,5 +225,6 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
     } 
     # END OF if(ic == TRUE)
   } # END OF REPL. LOOP
-  return(list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl))
+  # OUTPUT
+  return(evalCritl_list)
 }
