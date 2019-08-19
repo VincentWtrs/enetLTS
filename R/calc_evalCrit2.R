@@ -209,6 +209,7 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
                                                           intercept = FALSE) # Minus loss + Penalty
             print(evalCritl)
           } else if (length(ic_type) > 1) {
+            print("I am in the multiple ic type situation in calc_evalcrit2")
             evalCritl_list <- vector("list", length = length(ic_type))
             evalCritl <- rep(NA, length = length(ic_type))
             for (i in 1:length(ic_type)) {
