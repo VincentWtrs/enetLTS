@@ -189,7 +189,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
       # Binomial Case
       if (family == "binomial") {
         evalCritl[l] <- mean(loss, na.rm = TRUE)
-        if(ic == TRUE){
+        if(ic == TRUE) {
           if (length(ic_type) == 1) {
           evalCritl[l] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
                                                                     type = ic_type, 
@@ -199,6 +199,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
           } else if (length(ic_type) > 1) {
             evalCritl <- matrix(NA, ncol = length(ic_type), nrow = repl)
             for (i in 1:length(ic_type)) {
+              print("I am in the multiple ic_type case")
               evalCritl[l, i] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, # NEW
                                                                            type = ic_type[i], # NEW
                                                                            alpha = alpha,
