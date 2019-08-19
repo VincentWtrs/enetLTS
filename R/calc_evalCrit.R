@@ -38,15 +38,11 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
   ## For each replication
   evalCritl <- rep(NA, repl) # Initiating
   for (l in 1:repl) {
-    print("printing family")
-    print(family)
     
     ## NEW: if(ic == FALSE): Keep old functionality
     if (isFALSE(ic)) {
-      print("I am in the CV case")
       # Binomial Case
       if (family == "binomial") {
-        print("I am creating the folds using cvTools")
         folds0 <- cvTools:::cvFolds(length(y[y == 0]), K = nfold, R = 1, type = "random")
         folds1 <- cvTools:::cvFolds(length(y[y == 1]), K = nfold, R = 1, type = "random")
         loss0 <- rep(NA, sum(y == 0))
@@ -63,8 +59,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
         ### Creating folds
         ## Binomial Case
         if (family == "binomial") {
-          print("I am in the binomial case")
-          
+
           # 0-outcomes
           xtrain0 <- x[y == 0, ][folds0$subsets[folds0$which != f, 1], ]
           ytrain0 <- y[y == 0][folds0$subsets[folds0$which != f, 1]]
@@ -82,10 +77,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
           ytrain <- c(ytrain0, ytrain1)
           xtest <- rbind(xtest0, xtest1)
           ytest <- c(ytest0, ytest1)
-          
-          
-          print("printing head xtrain within calc_evalcrit") # TODO REMOVE
-          print(head(xtrain, 1)) # TODO REMOVE
         
         ## Gaussian Case  
         }  else if (family == "gaussian") {
@@ -105,8 +96,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                              alpha = alpha, 
                              standardize = FALSE, 
                              intercept = FALSE)
-         print("printing trainmod") # TODO REMOVE
-         print(trainmod) # TODO REMOVE
         }, error = function(err) {
           error <- TRUE
           return(error)
@@ -143,8 +132,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
       # Fitting (within an error catching structure)
       res <- tryCatch({
         hpen <- length(ytrain) # Sample size WITHIN THE FOLD (< h)
-        print("printing head xtrain within calc_evalcrit") # TODO REMOVE
-        print(head(xtrain, 1)) # TODO REMOVE
         trainmod <- glmnet(xtrain, 
                            ytrain, 
                            family, 
