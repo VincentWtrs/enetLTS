@@ -2,7 +2,7 @@
 calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas, 
                           index, xx, yy, nfold, repl, family, ic_type = NULL) {
   # family argument defined as well, because it was defined within cv.enetLTS and calc_evalCrit just used it there as well
-
+  
   ## NEW: Handling information criterion case ## NEW(2) moved the nfold and repl correcting part to top-layer enetLTS() function
   if(!is.null(ic_type)){
     ic <- TRUE 
@@ -28,7 +28,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
   if (is.null(index)) {
     x <- xx
     y <- yy
-  # Yes index: use the subsetted data by the given indices
+    # Yes index: use the subsetted data by the given indices
   } else {
     x <- xx[index[, i, j], ]
     y <- yy[index[, i, j]]
@@ -47,8 +47,8 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
         folds1 <- cvTools:::cvFolds(length(y[y == 1]), K = nfold, R = 1, type = "random")
         loss0 <- rep(NA, sum(y == 0))
         loss1 <- rep(NA, sum(y == 1))
-      
-      # Gaussian Case
+        
+        # Gaussian Case
       } else if (family == "gaussian") {
         folds <- cvTools:::cvFolds(length(y), K = nfold, R = 1, type = "random")
         loss <- rep(NA, nrow(x))
@@ -59,7 +59,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
         ### Creating folds
         ## Binomial Case
         if (family == "binomial") {
-
+          
           # 0-outcomes
           xtrain0 <- x[y == 0, ][folds0$subsets[folds0$which != f, 1], ]
           ytrain0 <- y[y == 0][folds0$subsets[folds0$which != f, 1]]
@@ -77,15 +77,15 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
           ytrain <- c(ytrain0, ytrain1)
           xtest <- rbind(xtest0, xtest1)
           ytest <- c(ytest0, ytest1)
-        
-        ## Gaussian Case  
+          
+          ## Gaussian Case  
         }  else if (family == "gaussian") {
           xtrain <- x[folds$subsets[folds$which != f, 1], ]
           ytrain <- y[folds$subsets[folds$which != f, 1]]
           xtest <- x[folds$subsets[folds$which == f, 1], ]
           ytest <- y[folds$subsets[folds$which == f, 1]]
         }
-
+        
         ### Fitting elastic net for each fold
         res <- tryCatch({
           hpen <- length(ytrain)
@@ -107,7 +107,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                                standardize = FALSE, # Because already robustly standardized!
                                intercept = FALSE) # WITHOUT BECAUSE GAUSSIAN, WILL GO THROUGH ORIGIN OR CLOSE
           }
-
+          
         }, error = function(err) {
           error <- TRUE
           return(error)
@@ -164,7 +164,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                              standardize = FALSE, # NOT NEEDED BECAUSE ALREADY STANDARDIZED
                              intercept = FALSE) # BECAUSE STANDARDIZATION WILL CAUSE IT TO GO THROUGH ORIGIN OR CLOSE
         }
-
+        
       }, error = function(err) {
         error <- TRUE
         return(error)
@@ -189,27 +189,12 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
       # Binomial Case
       if (family == "binomial") {
         evalCritl[l] <- mean(loss, na.rm = TRUE)
-        if(ic == TRUE) {
-          if (length(ic_type) == 1) {
+        if(ic == TRUE){
           evalCritl[l] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
                                                                     type = ic_type, 
                                                                     X = xtrain, 
                                                                     alpha = alpha,
                                                                     intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
-          } else if (length(ic_type) > 1) {
-            evalCritl <- matrix(NA, ncol = length(ic_type), nrow = repl)
-            for (i in 1:length(ic_type)) {
-              print("I am in the multiple ic_type case")
-              print("I am printing l")
-              print(l)
-              evalCritl[l, i] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, # NEW
-                                                                           type = ic_type[i], # NEW
-                                                                           X = xtrain,
-                                                                           alpha = alpha,
-                                                                           intercept = TRUE) 
-            }
-          }
-          
           # Note: the intercept setting needs to be the same as used to fit the respective model that is given to ic_penalty
         }
       } # Gaussian Case
@@ -229,7 +214,5 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     # END OF if(ic == TRUE)
     
   } # END OF REPL. LOOP
-  print("I am printing the evalCritl matrix:")
-  print(evalCritl)
   return(list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl))
 }
