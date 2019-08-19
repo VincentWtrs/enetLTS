@@ -31,7 +31,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   # del: 1-del: is the quantile to give 0-weight to an observation (hence this is flagged as outlier) in the reweighing step!
   # tol: Tolerance for stopping while loops in the C-step procedures, default: -1e+06
   # type: type of predictions required, default: c("response", "class")
-
+  
   
   print("USING UPDATED VERSION enetLTS(): 19-08-2019") # So I can see that the new function is effectively called
   ########################
@@ -300,7 +300,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       ic_type_now = ic_type[i] # Extracting current IC
       print("Entering the rweighting/results step for IC:") # TODO REMOVE
       print(ic_type_now) # TODO REMOVE
-  
+      
       reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
                                                         yy = yy,
                                                         family = family,
@@ -360,9 +360,9 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   }
   # Record end time and diff
   end_time <- Sys.time()
-  run_time <- difftime(time1 = end_time,
-                       time2 = start_time,
-                       units = "secs")
+  run_time <- as.numeric(difftime(time1 = end_time,
+                                  time2 = start_time,
+                                  units = "secs")) # as.numeric() just gives the amount of seconds
   
   # Creating output list
   output <- reweight_results
