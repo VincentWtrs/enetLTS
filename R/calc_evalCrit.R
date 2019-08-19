@@ -89,9 +89,11 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
         ### Fitting elastic net for each fold
         res <- tryCatch({
           hpen <- length(ytrain)
-          trainmod <- glmnet(xtrain, 
-                             ytrain, 
-                             family, 
+          print("printing head xtrain within calc_evalcrit") # TODO REMOVE
+          print(head(x_train, 1)) # TODO REMOVE
+          trainmod <- glmnet(x = xtrain, 
+                             y = ytrain, 
+                             family = family, 
                              lambda = lambda/hpen, # hpen !=h because of folds!
                              alpha = alpha, 
                              standardize = FALSE, 
@@ -134,6 +136,8 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
       # Fitting (within an error catching structure)
       res <- tryCatch({
         hpen <- length(ytrain) # Sample size WITHIN THE FOLD (< h)
+        print("printing head xtrain within calc_evalcrit") # TODO REMOVE
+        print(head(xtrain, 1)) # TODO REMOVE
         trainmod <- glmnet(xtrain, 
                            ytrain, 
                            family, 
