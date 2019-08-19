@@ -209,6 +209,12 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
             }
             print("I am printing evalCritl_list in calc_evalcrit2:")
             print(evalCritl_list)
+            print("I am printing the structure of evalCritl_list")
+            print(str(evalCritl_list))
+            print('and length:')
+            print(length(evalCritl_list))
+            prin("length of first [[1]]")
+            print(length(evalCritl_list[[1]]))
           }
 
           # Note: the intercept setting needs to be the same as used to fit the respective model that is given to ic_penalty
