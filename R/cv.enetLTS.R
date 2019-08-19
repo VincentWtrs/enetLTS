@@ -17,8 +17,14 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   if (missing(lambdas)) 
     stop("provide an lambdas sequence")
   
-  evalCrit <- array(NA, dim = c(length(ic_type), length(lambdas), length(alphas))) # NEW
-  dimnames(evalCrit) <- list(ic_type, paste("lambdas", lambdas), paste("alpha", alphas))
+  # NEW MAKING ARRAY WHEN MULTIPLE IC TYPES
+  if(length(ic_type) > 1){
+    evalCrit <- array(NA, dim = c(length(ic_type), length(lambdas), length(alphas))) # NEW
+    dimnames(evalCrit) <- list(ic_type, paste("lambdas", lambdas), paste("alpha", alphas))
+  } else {
+    evalCrit <- matrix(NA, nrow = length(lambdas), ncol = length(alphas))
+    dimnames(evalCrit) <- list(paste("lambdas", lambdas), paste("alpha", alphas))
+  }
   combis_ind <- expand.grid(1:length(lambdas), 1:length(alphas))
   indcombi <- 1:nrow(combis_ind)
   
