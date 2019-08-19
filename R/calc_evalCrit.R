@@ -136,7 +136,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     } # END OF if(ic == FALSE)
     
     ########## NEW: if ic is TRUE ########## 
-    if(isTRUE(ic)){
+    if (isTRUE(ic)) {
       loss <- rep(NA, nrow(x)) # nrow(x) = h
       xtrain <- x # Note: there is only a training set here
       ytrain <- y # Note: there is only a training set here
@@ -194,7 +194,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
                                                                     type = ic_type, 
                                                                     X = xtrain, 
                                                                     alpha = alpha,
-                                                                    intercept = FALSE)
+                                                                    intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
           # Note: the intercept setting needs to be the same as used to fit the respective model that is given to ic_penalty
         }
       } # Gaussian Case
