@@ -89,13 +89,24 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
         ### Fitting elastic net for each fold
         res <- tryCatch({
           hpen <- length(ytrain)
-          trainmod <- glmnet(x = xtrain, 
-                             y = ytrain, 
-                             family = family, 
-                             lambda = lambda/hpen, # hpen !=h because of folds!
-                             alpha = alpha, 
-                             standardize = FALSE, 
-                             intercept = FALSE)
+          if(family == "binomial"){
+            trainmod <- glmnet(x = xtrain, 
+                               y = ytrain, 
+                               family = family, 
+                               lambda = lambda/hpen, # hpen !=h because of folds!
+                               alpha = alpha, 
+                               standardize = FALSE, # Because already robustly standardized!
+                               intercept = TRUE) # WITH INTERCEPT BECAUSE BINOMIAL
+          } else if(family == "gaussian"){
+            trainmod <- glmnet(x = xtrain, 
+                               y = ytrain, 
+                               family = family, 
+                               lambda = lambda/hpen, # hpen !=h because of folds!
+                               alpha = alpha, 
+                               standardize = FALSE, # Because already robustly standardized!
+                               intercept = FALSE) # WITHOUT BECAUSE GAUSSIAN, WILL GO THROUGH ORIGIN OR CLOSE
+          }
+
         }, error = function(err) {
           error <- TRUE
           return(error)
@@ -132,13 +143,26 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
       # Fitting (within an error catching structure)
       res <- tryCatch({
         hpen <- length(ytrain) # Sample size WITHIN THE FOLD (< h)
-        trainmod <- glmnet(xtrain, 
-                           ytrain, 
-                           family, 
-                           alpha = alpha, 
-                           lambda = lambda/hpen, # Note: hpen != h
-                           standardize = FALSE, 
-                           intercept = FALSE)
+        
+        if (family == "binomial"){
+          trainmod <- glmnet(xtrain, 
+                             ytrain, 
+                             family, 
+                             alpha = alpha, 
+                             lambda = lambda/hpen, # Note: hpen != h
+                             standardize = FALSE, # NOT NEEDED BECAUSE ALREADY STANDARDIZED
+                             intercept = TRUE) # BECAUSE BINOMIAL
+          
+        } else if (family == "gaussian") {
+          trainmod <- glmnet(xtrain, 
+                             ytrain, 
+                             family, 
+                             alpha = alpha, 
+                             lambda = lambda/hpen, # Note: hpen != h
+                             standardize = FALSE, # NOT NEEDED BECAUSE ALREADY STANDARDIZED
+                             intercept = FALSE) # BECAUSE STANDARDIZATION WILL CAUSE IT TO GO THROUGH ORIGIN OR CLOSE
+        }
+
       }, error = function(err) {
         error <- TRUE
         return(error)
@@ -186,17 +210,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     } 
     
     # END OF if(ic == TRUE)
-    
-    # # Stability Selection Approach
-    # if(stability_selection == TRUE){
-    #   p <- ncol(xtrain) # Dimensionality without intercept
-    #   subset1_indices <- sample(x = 1:p, size = floor(p/2)) # Getting column indices for subset 1
-    #   subset2_indices <- intersect(1:p, subset1_indices) # Taking other column indices for subset 2
-    #   
-    #   xtrain_subset1 <- xtrain[, subset1_indices]
-    #   xtrain_subset2 <- xtrain[, subset2_indices]
-    #   
-    # }
     
   } # END OF REPL. LOOP
   return(list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl))
