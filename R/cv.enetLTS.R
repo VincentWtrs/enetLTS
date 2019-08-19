@@ -104,16 +104,12 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     
     temp_result2 <- vector("list", length = length(ic_type)) # Initializing
     # NEW UNPACKING
-    for(i in 1:length(ic_type)) {
-      temp_result2[[i]] <- matrix(unlist(temp_result[[i]]),
+    for(m in 1:length(ic_type)) {
+      temp_result2[[m]] <- matrix(unlist(temp_result[[m]]),
                                   ncol = repl + 2,
                                   byrow = TRUE)
     }
     
-    # Restructuring output
-    #temp_result2 <- matrix(unlist(temp_result), 
-    #                       ncol = repl + 2, # + 2
-    #                       byrow = TRUE)
     print("printing temp_result2 in cv.enetLTS")
     print(temp_result2)
 
@@ -129,13 +125,13 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     print("I am printing evalCrit in cv.enetLTS:")
     print(evalCrit)
     
-    optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
-    
     # NEW
     if(length(ic_type) > 1){
       minevalCrit <- rep(NA, length = length(ic_type))
       indexbest <- rep(NA, length = length(ic_type))
+      optind <- rep(NA, length = length(ic_type))
       for(m in 1:dim(evalCrit)[1]){
+        optind[m] <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ,] # NEW
         minevalCrit[m] <- evalCrit[optind[1], optind[2]]
         indexbest[m] <- index[, optind[1], optind[2]]
       }
