@@ -93,7 +93,7 @@ ic_penalty <- function(type, model, X, alpha, HBIC_gamma = NULL, BIC_HD_C = NULL
   
   ## Calculating the information criteria penalty
   # Akaike Information Criterion (AIC)
-  if(type == "AIC"){
+  if (type == "AIC") {
     penalty <- (2 * df)/nobs
   }
   
@@ -108,12 +108,12 @@ ic_penalty <- function(type, model, X, alpha, HBIC_gamma = NULL, BIC_HD_C = NULL
   }
   
   # BIC-type: Wang, Li & Leng (2009)
-  if(type == "BIC_WLL"){
+  if (type == "BIC_WLL") {
     penalty <- (df * log(nobs) * log(log(p)))/nobs
   }
   
   # GIC-type: Fang & Tang (2012) -> GIC
-  if(type == "GIC_FT"){ 
+  if (type == "GIC_FT") { 
     penalty <- (df * (log(log(nobs)) * log(p)))/nobs
   }
   
@@ -121,9 +121,6 @@ ic_penalty <- function(type, model, X, alpha, HBIC_gamma = NULL, BIC_HD_C = NULL
   if (type == "HBIC") {
     if (is.null(HBIC_gamma)) {
       HBIC_gamma <- 1.5  # Empirically well-performing ]1, 2]
-    }
-    if(HBIC_gamma > 0){
-      stop("HBIC_gamma is required to be > 1 following Wang & Zhu (2011)")
     }
     if (HBIC_gamma < 1) {
       warning("HBIC_gamma ideally set above 1 to become selection consistent")
