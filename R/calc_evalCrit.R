@@ -226,6 +226,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     
   } # END OF REPL. LOOP
   print("I am printing the evalCritl matrix:")
-  print(evalcritl)
+  print(evalCritl)
   return(list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl))
 }
