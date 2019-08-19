@@ -211,7 +211,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
 
         }
       }
-      
     } 
     
     # END OF if(ic == TRUE)
