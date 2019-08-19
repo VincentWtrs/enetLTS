@@ -112,18 +112,6 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     }
     
     
-
-    
-    for(k in 1:length(ic_type)){
-      result_for_one_ic <- temp_result[[k]]
-      for(l in 1:length(lambdas)){
-        for(m in 1:length(alphas)) {
-          mat_list[[k]][l, m] <- temp_result[[]]$in # GET INDICE
-        }
-      }
-      
-    }
-    
     temp_result2 <- vector("list", length = length(ic_type)) # Initializing
     # NEW UNPACKING
     for(m in 1:length(ic_type)) {
