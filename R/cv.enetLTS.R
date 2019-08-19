@@ -96,19 +96,28 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     print("I am printing temp_result in cv.enetLTS")
     print(temp_result)
     
+    # NEW UNPACKING
+    for(i in 1:length(ic_type)) {
+      temp_result2[[i]] <- matrix(unlist(temp_result[[i]]),
+                                  ncol = repl + 2,
+                                  byrow = TRUE)
+    }
+    
     # Restructuring output
-    temp_result2 <- matrix(unlist(temp_result), 
-                           ncol = repl + 2, # + 2
-                           byrow = TRUE)
+    #temp_result2 <- matrix(unlist(temp_result), 
+    #                       ncol = repl + 2, # + 2
+    #                       byrow = TRUE)
     print("printing temp_result2 in cv.enetLTS")
     print(temp_result2)
     
-    
-    for (k in 1:nrow(temp_result2)) {
-      i <- temp_result2[k, 1]
-      j <- temp_result2[k, 2]
-      evalCrit[i, j] <- mean(temp_result2[k, 3:(repl + 2)])
+    for(m in 1:length(ic_type)){
+      for (k in 1:nrow(temp_result2)) {
+        i <- temp_result2[k, 1]
+        j <- temp_result2[k, 2]
+        evalCrit[m, i, j] <- mean(temp_result2[k, 3:(repl + 2)]) # Array
+      }
     }
+
     
     print("I am printing evalCrit in cv.enetLTS:")
     print(evalCrit)
