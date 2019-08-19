@@ -138,11 +138,11 @@ ic_penalty <- function(type, model, X, alpha, HBIC_gamma = NULL, BIC_HD_c = NULL
   
   # Extended Bayesian Information Criterion (EBIC)
   if (type == "EBIC") {
-    if(EBIC_gamma > 1 | EBIC_gamma < 0) {
-      stop("This EBIC_gamma parameter is not allowed, choose a value in [0, 1]")
-    }
     if (is.null(EBIC_gamma)) {
       EBIC_gamma <- 0.25
+    }
+    if(EBIC_gamma > 1 | EBIC_gamma < 0) {
+      stop("This EBIC_gamma parameter is not allowed, choose a value in [0, 1]")
     }
     #penalty <- (coefs_nonzero * log(nobs) + 2 * coefs_nonzero * sigma * log(p))/nobs # THEORY
     penalty <- (df * log(nobs) + 2 * df * EBIC_gamma * log(p))/nobs
