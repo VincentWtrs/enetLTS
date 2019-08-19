@@ -42,6 +42,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   matchedCall <- match.call() # Use match.call() if there are a lot of optional arguments
   matchedCall[[1]] <- as.name("enetLTS")
   
+  
   # Loading libraries
   library(glmnetUtils) # For cva.glmnet(): Tuning of alpha and lambda
   
@@ -289,7 +290,8 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                  ntab = ntab,
                                                  indexall = indexall,
                                                  alphas = alphas,
-                                                 lambdas = lambdas)
+                                                 lambdas = lambdas,
+                                                 call = matchedCall)
   } else if (length(ic_type) > 1) {
     
     # Initializing list to save results in
@@ -326,7 +328,8 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                         ntab = ntab,
                                                         indexall = indexall,
                                                         alphas = alphas,
-                                                        lambdas = lambdas)
+                                                        lambdas = lambdas,
+                                                        call = matchedCall)
     }
   }
   
@@ -356,7 +359,8 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                  ntab = ntab,
                                                  indexall = indexall,
                                                  alphas = alphas,
-                                                 lambdas = lambdas)
+                                                 lambdas = lambdas,
+                                                 call = matchedCall)
   }
   # Record end time and diff
   end_time <- Sys.time()
@@ -369,7 +373,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   
   # Adding run time
   output$run_time <- run_time
-  output$call <- matchedCall # NEW
+  #output$call <- matchedCall # NEW
   
   # OUTPUT
   return(output)
