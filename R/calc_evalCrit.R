@@ -40,7 +40,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
   for (l in 1:repl) {
     
     ## NEW: if(ic == FALSE): Keep old functionality
-    if(isFALSE(ic_type)){
+    if (isFALSE(ic_type)) {
       # Binomial Case
       if (family == "binomial") {
         folds0 <- cvTools:::cvFolds(length(y[y == 0]), K = nfold, R = 1, type = "random")
@@ -78,6 +78,10 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
           xtest <- rbind(xtest0, xtest1)
           ytest <- c(ytest0, ytest1)
           
+          
+          print("printing head xtrain within calc_evalcrit") # TODO REMOVE
+          print(head(x_train, 1)) # TODO REMOVE
+          
         } ## Gaussian Case
         else if (family == "gaussian") {
           xtrain <- x[folds$subsets[folds$which != f, 1], ]
@@ -85,9 +89,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
           xtest <- x[folds$subsets[folds$which == f, 1], ]
           ytest <- y[folds$subsets[folds$which == f, 1]]
         }
-        
-        print("printing head xtrain within calc_evalcrit") # TODO REMOVE
-        print(head(x_train, 1)) # TODO REMOVE
+
         
         ### Fitting elastic net for each fold
         res <- tryCatch({
