@@ -17,6 +17,7 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL){
   # 3. IDEA to work with the intercept is to see in coefficients(model) is it's 0, if yes: no intercept fitted, becuase it's always unpenalized!
   # 4. I was afraid this might break down at the matrix inversion when |Active set| > n, but seems to be okay!
   
+  ## Defining detect intercept function
   detect_intercept <- function(model) {
     if(any(model$a0 !=  0)){
       intercept <- TRUE
@@ -27,8 +28,9 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL){
     return(intercept)
   }
   
+  ## Defining detect regularization path function
   detect_regularization_path <- function(model) {
-    if(length(model$lambda) > 1){
+    if (length(model$lambda) > 1) {
       path <- TRUE
     } else {
       path <- FALSE
@@ -148,7 +150,7 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL){
   
   # If the active set length (without intercept) == 0
   if(length(active_set_noint) == 0) {
-    if(intercept) {
+    if (intercept) {
       df <- 1
     } else if(!intercept){
       df <- 0
