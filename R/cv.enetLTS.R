@@ -20,6 +20,8 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
   # NEW MAKING ARRAY WHEN MULTIPLE IC TYPES
   if (length(ic_type) > 1) {
     evalCrit <- array(NA, dim = c(length(ic_type), length(lambdas), length(alphas))) # NEW
+    print("Printing evalcrit before filling")
+    print(evalCrit)# TODO REMOVE
     dimnames(evalCrit) <- list(paste("IC", ic_type), paste("lambdas", lambdas), paste("alpha", alphas))
   } else {
     evalCrit <- matrix(NA, nrow = length(lambdas), ncol = length(alphas))
