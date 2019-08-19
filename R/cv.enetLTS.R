@@ -106,8 +106,8 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     print(temp_result)
     
     for (k in 1:length(ic_type)) {
-      best_for_this_ic <- which(temp_result[, , k] == min(temp_result[, , k]), arr.ind = TRUE)
       print("printing best for this ic:")
+      best_for_this_ic <- which(temp_result[, , k] == min(temp_result[, , k]), arr.ind = TRUE)
       print(best_for_this_ic)
     }
     
