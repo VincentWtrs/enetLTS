@@ -145,7 +145,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
       res <- tryCatch({
         hpen <- length(ytrain) # Sample size WITHIN THE FOLD (< h)
         
-        if (family == "binomial"){
+        if (family == "binomial") {
           trainmod <- glmnet(xtrain, 
                              ytrain, 
                              family, 
@@ -216,5 +216,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
     # END OF if(ic == TRUE)
     
   } # END OF REPL. LOOP
+  print("printing list made as output of calc_evalcrit:")
+  print(list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl))
   return(list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl))
 }
