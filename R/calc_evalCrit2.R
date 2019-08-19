@@ -1,6 +1,6 @@
 # calc_evalCrit() Allowing nfold = 1 FOR INFORMATION CRITERION-BASED APPROACHES
 calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas, 
-                          index, xx, yy, nfold, repl, family, ic_type = NULL) {
+                           index, xx, yy, nfold, repl, family, ic_type = NULL) {
   # family argument defined as well, because it was defined within cv.enetLTS and calc_evalCrit just used it there as well
   
   ## NEW: Handling information criterion case ## NEW(2) moved the nfold and repl correcting part to top-layer enetLTS() function
@@ -200,19 +200,26 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
       } # Gaussian Case
       else if (family == "gaussian") {
         evalCritl[l] <- sqrt(mean(loss^2))
-        if(ic == TRUE){
-          evalCritl[l] <- 2 * evalCritl[l] + ic_penalty(model = trainmod, 
-                                                        type = ic_type, 
-                                                        X = xtrain, 
-                                                        alpha = alpha,
-                                                        intercept = FALSE) # Minus loss + Penalty
+        if(ic == TRUE) {
+          if (length(ic_type) == 1) {
+            evalCritl[l] <- 2 * evalCritl[l] + ic_penalty(model = trainmod, 
+                                                          type = ic_type, 
+                                                          X = xtrain, 
+                                                          alpha = alpha,
+                                                          intercept = FALSE) # Minus loss + Penalty
+            print(evalCritl)
+          } else if (length(ic_type) > 1) {
+            evalCritl[l] <- 2 * evalCritl[l] + ic_penalty(model = trainmod, 
+                                                          type = ic_type, 
+                                                          X = xtrain, 
+                                                          alpha = alpha,
+                                                          intercept = FALSE) # Minus loss + Penalty
+          }
+          
         }
       }
-      
     } 
-    
     # END OF if(ic == TRUE)
-    
   } # END OF REPL. LOOP
   return(list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl))
 }
