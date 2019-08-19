@@ -201,7 +201,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   if ((length(alphas) > 1) | (length(lambdas) > 1)) {
     
     # Case: no ICs or single IC
-    if ((is.null(ic_type)) | (length(ic_type) == 1)) {
+    if (is.null(ic_type)) {
       # NOTE: the results are called CV results can be from a IC search
       CVresults <- cv.enetLTS(index = indexall, 
                               xx = x, 
@@ -223,7 +223,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       evalCritCV <- CVresults$evalCrit
       
       # Case: multiple ICs provided
-    } else if (length(ic_type) >= 1) {
+    } else if (length(ic_type) == 999) { # TEMP
       
       # Initialization of lists and indices
       #CVresults_list <- vector("list", length = length(ic_type)) # TODO CHECK WITH EARLIER INITIALIZATION ADDED
