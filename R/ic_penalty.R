@@ -47,8 +47,7 @@ ic_penalty <- function(type, model, X, alpha, EBIC_gamma = NULL, s = NULL, inter
      type != "BIC_HD" &
      type != "EBIC2" &
      type != "ERIC" &
-     type != "RIC" &
-     type != "CAIC") {
+     type != "RIC") {
     stop("This type of information criterion not supported (or check for typos)")
   }
   
@@ -79,6 +78,8 @@ ic_penalty <- function(type, model, X, alpha, EBIC_gamma = NULL, s = NULL, inter
   
   if(intercept == FALSE){
     p <- length(coefficients(model, s = s)) - 1 # Because intercept is always returned when using coefficients() (hence - 1)
+  } else if (isTRUE(coefficients)) {
+    p <- length(coefficients(model, s = s))
   }
   # Calculating the effective degrees of freedom
   df <- logit_df(model = model,
