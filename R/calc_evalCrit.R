@@ -37,6 +37,8 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
   ### LOOPING OVER REPS AND FOLDS
   ## For each replication
   evalCritl <- rep(NA, repl) # Initiating
+  print("Printing repl") # TODO REMOVE
+  print(repl) # TODO REMOVE
   for (l in 1:repl) {
     
     ## NEW: if(ic == FALSE): Keep old functionality
