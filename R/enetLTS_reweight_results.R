@@ -195,7 +195,8 @@ enetLTS_reweight_results <- function(xx, yy, family, h, hsize, nsamp, s1, nCstep
                    lambdas = lambdas)  # NEW: Added the lambdas that were used
   }
   class(output) <- "enetLTS"
-  #output$call <- matchedCall # TODO FIX
+  output$call <- matchedCall
+  output$ic_type <- get("ic_type") # NEW TESTING
   print("I am at the end of the enetLTS_reweight_result.R function")
   return(output)
 }
