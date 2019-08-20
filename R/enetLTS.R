@@ -87,14 +87,14 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   }
   
   # Information criterion (IC) (require nfold, repl to be 1)
-  if(!is.null(ic_type)){
+  if (!is.null(ic_type)) {
     print("Information criterion supplied: the cross-validation input parameters (nfold, repl) are ignored")
     nfold <- 1
     repl <- 1
   }
   
   # Check if in n < p problem such that at least some nonzero lambda is needed (only when no lambdas given)
-  if(ncol(xx) > nrow(xx)) {
+  if (ncol(xx) > nrow(xx)) {
     min_lambda <- 1e-08
   } else {
     min_lambda <- 0 # 1e-08 #0 # TEMP NOT SETTING AT 0 BUT AT 1e-08
@@ -144,16 +144,16 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       
     }
     # NEW ADDING SOME VERY HEAVY REGULARIZATION PARAMETERS
-    if(!is.null(auto_lambda)){
+    if (!is.null(auto_lambda)) {
       if (auto_lambda == "VW") {
         temp_seq <- seq(l00, min_lambda, by = -0.025 * l00)
+        uppers <- c(l00 + 2, l00 + 1, l00 + 0.2)
         temp_seq <- tail(temp_seq, n = length(temp_seq) - 3)
-        lambdas <- c(2, 1, 0.5, temp_seq)
+        lambdas <- c(uppers, temp_seq)
         lambdas <- sort(lambdas, decreasing = TRUE)
-        print(lambdas) # TODO REMOVE
+        # TODO (Seeing if keeping in original order fixes the problems)
       }
     }
-    # TODO (Seeing if keeping in original order fixes the problems)
   }
   
   ## Data Preparation: robust centering and scaling
@@ -290,6 +290,20 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                  indexall = indexall,
                                                  alphas = alphas,
                                                  lambdas = lambdas)
+    # Record end time and diff
+    end_time <- Sys.time()
+    run_time <- as.numeric(difftime(time1 = end_time,
+                                    time2 = start_time,
+                                    units = "secs")) # as.numeric() just gives the amount of seconds
+    
+    # Additional output to see if the max lambda was selected as the raw lambda
+    if(abs(max(lambdas),  lambdabest) < 0.000000000001) {
+      max_raw_lambda_chosen <- TRUE
+    } else {
+      max_raw_lambda_chosen  <- FALSE
+    }
+    
+  # Case: Multiple ICs
   } else if (length(ic_type) > 1) {
     
     # Initializing list to save results in
@@ -303,7 +317,6 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       
       print("printing alphabest")
       print(alphabest[[i]])
-      
       
       reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
                                                         yy = yy,
@@ -331,6 +344,20 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                         indexall = indexall,
                                                         alphas = alphas,
                                                         lambdas = lambdas)
+      
+      # Additional output to see if the max lambda was selected as the raw lambda
+      for(i in 1:length(ic_type)) {
+        if (abs(max(lambdas - lambdabest[[i]])) < 0.000000000001) {
+          max_raw_lambda_chosen <- TRUE
+        } else {
+          max_raw_lambda_chosen <- FALSE
+        }
+        # Adding it to output
+        reweight_results[[i]]$max_raw_lambda_chosen <- max_raw_lambda_chosen
+      }
+      
+      # For the multiple IC case the run time does not make so much sense
+      run_time <- NULL
     }
   }
   
@@ -361,13 +388,21 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                                  indexall = indexall,
                                                  alphas = alphas,
                                                  lambdas = lambdas)
+    
+    # Record end time and diff
+    end_time <- Sys.time()
+    run_time <- as.numeric(difftime(time1 = end_time,
+                                    time2 = start_time,
+                                    units = "secs")) # as.numeric() just gives the amount of seconds
+    
+    # Additional output to see if the max lambda was selected as the raw lambda
+    if(abs(max(lambdas),  lambdabest) < 0.000000000001) {
+      max_raw_lambda_chosen <- TRUE
+    } else {
+      max_raw_lambda_chosen  <- FALSE
+    }
   }
-  # Record end time and diff
-  end_time <- Sys.time()
-  run_time <- as.numeric(difftime(time1 = end_time,
-                                  time2 = start_time,
-                                  units = "secs")) # as.numeric() just gives the amount of seconds
-  
+
   # Creating output list
   output <- reweight_results
   
