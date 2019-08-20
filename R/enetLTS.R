@@ -223,7 +223,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       evalCritCV <- CVresults$evalCrit
       
       # Case: multiple ICs provided
-    } if (length(ic_type) > 1) {
+    } else if (length(ic_type) > 1) {
       
       # Initialization of lists and indices
       #CVresults_list <- vector("list", length = length(ic_type)) # TODO CHECK WITH EARLIER INITIALIZATION ADDED
