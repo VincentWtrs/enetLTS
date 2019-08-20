@@ -3,7 +3,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                     s1 = 10, nCsteps = 20, nfold = 5, seed = NULL, plot = TRUE, 
                     repl = 5, para = TRUE, ncores = 1, del = 0.0125, tol = -1e+06, 
                     scal = TRUE, type = c("response", "class"), ic_type = NULL, type_lambdaw = "min", 
-                    ic_type_reweighted = NULL) {
+                    ic_type_reweighted = NULL, auto_lambda = NULL) {
   
   #### UPDATED VERSION ###
   # NEW: ic_type test test
@@ -138,8 +138,20 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                     y = yy, 
                     normalize = scal, 
                     intercept = intercept)
-    lambdas <- seq(l00, min_lambda, by = -0.025 * l00) # DECREASING SEQUENCE (HIGH REGULARIZATION FIRST) # TO DO: CHECK PROBABLY MORE LOGIC TO DO OTHER WAY AROUND TO GET OUTLIERS SINCE OTHERWISE THEY WILL BE HIDDEN IN THE SPAGHETTI (WARM START SEQUENCE) WHERE THE DIMENSIONALITY COLLAPSES AND THE OUTLIERS WILL NOT BE FOUND ANWAY...
-    #lambdas <- sort(lambdas, decreasing = FALSE) # NEW: Sorting INCREASING 
+    if (is.null(auto_lambda)) {
+      lambdas <- seq(l00, min_lambda, by = -0.025 * l00) # DECREASING SEQUENCE (HIGH REGULARIZATION FIRST) # TO DO: CHECK PROBABLY MORE LOGIC TO DO OTHER WAY AROUND TO GET OUTLIERS SINCE OTHERWISE THEY WILL BE HIDDEN IN THE SPAGHETTI (WARM START SEQUENCE) WHERE THE DIMENSIONALITY COLLAPSES AND THE OUTLIERS WILL NOT BE FOUND ANWAY...
+      #lambdas <- sort(lambdas, decreasing = FALSE) # NEW: Sorting INCREASING 
+      
+    }
+    # NEW ADDING SOME VERY HEaVY REGULARIZATION PARAMETERS
+    if (auto_lambda == "VW") {
+      temp_seq <- seq(l00, min_lambda, by = -0.025 * l00)
+      temp_seq <- tail(temp_seq, n = length(temp_seq) - 3)
+      lambdas <- c(2, 1, 0.5, temp_seq)
+      lambdas <- sort(lambdas, decreasing = TRUE)
+      print(lambdas) # TODO REMOVE
+    }
+
     # TODO (Seeing if keeping in original order fixes the problems)
   }
   
