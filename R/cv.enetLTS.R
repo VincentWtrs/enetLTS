@@ -76,6 +76,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
                 family = family)
     }
   } else if (length(ic_type) > 1) {
+    prin("I am in the multiple ic_type part of cv.enetLTS")
     temp_result <- mclapply(1:nrow(combis_ind), FUN = calc_evalCrit2, 
                             combis_ind = combis_ind, 
                             alphas = alphas, 
