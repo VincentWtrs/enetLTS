@@ -89,9 +89,6 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
       print(alpha_indx[m])
       print(lambda_indx[m])
       
-      print("the whole thing")
-      print(alpha_indx)
-      print(lambda_indx)
       
       output[[m]]$indexbest <- index[, lambda_indx[m], alpha_indx[m]] # NOTE THE OPPOSITE INDEXATION (WEIRD BUT CORRECT) TODO DOUBLE CHECK
       output[[m]]$alphas <- alphas
@@ -100,6 +97,10 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
       output[[m]]$lambda <- lambda_opt[m]
     }
     # OUTPUT IS A LIST NOW
+    print("best alpha/lambda indices")
+    print(alpha_indx)
+    print(lambda_indx)
+    
     return(output)
     
     
