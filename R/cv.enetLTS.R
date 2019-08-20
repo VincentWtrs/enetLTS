@@ -103,7 +103,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     
     print("Best values of alpha/lambda")
     print(alphas[alpha_indx])
-    print(lambdas[lambdas_indx])
+    print(lambdas[lambda_indx])
     
     return(output)
     
