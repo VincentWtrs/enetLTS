@@ -48,8 +48,8 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     s <- 1 # Counter
     for(r in 1:length(temp_result)) {
       for(m in 1:length(ic_type)) {
-        temp_grid[s, "lambda"] <- lambda[temp_result[[r]]$lambda_ind]
-        temp_grid[s, "alpha"] <- alpha[temp_result[[r]]$alpha_ind]
+        temp_grid[s, "lambda"] <- lambdas[temp_result[[r]]$lambda_ind]
+        temp_grid[s, "alpha"] <- alphas[temp_result[[r]]$alpha_ind]
         temp_grid[s, "IC"] <- ic_type[r]
         temp_grid[s, "loss"] <- temp_result[[i]]$evalCritl[m]
         s <-  s + 1
