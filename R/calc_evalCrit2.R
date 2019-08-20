@@ -205,9 +205,6 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
                                                                                     alpha = alpha,
                                                                                     intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
               
-
-              evalCritl_array[i, ,] <- i
-              evalCritl_array[, j, ] <- j
             }
         
           }
