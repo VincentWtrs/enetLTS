@@ -71,6 +71,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     # Loop
     for(m in 1:length(ic_type)) {
       grid_ic_now <- grid[grid$IC == ic_type[m], ]
+      print(grid_ic_now)
       alpha_opt[m] <- grid_ic_now[which.min(grid_ic_now$loss), "alpha"]
       lambda_opt[m] <- grid_ic_now[which.min(grid_ic_now$loss), "lambda"]
       loss_opt[m] <- grid_ic_now[which.min(grid_ic_now$loss), "loss"]
