@@ -238,6 +238,10 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
         alphabest[[i]] <- CVresults$alpha[i]
         lambdabest[[i]] <- CVresults$lambda[i]
         evalCritCV[[i]] <- CVresults$evalCrit[i]
+        
+        print('printing alphabest')
+        print(alphabest)
+        
       }
       
     } else {
