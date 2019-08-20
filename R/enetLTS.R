@@ -247,121 +247,120 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       evalCritCV <- CVresults$evalCrit
     }
   } 
-}
-
-### STEP: REWEIGHTING AND REFITTING
-## Reweighting/Refitting with cross-validation
-if (is.null(ic_type)) {
-  reweight_results <- enetLTS_reweight_results(xx = xx,
-                                               yy = yy,
-                                               family = family,
-                                               indexbest = indexbest,
-                                               alphabest = alphabest,
-                                               lambdabest = lambdabest,
-                                               h = h,
-                                               hsize = hsize,
-                                               nsamp = nsamp,
-                                               s1 = s1,
-                                               nCsteps = nCsteps,
-                                               nfold = nfold,
-                                               repl = repl,
-                                               para = para,
-                                               ncores = ncores,
-                                               ic_type = NULL, # TODO CHECK THIS IF WE CAN REMOVE THE THING
-                                               #lambdaw = lambdaw,
-                                               del = del,
-                                               intercept = intercept,
-                                               scal = scal,
-                                               type_lambdaw = type_lambdaw,
-                                               classnames = classnames,
-                                               ntab = ntab,
-                                               indexall = indexall,
-                                               alphas = alphas,
-                                               lambdas = lambdas)
-} else if (length(ic_type) > 1) {
   
-  # Initializing list to save results in
-  reweight_results <- vector("list", length = length(ic_type)) # Initialization # TODO: MAKE MORE FLEXIBLE 
-  
-  # Looping over all ICs
-  for (i in 1:length(ic_type)) {
-    ic_type_now = ic_type[i] # Extracting current IC
-    print("Entering the rweighting/results step for IC:") # TODO REMOVE
-    print(ic_type_now) # TODO REMOVE
+  ### STEP: REWEIGHTING AND REFITTING
+  ## Reweighting/Refitting with cross-validation
+  if (is.null(ic_type)) {
+    reweight_results <- enetLTS_reweight_results(xx = xx,
+                                                 yy = yy,
+                                                 family = family,
+                                                 indexbest = indexbest,
+                                                 alphabest = alphabest,
+                                                 lambdabest = lambdabest,
+                                                 h = h,
+                                                 hsize = hsize,
+                                                 nsamp = nsamp,
+                                                 s1 = s1,
+                                                 nCsteps = nCsteps,
+                                                 nfold = nfold,
+                                                 repl = repl,
+                                                 para = para,
+                                                 ncores = ncores,
+                                                 ic_type = NULL, # TODO CHECK THIS IF WE CAN REMOVE THE THING
+                                                 #lambdaw = lambdaw,
+                                                 del = del,
+                                                 intercept = intercept,
+                                                 scal = scal,
+                                                 type_lambdaw = type_lambdaw,
+                                                 classnames = classnames,
+                                                 ntab = ntab,
+                                                 indexall = indexall,
+                                                 alphas = alphas,
+                                                 lambdas = lambdas)
+  } else if (length(ic_type) > 1) {
     
-    print("printing alphabest")
-    print(alphabest[[i]])
+    # Initializing list to save results in
+    reweight_results <- vector("list", length = length(ic_type)) # Initialization # TODO: MAKE MORE FLEXIBLE 
     
-    
-    reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
-                                                      yy = yy,
-                                                      family = family,
-                                                      indexbest = indexbest[[i]],
-                                                      alphabest = alphabest[[i]],
-                                                      lambdabest = lambdabest[[i]],
-                                                      h = h,
-                                                      hsize = hsize,
-                                                      nsamp = nsamp,
-                                                      s1 = s1,
-                                                      nCsteps = nCsteps,
-                                                      nfold = nfold,
-                                                      repl = repl,
-                                                      para = para,
-                                                      ncores = ncores,
-                                                      ic_type = ic_type_now,
-                                                      #lambdaw = lambdaw,
-                                                      del = del,
-                                                      intercept = intercept,
-                                                      scal = scal,
-                                                      type_lambdaw = type_lambdaw,
-                                                      classnames = classnames,
-                                                      ntab = ntab,
-                                                      indexall = indexall,
-                                                      alphas = alphas,
-                                                      lambdas = lambdas)
+    # Looping over all ICs
+    for (i in 1:length(ic_type)) {
+      ic_type_now = ic_type[i] # Extracting current IC
+      print("Entering the rweighting/results step for IC:") # TODO REMOVE
+      print(ic_type_now) # TODO REMOVE
+      
+      print("printing alphabest")
+      print(alphabest[[i]])
+      
+      
+      reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
+                                                        yy = yy,
+                                                        family = family,
+                                                        indexbest = indexbest[[i]],
+                                                        alphabest = alphabest[[i]],
+                                                        lambdabest = lambdabest[[i]],
+                                                        h = h,
+                                                        hsize = hsize,
+                                                        nsamp = nsamp,
+                                                        s1 = s1,
+                                                        nCsteps = nCsteps,
+                                                        nfold = nfold,
+                                                        repl = repl,
+                                                        para = para,
+                                                        ncores = ncores,
+                                                        ic_type = ic_type_now,
+                                                        #lambdaw = lambdaw,
+                                                        del = del,
+                                                        intercept = intercept,
+                                                        scal = scal,
+                                                        type_lambdaw = type_lambdaw,
+                                                        classnames = classnames,
+                                                        ntab = ntab,
+                                                        indexall = indexall,
+                                                        alphas = alphas,
+                                                        lambdas = lambdas)
+    }
   }
-}
-
-if (length(ic_type) == 1) {
-  reweight_results <- enetLTS_reweight_results(xx = xx,
-                                               yy = yy,
-                                               family = family,
-                                               indexbest = indexbest,
-                                               alphabest = alphabest,
-                                               lambdabest = lambdabest,
-                                               h = h,
-                                               hsize = hsize,
-                                               nsamp = nsamp,
-                                               s1 = s1,
-                                               nCsteps = nCsteps,
-                                               nfold = nfold,
-                                               repl = repl,
-                                               para = para,
-                                               ncores = ncores,
-                                               ic_type = ic_type,
-                                               #lambdaw = lambdaw,
-                                               del = del,
-                                               intercept = intercept,
-                                               scal = scal,
-                                               type_lambdaw = type_lambdaw,
-                                               classnames = classnames,
-                                               ntab = ntab,
-                                               indexall = indexall,
-                                               alphas = alphas,
-                                               lambdas = lambdas)
-}
-# Record end time and diff
-end_time <- Sys.time()
-run_time <- as.numeric(difftime(time1 = end_time,
-                                time2 = start_time,
-                                units = "secs")) # as.numeric() just gives the amount of seconds
-
-# Creating output list
-output <- reweight_results
-
-# Adding run time
-output$run_time <- run_time
-
-# OUTPUT
-return(output)
+  
+  if (length(ic_type) == 1) {
+    reweight_results <- enetLTS_reweight_results(xx = xx,
+                                                 yy = yy,
+                                                 family = family,
+                                                 indexbest = indexbest,
+                                                 alphabest = alphabest,
+                                                 lambdabest = lambdabest,
+                                                 h = h,
+                                                 hsize = hsize,
+                                                 nsamp = nsamp,
+                                                 s1 = s1,
+                                                 nCsteps = nCsteps,
+                                                 nfold = nfold,
+                                                 repl = repl,
+                                                 para = para,
+                                                 ncores = ncores,
+                                                 ic_type = ic_type,
+                                                 #lambdaw = lambdaw,
+                                                 del = del,
+                                                 intercept = intercept,
+                                                 scal = scal,
+                                                 type_lambdaw = type_lambdaw,
+                                                 classnames = classnames,
+                                                 ntab = ntab,
+                                                 indexall = indexall,
+                                                 alphas = alphas,
+                                                 lambdas = lambdas)
+  }
+  # Record end time and diff
+  end_time <- Sys.time()
+  run_time <- as.numeric(difftime(time1 = end_time,
+                                  time2 = start_time,
+                                  units = "secs")) # as.numeric() just gives the amount of seconds
+  
+  # Creating output list
+  output <- reweight_results
+  
+  # Adding run time
+  output$run_time <- run_time
+  
+  # OUTPUT
+  return(output)
 }
