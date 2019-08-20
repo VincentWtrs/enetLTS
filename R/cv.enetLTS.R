@@ -83,6 +83,11 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
       lambda_indx[m] <- which(lambdas == lambda_opt[m])
       
       output[[m]]$minevalCrit <- loss_opt[m]
+      
+      print("Printing the index") # TODO REMOVE
+      print(str(index)) # TODO REMOVE
+      print(index) # TODO REMOVE
+      
       output[[m]]$indexbest <- index[, alpha_indx[m], lambda_indx[m]]
       output[[m]]$alphas <- alphas
       output[[m]]$lambdas <- lambdas
