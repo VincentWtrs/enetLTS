@@ -59,8 +59,8 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     ## Best for each IC
     # Initializations
     best <- rep(NA, times = length(ic_type))
-    alpha_opt_temp <- rep(NA, times = length(ic_type))
-    lambda_opt_temp <- rep(NA, times = length(ic_type))
+    alpha_opt <- rep(NA, times = length(ic_type))
+    lambda_opt <- rep(NA, times = length(ic_type))
     loss_opt <- rep(NA, times = length(ic_type))
     output <- vector("list", length = length(ic_type))
     
