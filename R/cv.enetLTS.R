@@ -49,10 +49,6 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     for(r in 1:length(temp_result)) {
       for(m in 1:length(ic_type)) {
         temp_grid[s, "lambda"] <- lambdas[temp_result[[r]]$lambda_ind]
-        print("printing temp_result[[r]]$alpha_ind")
-        print(temp_result[[r]]$alpha_ind)
-        print("alphas[temp_result[[r]]$alpha_ind]")
-        print(alphas[temp_result[[r]]$alpha_ind])
         temp_grid[s, "alpha"] <- alphas[temp_result[[r]]$alpha_ind]
         temp_grid[s, "IC"] <- ic_type[r]
         temp_grid[s, "loss"] <- temp_result[[i]]$evalCritl[m]
@@ -70,6 +66,8 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     
     # Loop
     for(m in 1:length(ic_type)) {
+      print("printing ic_Type[m]:")
+      print(ic_type)
       grid_ic_now <- grid[grid$IC == ic_type[m], ]
       print("Printing grids_ic_now:")
       print(grid_ic_now)
