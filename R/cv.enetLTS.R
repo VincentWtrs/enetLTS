@@ -51,7 +51,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
         temp_grid[s, "lambda"] <- lambdas[temp_result[[r]]$lambda_ind]
         temp_grid[s, "alpha"] <- alphas[temp_result[[r]]$alpha_ind]
         temp_grid[s, "IC"] <- ic_type[m]
-        temp_grid[s, "loss"] <- temp_result[[i]]$evalCritl[m]
+        temp_grid[s, "loss"] <- temp_result[[r]]$evalCritl[m]
         s <-  s + 1
       }
     }
