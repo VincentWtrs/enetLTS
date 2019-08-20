@@ -37,6 +37,7 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
   ### LOOPING OVER REPS AND FOLDS
   ## For each replication
   evalCritl <- rep(NA, repl) # Initiating
+  evalCritl_array <- array(NA, dim = c(length(lambdas), length(alphas), length(ic_type))) # NEW
   for (l in 1:repl) {
     
     ## NEW: if(ic == FALSE): Keep old functionality
@@ -197,7 +198,6 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
                                                                       alpha = alpha,
                                                                       intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
           } else if (length(ic_type) > 1) {
-            evalCritl_array <- array(NA, dim = c(length(lambdas), length(alphas), length(ic_type)))
             for (m in 1:length(ic_type)) {
               evalCritl_array[i, j, m] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
                                                                                     type = ic_type[m], # CURRENT IC TYPE
