@@ -84,10 +84,6 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
       
       output[[m]]$minevalCrit <- loss_opt[m]
       
-      print("Printing the index") # TODO REMOVE
-      print(str(index)) # TODO REMOVE
-      print(index) # TODO REMOVE
-      
       print("printing the alpha_indx & lambdaindx")
       print("for index m")
       print(alpha_indx[m])
