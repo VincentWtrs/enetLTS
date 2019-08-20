@@ -88,6 +88,15 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
       print(str(index)) # TODO REMOVE
       print(index) # TODO REMOVE
       
+      print("printing the alpha_indx & lambdaindx")
+      print("for index m")
+      print(alpha_indx[m])
+      print(lambda_indx[m])
+      
+      print("the whole thing")
+      print(alpha_indx)
+      print(lambda_indx)
+      
       output[[m]]$indexbest <- index[, alpha_indx[m], lambda_indx[m]]
       output[[m]]$alphas <- alphas
       output[[m]]$lambdas <- lambdas
