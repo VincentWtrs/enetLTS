@@ -240,6 +240,9 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       # Looping over all required ICs
       for(i in 1:length(ic_type)) {
         
+        print("printing CVrestuls")
+        print(CVresults)
+        
         # Extracting results
         indexbest[[i]] <- CVresults$indexbest[i]
         alphabest[[i]] <- CVresults$alpha[i]
