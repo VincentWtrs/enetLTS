@@ -239,10 +239,11 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       
       # Looping over all required ICs
       for(i in 1:length(ic_type)) {
+        
         # Extracting results
         indexbest[[i]] <- CVresults$indexbest[i]
-        alphabest[[i]] <- CVresults$alphaopt[i]
-        lambdabest[[i]] <- CVresults$lambdaopt[i]
+        alphabest[[i]] <- CVresults$alpha[i]
+        lambdabest[[i]] <- CVresults$lambda[i]
         evalCritCV[[i]] <- CVresults$evalCrit[i]
       }
     }
