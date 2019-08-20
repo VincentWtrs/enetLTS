@@ -65,6 +65,9 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     lambda_opt <- rep(NA, times = length(ic_type))
     loss_opt <- rep(NA, times = length(ic_type))
     output <- vector("list", length = length(ic_type))
+    alpha_indx <- rep(NA, times = length(ic_type))
+    lambda_indx <- rep(NA, times = length(ic_type))
+    
     
     # Loop
     for(m in 1:length(ic_type)) {
@@ -76,11 +79,11 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
       alpha_opt[m] <- grid_ic_now[which.min(grid_ic_now$loss), "alpha"]
       lambda_opt[m] <- grid_ic_now[which.min(grid_ic_now$loss), "lambda"]
       loss_opt[m] <- grid_ic_now[which.min(grid_ic_now$loss), "loss"]
-      alpha_indx <- which(alphas == alpha_opt[m])
-      lambda_indx <- which(lambdas == lambda_opt[m])
+      alpha_indx[m] <- which(alphas == alpha_opt[m])
+      lambda_indx[m] <- which(lambdas == lambda_opt[m])
       
       output[[m]]$minevalCrit <- loss_opt[m]
-      output[[m]]$indexbest <- index[, alpha_indx, lambda_indx]
+      output[[m]]$indexbest <- index[, alpha_indx[m], lambda_indx[m]]
       output[[m]]$alphas <- alphas
       output[[m]]$lambdas <- lambdas
       output[[m]]$alpha <- alpha_opt[m]
@@ -91,7 +94,7 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
     
     
     
-  } else {
+  } else { # IN CASE NO MULTIPLE ICS! (CV or single IC)
     temp_result <- mclapply(1:nrow(combis_ind), FUN = calc_evalCrit, 
                             combis_ind = combis_ind, 
                             alphas = alphas, 
