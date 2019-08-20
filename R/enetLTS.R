@@ -297,7 +297,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                     units = "secs")) # as.numeric() just gives the amount of seconds
     
     # Additional output to see if the max lambda was selected as the raw lambda
-    if(abs(max(lambdas),  lambdabest) < 0.000000000001) {
+    if(abs(max(lambdas) - lambdabest) < 0.000000000001) {
       max_raw_lambda_chosen <- TRUE
     } else {
       max_raw_lambda_chosen  <- FALSE
@@ -347,7 +347,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       
       # Additional output to see if the max lambda was selected as the raw lambda
       for(i in 1:length(ic_type)) {
-        if (abs(max(lambdas - lambdabest[[i]])) < 0.000000000001) {
+        if (abs(max(lambdas) - lambdabest[[i]]) < 0.000000000001) {
           max_raw_lambda_chosen <- TRUE
         } else {
           max_raw_lambda_chosen <- FALSE
@@ -396,7 +396,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                                     units = "secs")) # as.numeric() just gives the amount of seconds
     
     # Additional output to see if the max lambda was selected as the raw lambda
-    if(abs(max(lambdas),  lambdabest) < 0.000000000001) {
+    if(abs(max(lambdas) -  lambdabest) < 0.000000000001) {
       max_raw_lambda_chosen <- TRUE
     } else {
       max_raw_lambda_chosen  <- FALSE
