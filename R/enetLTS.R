@@ -33,7 +33,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   # type: type of predictions required, default: c("response", "class")
   
   
-  print("USING UPDATED VERSION enetLTS(): 19-08-2019") # So I can see that the new function is effectively called
+  print("USING UPDATED VERSION enetLTS(): 20-08-2019") # So I can see that the new function is effectively called
   ########################
   
   # Recording starting time (later to get difference, to get run time)
