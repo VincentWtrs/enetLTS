@@ -202,7 +202,7 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
       } # Gaussian Case
       else if (family == "gaussian") {
         evalCritl[l] <- sqrt(mean(loss^2))
-        if(ic == TRUE){
+        if(ic == TRUE) {
           evalCritl[l] <- 2 * evalCritl[l] + ic_penalty(model = trainmod, 
                                                         type = ic_type, 
                                                         X = xtrain, 
@@ -212,7 +212,6 @@ calc_evalCrit <- function(rowind, combis_ind, alphas, lambdas,
         }
       }
     } 
-    
     # END OF if(ic == TRUE)
     
   } # END OF REPL. LOOP
