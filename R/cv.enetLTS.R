@@ -55,6 +55,8 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
         s <-  s + 1
       }
     }
+    print("printing temp_grid")
+    print(temp_grid)
     
     ## Best for each IC
     # Initializations
