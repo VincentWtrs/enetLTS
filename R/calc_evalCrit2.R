@@ -199,16 +199,16 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
                                                                       intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
           } else if (length(ic_type) > 1) {
             for (m in 1:length(ic_type)) {
-              evalCritl_array[i, j, m] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
-                                                                                    type = ic_type[m], # CURRENT IC TYPE
-                                                                                    X = xtrain, 
-                                                                                    alpha = alpha,
-                                                                                    intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
+              evalCritl[m] <- 2 * mean(loss, na.rm = TRUE) + ic_penalty(model = trainmod, 
+                                                                     type = ic_type[m], # CURRENT IC TYPE
+                                                                     X = xtrain, 
+                                                                     alpha = alpha,
+                                                                     intercept = TRUE) # BECAUSE BINOMIAL ALWAYS WITH INTERCEPT
               
             }
-        
+            
           }
-
+          
           # Note: the intercept setting needs to be the same as used to fit the respective model that is given to ic_penalty
         }
       } # Gaussian Case
@@ -227,5 +227,5 @@ calc_evalCrit2 <- function(rowind, combis_ind, alphas, lambdas,
     # END OF if(ic == TRUE)
   } # END OF REPL. LOOP
   # OUTPUT
-  return(evalCritl_array)
+  return(list(lambda_ind = i, alpha_ind = j, evalCritl = evalCritl))
 }
