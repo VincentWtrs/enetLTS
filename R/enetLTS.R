@@ -289,6 +289,9 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       print("Entering the rweighting/results step for IC:") # TODO REMOVE
       print(ic_type_now) # TODO REMOVE
       
+      print("printing alphabest")
+      print(alphabest[[i]])
+      
       reweight_results[[i]] <- enetLTS_reweight_results(xx = xx,
                                                         yy = yy,
                                                         family = family,
