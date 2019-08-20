@@ -242,20 +242,6 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       
       # Looping over all required ICs
       for(i in 1:length(ic_type)) {
-        ic_now <- ic_type[i] # Extract current IC
-        print(paste0("Currently running the cv.enetLTS() function for: ", ic_type[i]))
-        CVresults[[i]] <- cv.enetLTS(index = indexall,
-                                     xx = x, # x Is the normalized data, xx is raw
-                                     yy = y, # y Is the normalized data, yy is raw
-                                     family = family,
-                                     alphas = alphas,
-                                     lambdas = lambdas,
-                                     nfold = nfold,
-                                     repl = repl,
-                                     ncores = ncores,
-                                     plot = plot,
-                                     ic_type = ic_now)
-        
         # Extracting results
         indexbest[[i]] <- CVresults[[i]]$indexbest
         alphabest[[i]] <- CVresults[[i]]$alphaopt
