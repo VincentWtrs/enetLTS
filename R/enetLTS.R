@@ -215,8 +215,6 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
                               ncores = ncores, 
                               plot = plot, 
                               ic_type = ic_type) # NEW: ic_type ## NEW(2): remove ic_type # NEW(3) Think we can remove this due to default NULL
-      # TEMP
-      return(CVresults) # TODO REMOVE
       
       # Gathering results from the IC/CV search
       indexbest <- CVresults$indexbest
