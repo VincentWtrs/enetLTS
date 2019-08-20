@@ -49,159 +49,141 @@ cv.enetLTS <- function(index = NULL, xx, yy, family, h, alphas, lambdas, nfold,
                             ic_type = ic_type, # NEW
                             mc.cores = ncores, 
                             mc.allow.recursive = FALSE)
-    print("I am printing temp_result in cv.enetLTS")
+    
+    
+    #for(m in 1:length(ic_type)) {
+    #  temp_result2[[m]] <- matrix(unlist(temp_result[[m]]),
+    #                              ncol = repl + 2,
+    #                              byrow = TRUE)
+    #}
+    
+    
+    optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
+    minevalCrit <- evalCrit[optind[1], optind[2]]
+    indexbest <- index[, optind[1], optind[2]]
+    alpha <- alphas[optind[2]] 
+    lambda <- lambdas[optind[1]]
+    
+    ## PLOTTING
+    # NEW: was fully defined inside this function but split off to new function
+    if(isTRUE(plot)){
+      tune_plot(alphas = alphas,
+                alpha = alpha,
+                lambdas = lambdas,
+                lambda = lambda,
+                evalCrit = evalCrit,
+                index = index,
+                family = family)
+    }
+  } else if (length(ic_type) > 1) {
+    temp_result <- mclapply(1:nrow(combis_ind), FUN = calc_evalCrit2, 
+                            combis_ind = combis_ind, 
+                            alphas = alphas, 
+                            lambdas = lambdas, 
+                            index = index, 
+                            xx = xx, 
+                            yy = yy, 
+                            nfold = nfold, 
+                            repl = repl, 
+                            family = family, # NEW 
+                            ic_type = ic_type, # NEW
+                            mc.cores = ncores, 
+                            mc.allow.recursive = FALSE)
+    print("I am printing temp_result in cv.enetLTS for multipe IC case!!!!!")
+    print(temp_result)
+    
+    print("structure of temp_result")
     print(temp_result)
     
     # Restructuring output
     temp_result2 <- matrix(unlist(temp_result), 
                            ncol = repl + 2, # + 2
                            byrow = TRUE)
+    
+    return(list(temp_result, temp_result2)) # TODO REMOVE
+    
+    
+    
+    for (k in 1:nrow(temp_result2)) {
+      i <- temp_result2[k, 1]
+      j <- temp_result2[k, 2]
+      evalCrit[i, j] <- mean(temp_result2[k, 3:(repl + 2)]) # THIS NEEDS TO CHANGE BECAUSE NOW NOT MEAN!
+    }
+    
+    for (k in 1:length(ic_type)) {
+      print("printing best for this ic:")
+      best_for_this_ic <- which(temp_result[, , k] == min(temp_result[, , k]), arr.ind = TRUE)
+      print(best_for_this_ic)
+    }
+    
+    
+    temp_result2 <- vector("list", length = length(ic_type)) # Initializing
+    # NEW UNPACKING
+    for(m in 1:length(ic_type)) {
+      temp_result2[[m]] <- matrix(unlist(temp_result[[m]]),
+                                  ncol = repl + 2,
+                                  byrow = TRUE)
+    }
+    
     print("printing temp_result2 in cv.enetLTS")
     print(temp_result2)
     
-    return(temp_result2)
-  } # TODO RM
-} # TODO RM
-
-for(m in 1:length(ic_type)) {
-  temp_result2[[m]] <- matrix(unlist(temp_result[[m]]),
-                              ncol = repl + 2,
-                              byrow = TRUE)
-}
-
-print(temp_result)
-
-
-for (k in 1:nrow(temp_result2)) {
-  i <- temp_result2[k, 1]
-  j <- temp_result2[k, 2]
-  evalCrit[i, j] <- mean(temp_result2[k, 3:(repl + 2)])
-}
-
-print("I am printing evalCrit in cv.enetLTS:")
-print(evalCrit)
-
-optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
-minevalCrit <- evalCrit[optind[1], optind[2]]
-indexbest <- index[, optind[1], optind[2]]
-#alphas <- round(alphas, 10) # NEW: REMOVED ROUNDING
-alpha <- alphas[optind[2]] 
-#lambdas <- round(lambdas, 10) # NEW: less rounding # NEW: REMOVED ROUNDING
-lambda <- lambdas[optind[1]] # NEW: less rounding
-
-## PLOTTING
-# NEW: was fully defined inside this function but split off to new function
-if(isTRUE(plot)){
-  tune_plot(alphas = alphas,
-            alpha = alpha,
-            lambdas = lambdas,
-            lambda = lambda,
-            evalCrit = evalCrit,
-            index = index,
-            family = family)
-}
-} else if (length(ic_type) > 1) {
-  temp_result <- mclapply(1:nrow(combis_ind), FUN = calc_evalCrit2, 
-                          combis_ind = combis_ind, 
-                          alphas = alphas, 
-                          lambdas = lambdas, 
-                          index = index, 
-                          xx = xx, 
-                          yy = yy, 
-                          nfold = nfold, 
-                          repl = repl, 
-                          family = family, # NEW 
-                          ic_type = ic_type, # NEW
-                          mc.cores = ncores, 
-                          mc.allow.recursive = FALSE)
-  print("I am printing temp_result in cv.enetLTS for multipe IC case!!!!!")
-  print(temp_result)
-  
-  print("structure of temp_result")
-  print(temp_result)
-  
-  
-  
-  for (k in 1:nrow(temp_result2)) {
-    i <- temp_result2[k, 1]
-    j <- temp_result2[k, 2]
-    evalCrit[i, j] <- mean(temp_result2[k, 3:(repl + 2)]) # THIS NEEDS TO CHANGE BECAUSE NOW NOT MEAN!
-  }
-  
-  for (k in 1:length(ic_type)) {
-    print("printing best for this ic:")
-    best_for_this_ic <- which(temp_result[, , k] == min(temp_result[, , k]), arr.ind = TRUE)
-    print(best_for_this_ic)
-  }
-  
-  
-  temp_result2 <- vector("list", length = length(ic_type)) # Initializing
-  # NEW UNPACKING
-  for(m in 1:length(ic_type)) {
-    temp_result2[[m]] <- matrix(unlist(temp_result[[m]]),
-                                ncol = repl + 2,
-                                byrow = TRUE)
-  }
-  
-  print("printing temp_result2 in cv.enetLTS")
-  print(temp_result2)
-  
-  
-  for(m in 1:length(ic_type)){
-    for (k in 1:nrow(temp_result2[[m]])) {
-      i <- temp_result2[[m]][k, 1]
-      j <- temp_result2[[m]][k, 2]
-      evalCrit[i, j, m] <- mean(temp_result2[[m]][k, 3:(repl + 2)]) # Array
+    
+    for(m in 1:length(ic_type)){
+      for (k in 1:nrow(temp_result2[[m]])) {
+        i <- temp_result2[[m]][k, 1]
+        j <- temp_result2[[m]][k, 2]
+        evalCrit[i, j, m] <- mean(temp_result2[[m]][k, 3:(repl + 2)]) # Array
+      }
+    }
+    
+    print("I am printing evalCrit in cv.enetLTS:")
+    print(evalCrit)
+    
+    # NEW
+    if(length(ic_type) > 1){
+      minevalCrit <- rep(NA, length = length(ic_type))
+      indexbest <- rep(NA, length = length(ic_type))
+      optind <- rep(NA, length = length(ic_type))
+      for(m in 1:dim(evalCrit)[1]){
+        optind[m] <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ,] # NEW
+        minevalCrit[m] <- evalCrit[optind[1], optind[2]]
+        indexbest[m] <- index[optind[1], optind[2],]
+      }
+    } else { # If NOT multiple ic
+      optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
+      minevalCrit <- evalCrit[optind[1], optind[2]]
+      indexbest <- index[, optind[1], optind[2]]
+      #alphas <- round(alphas, 10) # NEW: REMOVED ROUNDING
+      alpha <- alphas[optind[2]] 
+      #lambdas <- round(lambdas, 10) # NEW: less rounding # NEW: REMOVED ROUNDING
+      lambda <- lambdas[optind[1]] # NEW: less rounding
+    }
+    
+    
+    ## PLOTTING
+    # NEW: was fully defined inside this function but split off to new function
+    if(isTRUE(plot)){
+      tune_plot(alphas = alphas,
+                alpha = alpha,
+                lambdas = lambdas,
+                lambda = lambda,
+                evalCrit = evalCrit,
+                index = index,
+                family = family)
     }
   }
   
-  print("I am printing evalCrit in cv.enetLTS:")
-  print(evalCrit)
-  
-  # NEW
-  if(length(ic_type) > 1){
-    minevalCrit <- rep(NA, length = length(ic_type))
-    indexbest <- rep(NA, length = length(ic_type))
-    optind <- rep(NA, length = length(ic_type))
-    for(m in 1:dim(evalCrit)[1]){
-      optind[m] <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ,] # NEW
-      minevalCrit[m] <- evalCrit[optind[1], optind[2]]
-      indexbest[m] <- index[optind[1], optind[2],]
-    }
-  } else { # If NOT multiple ic
-    optind <- which(evalCrit == min(evalCrit, na.rm = TRUE), arr.ind = TRUE)[1, ]
-    minevalCrit <- evalCrit[optind[1], optind[2]]
-    indexbest <- index[, optind[1], optind[2]]
-    #alphas <- round(alphas, 10) # NEW: REMOVED ROUNDING
-    alpha <- alphas[optind[2]] 
-    #lambdas <- round(lambdas, 10) # NEW: less rounding # NEW: REMOVED ROUNDING
-    lambda <- lambdas[optind[1]] # NEW: less rounding
-  }
-  
-  
-  ## PLOTTING
-  # NEW: was fully defined inside this function but split off to new function
-  if(isTRUE(plot)){
-    tune_plot(alphas = alphas,
-              alpha = alpha,
-              lambdas = lambdas,
-              lambda = lambda,
-              evalCrit = evalCrit,
-              index = index,
-              family = family)
-  }
-}
-
-# OUTPUT
-print("Printing output list: ")
-print(list(evalCrit = evalCrit, 
-           minevalCrit = minevalCrit, 
-           indexbest = indexbest, 
-           lambdaopt = lambda, 
-           alphaopt = alpha))
-return(list(evalCrit = evalCrit, 
-            minevalCrit = minevalCrit, 
-            indexbest = indexbest, 
-            lambdaopt = lambda, 
-            alphaopt = alpha))
+  # OUTPUT
+  print("Printing output list: ")
+  print(list(evalCrit = evalCrit, 
+             minevalCrit = minevalCrit, 
+             indexbest = indexbest, 
+             lambdaopt = lambda, 
+             alphaopt = alpha))
+  return(list(evalCrit = evalCrit, 
+              minevalCrit = minevalCrit, 
+              indexbest = indexbest, 
+              lambdaopt = lambda, 
+              alphaopt = alpha))
 }
