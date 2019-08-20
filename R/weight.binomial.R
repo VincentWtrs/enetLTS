@@ -16,7 +16,7 @@ weight.binomial <- function(x, y, beta, intercept, del) {
       res_na_indx <- which(is.na(res))
       
       # Catching indices that are very sure of their predictions and are CORRECT
-      correct_sure_indx <- which(y - pi < 0.000000001)
+      correct_sure_indx <- which((y - pi) < 0.000000001)
       
       # Intersection of these both
       intersection_na_sure <- intersect(res_na_indx, correct_sure_indx)
@@ -29,6 +29,11 @@ weight.binomial <- function(x, y, beta, intercept, del) {
       
       # Setting those incorrect sure ones rather big
       print("The residuals before replacing had the following y - pi_hat values:")
+      print("printing y[incorrect_sure_indx]")
+      print(y[incorrect_sure_indx])
+      print("Printing pi[incorrect_sure_indx]")
+      print(pi[incorrect_sure_indx])
+      
       print(y[incorrect_sure_indx] - pi[incorrect_sure_indx])
       res[incorrect_sure_indx] <- 3 # 3 Standard deviations away so will be flagged
     }
