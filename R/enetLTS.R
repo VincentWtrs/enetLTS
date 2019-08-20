@@ -143,15 +143,16 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
       #lambdas <- sort(lambdas, decreasing = FALSE) # NEW: Sorting INCREASING 
       
     }
-    # NEW ADDING SOME VERY HEaVY REGULARIZATION PARAMETERS
-    if (auto_lambda == "VW") {
-      temp_seq <- seq(l00, min_lambda, by = -0.025 * l00)
-      temp_seq <- tail(temp_seq, n = length(temp_seq) - 3)
-      lambdas <- c(2, 1, 0.5, temp_seq)
-      lambdas <- sort(lambdas, decreasing = TRUE)
-      print(lambdas) # TODO REMOVE
+    # NEW ADDING SOME VERY HEAVY REGULARIZATION PARAMETERS
+    if(!is.null(auto_lambda)){
+      if (auto_lambda == "VW") {
+        temp_seq <- seq(l00, min_lambda, by = -0.025 * l00)
+        temp_seq <- tail(temp_seq, n = length(temp_seq) - 3)
+        lambdas <- c(2, 1, 0.5, temp_seq)
+        lambdas <- sort(lambdas, decreasing = TRUE)
+        print(lambdas) # TODO REMOVE
+      }
     }
-
     # TODO (Seeing if keeping in original order fixes the problems)
   }
   
