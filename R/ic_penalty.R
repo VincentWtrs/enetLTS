@@ -1,5 +1,5 @@
 ic_penalty <- function(type, model, X, alpha, HBIC_gamma = NULL, BIC_HD_c = NULL, EBIC_gamma = NULL, 
-                       ERIC_NU = NULL, s = NULL, intercept = NULL){
+                       ERIC_nu = NULL, s = NULL, intercept = NULL){
   # This function calculates the PENALTY factor associated with information criteria (which then needs to be ADDED to loglik(= minus loss))
   
   ## INPUTS:
