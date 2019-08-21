@@ -55,6 +55,9 @@ ic_penalty <- function(type, model, X, alpha, HBIC_gamma = NULL, BIC_HD_c = NULL
   # Extracting parameters
   nobs <- model$nobs
   
+  print("printing the amount of observations in ic_penalty")
+  print(nobs)
+  
   ## Intercept can be given to function but we will perform a check if thats consistent with what the model has been fitted on
   # If an intercept is given with the function call
   if(!is.null(intercept)){
