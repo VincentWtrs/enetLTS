@@ -44,7 +44,7 @@ ic_penalty <- function(type, model, X, alpha, naive = FALSE, HBIC_gamma = NULL, 
         stop("There is a discrepancy between the function call to ic_penalty and the given model, since the model has a fitted intercept, while the function was called with intercept=FALSE")
       }
     } else if (isTRUE(intercept)) {
-      if(all(model$a0 == 0)) {
+      if (all(model$a0 == 0)) {
         # In this case the uer says there is an intercept but none have been fitted (Using any() to check in case of regularization path)
         stop("There is a discrepancy between the function call to ic_penalty and the given model, since the model appears to not have any fitted intercept but the function call states intercept=TRUE")
       }
@@ -82,7 +82,7 @@ ic_penalty <- function(type, model, X, alpha, naive = FALSE, HBIC_gamma = NULL, 
   # Extracting intercept parameter
   if (all(model$a0 == 0)) {
     intercept <- FALSE
-  } else (!all(model$a0 == 0)) {
+  } else if (!all(model$a0 == 0)) {
     intercept <- TRUE
   }
   
