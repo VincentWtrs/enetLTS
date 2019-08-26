@@ -1,42 +1,56 @@
-ic_penalty <- function(type, model, X, alpha, HBIC_gamma = NULL, BIC_HD_c = NULL, EBIC_gamma = NULL, 
-                       ERIC_nu = NULL, s = NULL, intercept = NULL){
+ic_penalty <- function(type, model, X, alpha, naive = FALSE, HBIC_gamma = NULL, BIC_HD_c = NULL, EBIC_gamma = NULL, 
+                       ERIC_nu = NULL, s = NULL, intercept = NULL) {
   # This function calculates the PENALTY factor associated with information criteria (which then needs to be ADDED to loglik(= minus loss))
   
   ## INPUTS:
-  # glmnet_in: a model fitted through glmnet()
-  # type: the sort of information criterion wanted
-  # X: the data
-  # alpha: because for some stupid reason one cannot extract it from the glmnet function.
-  # intercept: if intercept was used to fit the logit-glmnet (family = "binomial") model: TRUE.
+  # type: The specific information criterion requested
+  # model: A glmnet model, either a model with a single lambda or a regularization path (multiple lambdas)
+  # X: The design matrix without the intercept!
+  # alpha: The Elastic Net mixing hyperparameter
+  # naive: If naive calculations using the amount of estimated parameters is to be used for effective df (Default: FALSE)
+  # HBIC_gamma: Tuning parameter of the HBIC IC
+  # BIC_HD_c: Tuning parameter of the BIC_HD Information Criterion
+  # EBIC_gamma: Tuning parameter of the Extended BIC
+  # ERIC_nu: Tuning parameter of the Extended Regularized IC
+  # s: Single value for regularization parameter lambda in case where argument 'model' contained a regularization path
+  # intercept: Optional parameter for clarity: shows if intercept has been fitted or not and will adjust edfs appropriately. Will check against provided model
   
   ## OUPUTS:
   # Numeric value denoting the effective degrees of freedom
   
-  ## Error Catching (why commented out?)
-  # Checking if model is glmnet
-  #if(class(glmnet_in) != c("lognet", "glmnet")){
-  #  stop("The input for ic_penalty() should be a glmnet model")
-  #}
+  ## TODO 
+  # 1. Make the naming of lambda / s clearer in both logit_df as well as ic_penalty
+  # 2. Include possibility to estimate nuisance parameters (e.g. add amount of nuisance parameters as integer argument to function, ...)
   
+  ## Error Catching
+  # Checking if model is glmnet
+  if (class(model) != c("lognet", "glmnet")) {
+    stop("The input for ic_penalty() should be a glmnet model")
+  }
+  
+  # Checking for s is regularization path model was supplied
   if (length(model$lambda) > 1) {
-    if(length(s) > 1){
+    if (length(s) > 1) {
       stop("The ic_penalty function cannot handle multiple lambdas without supplying a single value for lambda through the 's' argument!")
     }
   }
   
-  # If the model was a full path of regularization, but a single s (lambda value) was supplied
-  if(length(model$lambda) > 1) {
-    if(length(s) == 1) {
-      lambda <- s
+  # Intercept can be given to function but we will perform a check if thats consistent with what the model has been fitted on
+  if (!is.null(intercept)) {  # If an intercept is given with the function call
+    if (isFALSE(intercept)) { # If intercept FALSE
+      if (any(model$a0 != 0)) {
+        # In this case the user requests no intercept, but intercepts have been fitted! (Using any() to check in case of regularization path)
+        stop("There is a discrepancy between the function call to ic_penalty and the given model, since the model has a fitted intercept, while the function was called with intercept=FALSE")
+      }
+    } else if (isTRUE(intercept)) {
+      if(all(model$a0 == 0)) {
+        # In this case the uer says there is an intercept but none have been fitted (Using any() to check in case of regularization path)
+        stop("There is a discrepancy between the function call to ic_penalty and the given model, since the model appears to not have any fitted intercept but the function call states intercept=TRUE")
+      }
     }
   }
   
-  # If no s given, extract s from the model object
-  if(is.null(s)) {
-    lambda = model$lambda
-  }
-  
-  # Checking if type is supported
+  # Checking if IC type is supported
   if(type != "AIC"  &
      type != "AIC_C" &
      type != "BIC" &
@@ -52,47 +66,47 @@ ic_penalty <- function(type, model, X, alpha, HBIC_gamma = NULL, BIC_HD_c = NULL
     stop("This type of information criterion not supported (or check for typos)")
   }
   
-  # Extracting parameters
-  nobs <- model$nobs
-  
-  print("printing the amount of observations in ic_penalty")
-  print(nobs)
-  
-  ## Intercept can be given to function but we will perform a check if thats consistent with what the model has been fitted on
-  # If an intercept is given with the function call
-  if(!is.null(intercept)){
-    if(!intercept) { # If intercept FALSE
-      if(any(model$a0 != 0)){ # If there is one not equal to 0
-        stop("There is a discrepancy between the function call to ic_penalty and the given model, since the model has a fitted intercept, while the function was called with intercept=FALSE")
-      }
-    }
-    if(intercept) { # If intercept TRUE
-      if(all(model$a0 == 0)) {
-        stop("There is a discrepancy between the function call to ic_penalty and the given model, since the model appears to not have any fitted intercept but the function call states intercept=TRUE")
-      }
-    }
+  ## Extracting parameters from model
+  # Extracting lambda
+  if(is.null(s)) { # If no s given: get it from model itself
+    lambda = model$lambda
+  } else if (length(model$lambda) > 1) { # If s is given, pass it on
+    lambda <- s 
+    # Note: no additional check on length(s) needs to be done because would have thrown stop() above
   }
   
-  # Checking if intercept is in the model
-  if(all(model$a0 == 0)){
+  # Extracting amoutn of observations
+  nobs <- model$nobs # Using nobs instead of n because here the amount of observations will often be |H| = h
+  
+  # Extracting intercept parameter
+  if (all(model$a0 == 0)) {
     intercept <- FALSE
-  } else {
+  } else (!all(model$a0 == 0)) {
     intercept <- TRUE
   }
   
-  if(intercept == FALSE){
-    p <- length(coefficients(model, s = s)) - 1 # Because intercept is always returned when using coefficients() (hence - 1)
+  # Extracting total available predictor dimensionality (p)
+  if (intercept == FALSE) {
+    p <- length(coefficients(model, s = lambda)) - 1 # Because intercept is always returned when using coefficients() (hence - 1)
   } else if (isTRUE(intercept)) {
-    p <- length(coefficients(model, s = s))
+    p <- length(coefficients(model, s = lambda)) # In this case coefficients() returns the correct amount
   }
-  # Calculating the effective degrees of freedom
-  df <- logit_df(model = model,
-                 X = X,
-                 alpha = alpha,
-                 lambda = lambda) # NEW
+  # TODO: Maybe use p always and then make later different flows to use p+1 instead of p, now the definition of p changes depending on intercept
   
-  # Amount of nonzeros
+  # Calcualting amount of nonzero predictors
   nonzeros <- sum(coefficients(model, s = lambda) != 0)
+  # NOTE: No different path for intercept TRUE/FALSE needed: if no intercept fitted: it will be 0 anyway, if there is one fitted it will be in the p
+  
+  # Calculating the effective degrees of freedom (df)
+  if(isFALSE(naive)) {
+    df <- logit_df(model = model,
+                   X = X,
+                   alpha = alpha,
+                   lambda = lambda) # NEW
+    # TODO: CHECK DOES IT HANDLE INTERCEPT WELL?
+  } else if (isTRUE(naive)) {
+    df <- nonzeros # If naive calculation is asked just give the amount of nonzeros
+  }
   
   ## Calculating the information criteria penalty
   # Akaike Information Criterion (AIC)
