@@ -8,14 +8,13 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRU
   # intercept: If intercept was used to fit the logit-glmnet model: set to TRUE
   
   ## OUTPUT
-  # df: the effective degrees of freedom for the logit model
+  # df: Estimated effective degrees of freedom
   
   ## NOTES
   # 1. lamba value can be extracted from glmnet model, alpha cannot in most circumstances
   # 2. The case for including an intercept is not so clean as it seems as it would require different
-  #    inner workings for the predict() function as it does not work with matrices with intercepts... might do this later
-  # 3. IDEA to work with the intercept is to see in coefficients(model) is it's 0, if yes: no intercept fitted, becuase it's always unpenalized!
-  # 4. I was afraid this might break down at the matrix inversion when |Active set| > n, but seems to be okay!
+  # 3.   inner workings for the predict() function as it does not work with matrices with intercepts... might do this later
+  # 3. I was afraid this might break down at the matrix inversion when |Active set| > n, but seems to be okay!
   
   ## TODO
   # 1. Extend the function to glm_df to open up options for Poisson e.g. 
