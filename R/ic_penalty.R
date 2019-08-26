@@ -21,6 +21,7 @@ ic_penalty <- function(type, model, X, alpha, naive = FALSE, HBIC_gamma = NULL, 
   ## TODO 
   # 1. Make the naming of lambda / s clearer in both logit_df as well as ic_penalty
   # 2. Include possibility to estimate nuisance parameters (e.g. add amount of nuisance parameters as integer argument to function, ...)
+  # 3. Introduce the detect_path() and detect_intercept() functions that are in the logit_df function.
   
   ## Error Catching
   # Checking if model is glmnet
