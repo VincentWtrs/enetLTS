@@ -66,7 +66,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   
   # Folds
   if (is.null(ic_type)) {
-    if (folds <= 1){
+    if (nfold <= 1){
       stop("The amount of folds in case of cross-validation needs to be 2 or higher (integer number)")
     }
   }
