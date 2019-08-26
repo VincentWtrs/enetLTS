@@ -33,7 +33,7 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   # type: type of predictions required, default: c("response", "class")
   
   
-  print("USING UPDATED VERSION enetLTS(): 20-08-2019") # So I can see that the new function is effectively called
+  print("USING UPDATED VERSION enetLTS(): 26-08-2019") # So I can see that the new function is effectively called
   ########################
   
   # Recording starting time (later to get difference, to get run time)
@@ -62,6 +62,13 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   # CV repetitions (require positive)
   if (repl <= 0) {
     stop("repl has to be a positive number")
+  }
+  
+  # Folds
+  if (is.null(ic_type)) {
+    if (folds <= 1){
+      stop("The amount of folds in case of cross-validation needs to be 2 or higher (integer number)")
+    }
   }
   
   # Max C-step amount (require positive)
