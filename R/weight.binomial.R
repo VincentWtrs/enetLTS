@@ -11,7 +11,7 @@ weight.binomial <- function(x, y, beta, intercept, del) {
     res <- (y - pi) / sqrt(pi*(1-pi))
     
     ## Catching some NAs for very high predicted probabilities
-    if (sum(is.na(res)) > 1){
+    if (sum(is.na(res)) > 1) { # TODO NEED MORE MORE SOMETIMES IT GOES INTO THIS FLOW BUT DOES NOT RETRIEVE ANY USEUFL INDICES (i.e. it gives numeric(0))
       # Catching the indices that are NA
       res_na_indx <- which(is.na(res))
       
