@@ -1,5 +1,5 @@
 ic_penalty <- function(type, model, X, alpha, naive = FALSE, HBIC_gamma = NULL, BIC_HD_c = NULL, EBIC_gamma = NULL, 
-                       ERIC_nu = NULL, s = NULL, intercept = NULL) {
+                       ERIC_nu = NULL, s = NULL, intercept = NULL, brute_force = FALSE) {
   # This function calculates the PENALTY factor associated with information criteria (which then needs to be ADDED to loglik(= minus loss))
   
   ## INPUTS:
@@ -28,6 +28,7 @@ ic_penalty <- function(type, model, X, alpha, naive = FALSE, HBIC_gamma = NULL, 
   if (class(model)[1] != "lognet" & class(model)[2] != "glmnet") {
     stop("The input for ic_penalty() should be a glmnet model")
   }
+  
   
   # Checking for s is regularization path model was supplied
   if (length(model$lambda) > 1) {
@@ -103,7 +104,8 @@ ic_penalty <- function(type, model, X, alpha, naive = FALSE, HBIC_gamma = NULL, 
     df <- logit_df(model = model,
                    X = X,
                    alpha = alpha,
-                   lambda = lambda) # NEW
+                   lambda = lambda, # NEW
+                   brute_force = brute_force) # NEW
     # TODO: CHECK DOES IT HANDLE INTERCEPT WELL?
   } else if (isTRUE(naive)) {
     df <- nonzeros # If naive calculation is asked just give the amount of nonzeros
