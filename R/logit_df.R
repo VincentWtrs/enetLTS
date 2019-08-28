@@ -166,46 +166,7 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRU
         
         # To become trace: Sum
         H_trace <- sum(diag_ZZ) # It's the same as H_trace now!
-        
-        # QR Decomposition
-        #QR <- qr.default(X_active_noint_tilde, LAPACK = TRUE) # 
-        #Q <- qr.qy(qr = QR, diag(1, nrow = nrow(QR$qr), ncol = QR$rank))
-        
-        # Making "weighted" Q matrices
-        #Q1 <- (1 / w_ii) * Q
-        #Q2 <- wii * Q
-        
-        #wii <- sqrt(p_hat * (1 - p_hat)) # For the QR style of things)
-        #X_active_noint_tilde <- wii * X_active_noint
-        #A <- (t(X_active_noint) %*% W %*% X_active_noint)  + (lambda * (1 - alpha)/2) * I
-        #U <- base::chol.default(A)
-        #Z <- base::forwardsolve(t(U), t(X_active_noint_tilde))
-        #edf_new <- sum(colSums(Z^2))
-        
       }
-      
-      # NEW VERSION
-      #if(isTRUE(dev)){
-      #  wii <- sqrt(p_hat * (1 - p_hat)) # For the QR style of things
-      #  print("dim of X_active_noint")
-      #  print(dim(X_active_noint))
-      #  print("dim of I")
-      #  print(dim(I))
-      #  X_active_noint_tilde <- wii * X_active_noint
-      #  QR <- qr.default(X_active_noint_tilde, LAPACK = TRUE)
-      #  Q <- qr.qy(qr = QR, diag(1, nrow = nrow(QR$qr), ncol = QR$rank))
-      #  Q1 <- (1 / wii) * Q
-      #  Q2 <- wii * Q
-      #  d <- rowSums(Q1 * Q2)
-      #  edf_new <- sum(d)
-      
-      #}
-      #wii <- sqrt(p_hat * (1 - p_hat)) # For the QR style of things)
-      #X_active_noint_tilde <- wii * X_active_noint
-      #A <- (t(X_active_noint) %*% W %*% X_active_noint)  + (lambda * (1 - alpha)/2) * I
-      #U <- base::chol.default(A)
-      #Z <- base::forwardsolve(t(U), t(X_active_noint_tilde))
-      #edf_new <- sum(colSums(Z^2))
       
       # ADDING THE INTERCEPT AGAIN (UNREGULARIZED SO 1 EXTRA DF)
       if(isTRUE(intercept)) {
