@@ -25,7 +25,7 @@ ic_penalty <- function(type, model, X, alpha, naive = FALSE, HBIC_gamma = NULL, 
   
   ## Error Catching
   # Checking if model is glmnet
-  if (class(model) != c("lognet", "glmnet")) {
+  if (class(model)[1] != "lognet" & class(model)[2] != "glmnet") {
     stop("The input for ic_penalty() should be a glmnet model")
   }
   
