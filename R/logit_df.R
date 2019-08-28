@@ -1,4 +1,5 @@
-logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRUE){
+# COPY OF logit_df() TO EXPERIMENT WITH (COPY FROM 28/08/2019)
+logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRUE, brute_force = FALSE, verbose = TRUE){
   ### logit_df() FUNCTION: calculating the effective degrees of freedom in a potentially penalized logistic regression using hat matrix trace
   
   ## INPUTS
@@ -6,6 +7,9 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRU
   # X: the data matrix WITHOUT INTERCEPT
   # alpha: Alpha value used to fit the model (single value)
   # intercept: If intercept was used to fit the logit-glmnet model: set to TRUE
+  # lambda: A specific lambda parameter to be given in case there is a model path supplied
+  # lasso_shortcut: Uses unbiased estimator for the df (see Zhou & Hastie Talk 2005)
+  # brute_force: Brute force: uses full expression with matrix inevrsion to get full H matrix. 
   
   ## OUTPUT
   # df: Estimated effective degrees of freedom
@@ -40,6 +44,12 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRU
   }
   
   ## Error handling
+  # Checking if the model was fitted with an intercept
+  intercept <- detect_intercept(model)
+  
+  # Checking if the model was fitted over a regularization path
+  path <- detect_regularization_path(model)
+  
   # Checking regularization path consistency with supplied lambda
   if (isTRUE(path)) {
     if (is.null(lambda)) {
@@ -63,13 +73,7 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRU
     }
   }
   
-  # Checking if the model was fitted with an intercept
-  intercept <- detect_intercept(model)
   
-  # Checking if the model was fitted over a regularization path
-  path <- detect_regularization_path(model)
-  
-
   ## Construction of the design matrix
   # If there is an intercept, add a first column of 1
   if(isTRUE(intercept)) {
@@ -116,9 +120,9 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRU
     
     # Predicting
     p_hat <- as.numeric(predict(object = model,
-                                newx = X_noint,
+                                newx = X_noint, # It wil automatically add intercept if it was ever fitted with one!
                                 type = "response",
-                                s = lambda))
+                                s = lambda)) # Fitting a single lambda
     
     ### Calculating degrees of freedom
     ## If alpha = 1 (LASSO): Shortcut calculation
@@ -127,28 +131,81 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRU
         df <- sum(beta != 0)
       }
     }
+    
     ## If alpha != 0: Calculate using weighted hat matrix
     if (alpha != 1) {
-      ## Calculating Hat matrix (H)
-      # Weight matrix W (diagonal), see GLM theory!
-      # NOTE: SINCE NO REGULARIZATION IS APPLIED ON THE INTERCEPT: EXCLUDE FROM CALCULATION AND ADD AT THE END
-      W <- diag(p_hat * (1 - p_hat))
-      W_sqrt <- diag(sqrt(p_hat) * (1 - sqrt(p_hat))) # Making square root beforehand (faster?)
+      if (isTRUE(brute_force)) {
+        ## Calculating Hat matrix (H)
+        # Weight matrix W (diagonal), see GLM theory!
+        W <- diag(p_hat * (1 - p_hat))
+        W_sqrt <- diag(sqrt(p_hat * (1 - p_hat))) # Making square root beforehand (Potentially faster)
+        I <- diag(length(active_set_noint))
+        H <- W_sqrt %*% X_active_noint %*% solve((t(X_active_noint) %*% W %*% X_active_noint)  + (lambda * (1 - alpha)/2) * I) %*% t(X_active_noint) %*% W_sqrt  # NEW
+        # NOTE: SINCE NO REGULARIZATION IS APPLIED ON THE INTERCEPT: EXCLUDE FROM DF CALCULATION (EXCEPT PREDS) AND ADD 1 AT THE END
+        # NOTE: ONLY FOR GLM PHI = CONSTANT MODEL, OTHERWISE: ADD 1 EXTRA AS WELL
+        # NOTE: lambda_2 = lambda (1 - alpha)/2 here
+        
+        H_trace <- sum(diag(H))
+        
+      } else {
+        print('Using Cholesky decomposition!')
+        
+        # Defining intermediate matrices
+        w_ii <- sqrt(p_hat * (1 - p_hat)) # Square root Weight vector
+        W <- diag(p_hat * (1 - p_hat)) # Weight matrix
+        X_active_noint_tilde <- w_ii * X_active_noint # X_tilde in most literature
+        I <- diag(length(active_set_noint)) # Identity matrix of size of active set
+        
+        # Choleski Decomposition
+        A <- t(X_active_noint) %*% W %*% X_active_noint + (lambda * (1 - alpha)/2)  # Matrix that needs would need to be inverted 'A'
+        U <- base::chol.default(A)
+        Z <- base::forwardsolve(t(U), t(X_active_noint_tilde))
+        
+        # Column Sums to get diagonal matrix
+        diag_ZZ <- colSums(Z^2)
+        
+        # To become trace: Sum
+        H_trace <- sum(diag_ZZ) # It's the same as H_trace now!
+        
+        # QR Decomposition
+        #QR <- qr.default(X_active_noint_tilde, LAPACK = TRUE) # 
+        #Q <- qr.qy(qr = QR, diag(1, nrow = nrow(QR$qr), ncol = QR$rank))
+        
+        # Making "weighted" Q matrices
+        #Q1 <- (1 / w_ii) * Q
+        #Q2 <- wii * Q
+        
+        #wii <- sqrt(p_hat * (1 - p_hat)) # For the QR style of things)
+        #X_active_noint_tilde <- wii * X_active_noint
+        #A <- (t(X_active_noint) %*% W %*% X_active_noint)  + (lambda * (1 - alpha)/2) * I
+        #U <- base::chol.default(A)
+        #Z <- base::forwardsolve(t(U), t(X_active_noint_tilde))
+        #edf_new <- sum(colSums(Z^2))
+        
+      }
       
-      # Calculating Hat (H) Matrix
-      # NEW: Trying to fix wrong regularization
-      I <- diag(length(active_set_noint))
-      #H <- sqrt(W) %*% X_active %*% solve((t(X_active) %*% W %*% X_active)  + (lambda * (1 - alpha)/2) * diag(length(active_set))) %*% t(X_active) %*% sqrt(W)
-      H <- W_sqrt %*% X_active_noint %*% solve((t(X_active_noint) %*% W %*% X_active_noint)  + (lambda * (1 - alpha)/2) * I) %*% t(X_active_noint) %*% W_sqrt  # NEW
+      # NEW VERSION
+      #if(isTRUE(dev)){
+      #  wii <- sqrt(p_hat * (1 - p_hat)) # For the QR style of things
+      #  print("dim of X_active_noint")
+      #  print(dim(X_active_noint))
+      #  print("dim of I")
+      #  print(dim(I))
+      #  X_active_noint_tilde <- wii * X_active_noint
+      #  QR <- qr.default(X_active_noint_tilde, LAPACK = TRUE)
+      #  Q <- qr.qy(qr = QR, diag(1, nrow = nrow(QR$qr), ncol = QR$rank))
+      #  Q1 <- (1 / wii) * Q
+      #  Q2 <- wii * Q
+      #  d <- rowSums(Q1 * Q2)
+      #  edf_new <- sum(d)
       
-
-      # Formula: W^(1/2) X_a (X'_a W X_a + lambda_2 * I)^-1 X'_a W^(1/2) (Yes transpose W at the end, but it's diagonal, so it doesn't matter)
-      # Note: lambda_2 = lambda (1 - alpha)/2 here
-      
-      # TODO CHECK IF THE FORMULA IS CORRECT FOR THE IMPLEMENTATION IN GLMNET (CHECK: I THINK SO)
-      
-      # Degrees of freedom = trace of H
-      H_trace <- sum(diag(H))
+      #}
+      #wii <- sqrt(p_hat * (1 - p_hat)) # For the QR style of things)
+      #X_active_noint_tilde <- wii * X_active_noint
+      #A <- (t(X_active_noint) %*% W %*% X_active_noint)  + (lambda * (1 - alpha)/2) * I
+      #U <- base::chol.default(A)
+      #Z <- base::forwardsolve(t(U), t(X_active_noint_tilde))
+      #edf_new <- sum(colSums(Z^2))
       
       # ADDING THE INTERCEPT AGAIN (UNREGULARIZED SO 1 EXTRA DF)
       if(isTRUE(intercept)) {
@@ -170,6 +227,8 @@ logit_df <- function(model, X, alpha = NULL, lambda = NULL, lasso_shortcut = TRU
   }
   
   # OUTPUT
+  print(df)
+  print(paste0("Nonzeros:", model$df))
   return(df)
 }
 
