@@ -4,7 +4,6 @@
 ##     Croux, C., and Haesbroeck, G. (2003),
 ##     ``Implementing the Bianco and Yohai estimator for Logistic Regression'',
 ##     Computational Statistics and Data Analysis, 44, 273-295
-
 dev1 <- function(s,y) log(1+exp(-abs(s))) + abs(s)*((y-0.5)*s<0)
 dev2 <- function(s,y) log1p(exp(-abs(s))) + abs(s)*((y-0.5)*s<0)
 dev3 <- function(s,y) -( y  * plogis(s, log.p=TRUE) +
@@ -44,8 +43,7 @@ rhoBY3 <- function(t,c3)
 }
 
 
-phiBY3 <- function(s,y,c3)
-{
+phiBY3 <- function(s,y,c3) {
    s <- as.double(s)
    dev. <- devBY(s,y)
    rhoBY3(dev.,c3) + GBY3Fs(s,c3) + GBY3Fsm(s,c3)

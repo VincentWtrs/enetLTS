@@ -32,7 +32,6 @@ enetLTS <- function(xx, yy, family=c("gaussian", "binomial"), alphas,
   # tol: Tolerance for stopping while loops in the C-step procedures, default: -1e+06
   # type: type of predictions required, default: c("response", "class")
   
-  
   print("USING UPDATED VERSION enetLTS(): 26-08-2019") # So I can see that the new function is effectively called
   ########################
   
