@@ -34,18 +34,22 @@ prepara <- function(x, y, family, index = NULL, robu = NULL){
       return(factor_col_indices)  # Return these (No return if no factors)
     }
   }
-  
-  # Checking if there are factors
-  factor_col_indices <- factor_handling(x)  # If there are no factor cols, return will be NULL
-  if (!is.null(factor_col_indices)) {
-    x_factor <- as.matrix(x[, factor_col_indices])  # Forcing as.matrix() s.t. apply() later on keeps working
-    x <- as.matrix(x[, -factor_col_indices])  # Forcing as.matrix() s.t. apply() later on keeps working
-  }
+
 
   # If no robu parameter given: will go to default: NULL: set robu <- 0
   if (is.null(robu)) {
     robu <- 0
   }
+  
+  # Checking if there are factors (only if robust option is asked, since the MAD often returns 0 (issue), while sd (nonrobust) does not...)
+  if (robu > 0) {
+    factor_col_indices <- factor_handling(x)  # If there are no factor cols, return will be NULL
+    if (!is.null(factor_col_indices)) {
+      x_factor <- x[, factor_col_indices, drop=FALSE]  # drop=FALSE keeps matrix structure (as well as names)
+      x <- x[, -factor_col_indices, drop=FALSE]  # drop=FALSE keeps matrix structure (as well as names)
+    }
+  }
+
   
   # 
   if (is.null(index)) {
