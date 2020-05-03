@@ -24,7 +24,8 @@ warmCsteps <- function(x, y, h, n, p, family, alphas, lambdas, hsize, nsamp,
     residall[, 1, 1] <- beginning.Cstep.with500$resid
     indexall[, 1, 1] <- beginning.Cstep.with500$index
     return(list(residall = residall, indexall = indexall))
-  
+    
+    
   # Case: multiple lambda/alpha combinations  
   } else {
     beginning.Cstep.with500 <- beginningCstep(x = x, 

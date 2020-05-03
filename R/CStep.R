@@ -8,7 +8,7 @@ CStep <- function(x, y, family, indx, h, hsize, alpha, lambda, scal){
   ## INPUT
   # new: Do we use my new proposed method or not?
   
-  # Note: the lambda given will be lambda/h hence will be correctly sized!
+  # Note: the lambda given will be lambda/h hence will be correctly sized
   
   n <- nrow(x)
   
